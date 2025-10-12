@@ -1,0 +1,206 @@
+<view class="container">
+  <!-- 骨架屏 -->
+  <view wx:if="{{showSkeleton}}" class="skeleton-container">
+    <!-- 搜索骨架 -->
+    <view class="skeleton-search">
+      <view class="skeleton-box skeleton-animate"></view>
+    </view>
+
+    <!-- 分类骨架 -->
+    <view class="skeleton-category">
+      <view class="skeleton-category-row">
+        <view class="skeleton-tag skeleton-animate"></view>
+        <view class="skeleton-tag skeleton-animate"></view>
+        <view class="skeleton-tag skeleton-animate"></view>
+        <view class="skeleton-tag skeleton-animate"></view>
+      </view>
+      <view class="skeleton-category-row">
+        <view class="skeleton-tag skeleton-animate"></view>
+        <view class="skeleton-tag skeleton-animate"></view>
+        <view class="skeleton-tag skeleton-animate"></view>
+      </view>
+    </view>
+
+    <!-- 列表骨架 -->
+    <view class="skeleton-list">
+      <view class="skeleton-item" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">
+        <view class="skeleton-item-header">
+          <view class="skeleton-title skeleton-animate"></view>
+          <view class="skeleton-price skeleton-animate"></view>
+        </view>
+        <view class="skeleton-tags">
+          <view class="skeleton-tag-small skeleton-animate"></view>
+          <view class="skeleton-tag-small skeleton-animate"></view>
+          <view class="skeleton-tag-small skeleton-animate"></view>
+        </view>
+        <view class="skeleton-company">
+          <view class="skeleton-avatar skeleton-animate"></view>
+          <view class="skeleton-text skeleton-animate"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 真实内容 -->
+  <view wx:else class="real-content">
+    <!-- 搜索容器 -->
+    <view class="search-container">
+      <view class="search-box">
+        <text class="search-icon">🔍</text>
+        <input class="search-input" placeholder="{{searchPlaceholder}}" bindinput="onSearchInput" bindconfirm="onSearchConfirm"/>
+      </view>
+    </view>
+
+    <!-- 分类区域 -->
+    <view class="category-section">
+      <!-- 类型分类（动态加载） -->
+      <view class="category-list">
+        <view
+          wx:for="{{categoryList}}"
+          wx:key="_id"
+          class="category-item {{currentType === item._id ? 'active' : ''}}"
+          bindtap="onTypeChange"
+          data-id="{{item._id}}"
+          data-name="{{item.name}}"
+        >
+          <text class="category-text">{{item.name}}</text>
+        </view>
+        <!-- 如果没有配置数据，显示提示 -->
+        <view wx:if="{{categoryList.length === 0}}" class="category-empty">
+          <text>暂无分类</text>
+        </view>
+      </view>
+
+      <!-- 地区分类（动态加载） -->
+      <view class="area-list">
+        <view
+          wx:for="{{areaList}}"
+          wx:key="_id"
+          class="area-item {{currentArea === item._id ? 'active' : ''}}"
+          bindtap="onAreaChange"
+          data-id="{{item._id}}"
+          data-name="{{item.name}}"
+        >
+          <text class="area-text">{{item.name}}</text>
+        </view>
+        <!-- 如果没有配置数据，显示提示 -->
+        <view wx:if="{{areaList.length === 0}}" class="area-empty">
+          <text>暂无区域</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 推荐板块 -->
+    <view class="recommendation-section">
+      <view class="rec-header">
+        <text class="rec-title">为你推荐</text>
+        <text class="rec-count">{{totalCount}}个职位</text>
+      </view>
+      <view class="rec-tags">
+        <text class="rec-tag {{currentSort === 'recommend' ? 'active' : ''}}" bindtap="onSortChange" data-sort="recommend">推荐</text>
+        <text class="rec-tag {{currentSort === 'newest' ? 'active' : ''}}" bindtap="onSortChange" data-sort="newest">最新</text>
+        <text class="rec-tag {{currentSort === 'nearby' ? 'active' : ''}}" bindtap="onSortChange" data-sort="nearby">附近</text>
+        <text class="rec-tag location {{cityFilterActive ? 'active' : ''}}" bindtap="onCityFilterToggle">📍 昆明</text>
+        <view class="rec-tag filter {{currentDistance ? 'active' : ''}}" bindtap="toggleDistanceFilter">
+          <text class="filter-text">{{currentDistance ? currentDistance + '公里内' : '筛选'}}</text>
+          <text class="filter-icon">🔽</text>
+        </view>
+      </view>
+
+      <!-- 距离筛选下拉菜单 -->
+      <view wx:if="{{showDistanceFilter}}" class="distance-filter-dropdown">
+        <view class="distance-option {{currentDistance === '1' ? 'active' : ''}}" bindtap="onDistanceChange" data-distance="1">
+          1公里内
+        </view>
+        <view class="distance-option {{currentDistance === '3' ? 'active' : ''}}" bindtap="onDistanceChange" data-distance="3">
+          3公里内
+        </view>
+        <view class="distance-option {{currentDistance === '5' ? 'active' : ''}}" bindtap="onDistanceChange" data-distance="5">
+          5公里内
+        </view>
+        <view class="distance-option {{currentDistance === '10' ? 'active' : ''}}" bindtap="onDistanceChange" data-distance="10">
+          10公里内
+        </view>
+        <view class="distance-option" bindtap="onDistanceChange" data-distance="">
+          不限距离
+        </view>
+      </view>
+    </view>
+
+    <!-- 职位列表 -->
+    <view class="job-list">
+      <!-- 智能加载遮罩 -->
+      <view wx:if="{{smartLoading}}" class="smart-loading-overlay">
+        <view class="smart-loading-content">
+          <view class="loading-spinner"></view>
+          <text class="loading-text">加载中...</text>
+        </view>
+      </view>
+
+      <!-- 职位卡片 -->
+    <view wx:for="{{jobList}}" wx:key="hash_id" class="job-item" bindtap="goToDetail" data-item="{{item}}">
+      <!-- 职位主要信息 -->
+      <view class="job-main">
+        <view class="job-header">
+          <text class="job-title">{{item.title}}</text>
+          <view class="job-salary-container">
+            <text class="job-salary">{{item.salary || '面议'}}</text>
+          </view>
+        </view>
+        <view class="job-location-info">
+          <text class="location-area">{{item.area || '五华区'}}</text>
+          <text class="location-separator"> • </text>
+          <text class="location-category">{{item.workType || '日结'}}</text>
+        </view>
+      </view>
+
+      <!-- 招聘人员信息 -->
+      <view class="recruiter-section">
+        <view class="recruiter-info">
+          <view class="recruiter-avatar">
+            <view class="avatar-placeholder {{item.isVIP ? 'vip-avatar' : 'normal-avatar'}}">
+              {{item.isVIP ? '高' : '普'}}
+            </view>
+            <view class="online-dot"></view>
+          </view>
+          <view class="recruiter-details">
+            <text class="company-name-bold">{{item.company_name || '公司名称'}}</text>
+            <text class="company-meta">总阅读{{item.totalViews}}次 | 今日阅读{{item.todayViews}}次</text>
+          </view>
+          <view class="action-area">
+            <text class="publish-time-info">{{item.postTime || '刚刚发布'}}</text>
+            <view class="call-button-rect" catchtap="makePhoneCall" data-phone="{{item.contact_phone}}" data-access-level="{{item.access_level}}">
+              <text class="call-icon-green">📞</text>
+              <text class="call-text-rect">拨打电话</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 职位标签 -->
+      <view class="job-tags-section">
+        <view class="job-requirement-tags">
+          <text wx:for="{{item.tags}}" wx:key="index" wx:for-item="tag" class="req-tag">{{tag.name}}</text>
+        </view>
+      </view>
+
+      <!-- 工作内容预览 -->
+      <view wx:if="{{item.descriptionPreview}}" class="job-description-preview">
+        <view class="desc-title">{{workContentLabel}}：</view>
+        <view class="desc-content">{{item.descriptionPreview}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 调试工具（点击标题5次触发） -->
+  <view class="debug-trigger" bindtap="toggleDebug"></view>
+  <view wx:if="{{showDebug}}" class="debug-tools">
+    <view class="debug-title">调试工具</view>
+    <view class="debug-btn" bindtap="initializeDatabase">初始化数据库</view>
+    <view class="debug-btn" bindtap="quickFix">快速修复</view>
+      <view class="debug-btn" bindtap="createDatabaseCollection">创建集合</view>
+      <view class="debug-btn" bindtap="setupFreeEnvironment">免费环境配置</view>
+      <view class="debug-btn" bindtap="goToDatabaseCreator">数据库工具台</view>
+    </view>
+  </view>
+</view>

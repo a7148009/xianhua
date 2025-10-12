@@ -1,0 +1,173 @@
+/* 变量设置页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 180rpx;
+}
+
+/* 页面头部 */
+.page-header {
+  background-color: #ffffff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.header-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 12rpx;
+}
+
+.header-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #999999;
+  line-height: 1.6;
+}
+
+/* 变量列表 */
+.variable-list {
+  padding: 0 20rpx;
+}
+
+/* 变量分组 */
+.variable-section {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 30rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+/* 变量条目 */
+.variable-item {
+  margin-bottom: 40rpx;
+}
+
+.variable-item:last-child {
+  margin-bottom: 0;
+}
+
+/* 变量头部 */
+.variable-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+/* 序号 */
+.variable-number {
+  flex-shrink: 0;
+  width: 48rpx;
+  height: 48rpx;
+  background-color: #007aff;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #ffffff;
+  margin-right: 16rpx;
+}
+
+/* 变量标签 */
+.variable-label {
+  flex: 1;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333333;
+}
+
+/* 输入框 */
+.variable-input {
+  width: 100%;
+  height: 80rpx;
+  background-color: #f8f8f8;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  border: 2rpx solid transparent;
+  transition: all 0.3s;
+}
+
+.variable-input:focus {
+  background-color: #ffffff;
+  border-color: #007aff;
+}
+
+/* 多行输入框 */
+.variable-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  background-color: #f8f8f8;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  border: 2rpx solid transparent;
+  transition: all 0.3s;
+}
+
+.variable-textarea:focus {
+  background-color: #ffffff;
+  border-color: #007aff;
+}
+
+/* 底部操作按钮 */
+.footer-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  padding: 20rpx 30rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 20rpx;
+  z-index: 999;
+}
+
+.action-btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 16rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  text-align: center;
+  border: none;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.reset-btn {
+  background-color: #f8f8f8;
+  color: #666666;
+}
+
+.reset-btn:active {
+  opacity: 0.7;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #007aff 0%, #0051d5 100%);
+  color: #ffffff;
+}
+
+.save-btn:active {
+  opacity: 0.9;
+}

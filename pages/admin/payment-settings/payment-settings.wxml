@@ -1,0 +1,198 @@
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="header-title">微信支付设置</text>
+    <text class="header-subtitle">配置微信支付商户参数</text>
+  </view>
+
+  <!-- 支付配置表单 -->
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">💳</text>
+      <text class="title-text">支付参数配置</text>
+    </view>
+
+    <!-- 商户号 -->
+    <view class="form-item">
+      <text class="form-label required">商户号 (mchId)</text>
+      <input
+        class="form-input"
+        type="text"
+        placeholder="请输入微信支付商户号"
+        value="{{paymentConfig.mchId}}"
+        bindinput="onInputMchId"
+      />
+      <text class="form-hint">在微信支付商户平台获取</text>
+    </view>
+
+    <!-- 子商户号 -->
+    <view class="form-item">
+      <text class="form-label">子商户号 (subMchId)</text>
+      <input
+        class="form-input"
+        type="text"
+        placeholder="服务商模式需要填写"
+        value="{{paymentConfig.subMchId}}"
+        bindinput="onInputSubMchId"
+      />
+      <text class="form-hint">仅服务商模式需要，普通商户留空</text>
+    </view>
+
+    <!-- API密钥 -->
+    <view class="form-item">
+      <text class="form-label required">API密钥 (apiKey)</text>
+      <input
+        class="form-input password-input"
+        type="{{showApiKey ? 'text' : 'password'}}"
+        placeholder="请输入API密钥"
+        value="{{paymentConfig.apiKey}}"
+        bindinput="onInputApiKey"
+      />
+      <view class="password-toggle" bindtap="toggleApiKey">
+        <text>{{showApiKey ? '👁️' : '👁️‍🗨️'}}</text>
+      </view>
+      <text class="form-hint">在微信支付商户平台 → 账户中心 → API安全 获取</text>
+    </view>
+
+    <!-- 证书序列号 -->
+    <view class="form-item">
+      <text class="form-label">证书序列号 (certSerialNo)</text>
+      <input
+        class="form-input"
+        type="text"
+        placeholder="API证书序列号（V3接口需要）"
+        value="{{paymentConfig.certSerialNo}}"
+        bindinput="onInputCertSerialNo"
+      />
+      <text class="form-hint">使用API V3接口时需要</text>
+    </view>
+
+    <!-- 支付模式 -->
+    <view class="form-item">
+      <text class="form-label">支付模式</text>
+      <view class="radio-group">
+        <view
+          class="radio-item {{paymentConfig.paymentMode === 'normal' ? 'active' : ''}}"
+          bindtap="onSelectPaymentMode"
+          data-mode="normal"
+        >
+          <view class="radio-icon">{{paymentConfig.paymentMode === 'normal' ? '✓' : ''}}</view>
+          <view class="radio-content">
+            <text class="radio-title">普通商户模式</text>
+            <text class="radio-desc">直连商户，无需子商户号</text>
+          </view>
+        </view>
+        <view
+          class="radio-item {{paymentConfig.paymentMode === 'service' ? 'active' : ''}}"
+          bindtap="onSelectPaymentMode"
+          data-mode="service"
+        >
+          <view class="radio-icon">{{paymentConfig.paymentMode === 'service' ? '✓' : ''}}</view>
+          <view class="radio-content">
+            <text class="radio-title">服务商模式</text>
+            <text class="radio-desc">需要配置子商户号</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 支付环境 -->
+    <view class="form-item">
+      <text class="form-label">支付环境</text>
+      <view class="radio-group">
+        <view
+          class="radio-item {{paymentConfig.environment === 'production' ? 'active' : ''}}"
+          bindtap="onSelectEnvironment"
+          data-env="production"
+        >
+          <view class="radio-icon">{{paymentConfig.environment === 'production' ? '✓' : ''}}</view>
+          <view class="radio-content">
+            <text class="radio-title">正式环境</text>
+            <text class="radio-desc">真实支付，扣除实际费用</text>
+          </view>
+        </view>
+        <view
+          class="radio-item {{paymentConfig.environment === 'sandbox' ? 'active' : ''}}"
+          bindtap="onSelectEnvironment"
+          data-env="sandbox"
+        >
+          <view class="radio-icon">{{paymentConfig.environment === 'sandbox' ? '✓' : ''}}</view>
+          <view class="radio-content">
+            <text class="radio-title">沙箱环境</text>
+            <text class="radio-desc">测试支付，不扣费用</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 启用状态 -->
+    <view class="form-item">
+      <view class="switch-row">
+        <view class="switch-label">
+          <text class="switch-title">启用微信支付</text>
+          <text class="switch-desc">关闭后用户无法进行支付</text>
+        </view>
+        <switch
+          class="switch-control"
+          checked="{{paymentConfig.enabled}}"
+          bindchange="onToggleEnabled"
+          color="#52c41a"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 使用说明 -->
+  <view class="help-section">
+    <view class="section-title">
+      <text class="title-icon">📖</text>
+      <text class="title-text">配置说明</text>
+    </view>
+    <view class="help-content">
+      <view class="help-item">
+        <text class="help-number">1</text>
+        <text class="help-text">登录微信支付商户平台（pay.weixin.qq.com）</text>
+      </view>
+      <view class="help-item">
+        <text class="help-number">2</text>
+        <text class="help-text">在"账户中心 → 商户信息"中查看商户号</text>
+      </view>
+      <view class="help-item">
+        <text class="help-number">3</text>
+        <text class="help-text">在"账户中心 → API安全"中设置API密钥</text>
+      </view>
+      <view class="help-item">
+        <text class="help-number">4</text>
+        <text class="help-text">确保小程序APPID已关联到微信支付商户号</text>
+      </view>
+      <view class="help-item">
+        <text class="help-number">5</text>
+        <text class="help-text">配置完成后，建议先使用沙箱环境测试</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 测试支付 -->
+  <view class="test-section">
+    <view class="section-title">
+      <text class="title-icon">🧪</text>
+      <text class="title-text">测试支付</text>
+    </view>
+    <view class="test-content">
+      <text class="test-desc">配置完成后，可以测试支付功能是否正常</text>
+      <view class="test-btn" bindtap="onTestPayment">
+        <text class="test-btn-text">测试支付（0.01元）</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部占位 -->
+  <view class="bottom-placeholder"></view>
+
+  <!-- 保存按钮 -->
+  <view class="save-button-container">
+    <view class="save-button" bindtap="onSave">
+      <text class="button-text">保存配置</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,276 @@
+.container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding: 20rpx;
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom)); /* 为底部导航栏留出空间 */
+}
+
+/* 用户信息区域 */
+.user-section {
+  background-color: #ffffff;
+  border-radius: 20rpx;
+  margin-bottom: 30rpx;
+  overflow: hidden;
+}
+
+.login-area {
+  display: flex;
+  align-items: center;
+  padding: 40rpx 30rpx;
+}
+
+.user-info-wrapper {
+  padding: 40rpx 30rpx;
+}
+
+.user-info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.avatar-placeholder {
+  width: 100rpx;
+  height: 100rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50rpx;
+  color: #ffffff;
+  margin-right: 30rpx;
+}
+
+.user-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.user-avatar-wrapper {
+  width: 100rpx;
+  height: 100rpx;
+  margin-right: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.login-info, .user-details {
+  flex: 1;
+}
+
+.user-name-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4rpx;
+}
+
+.login-text, .user-name {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.login-desc, .user-desc {
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.user-openid {
+  font-size: 22rpx;
+  color: #999999;
+  margin-top: 8rpx;
+  word-break: break-all;
+  user-select: text;
+}
+
+.debug-info {
+  font-size: 20rpx;
+  color: #ff4757;
+  margin-top: 8rpx;
+  word-break: break-all;
+  background-color: #f8f8f8;
+  padding: 10rpx;
+  border-radius: 8rpx;
+  font-family: monospace;
+}
+
+.login-arrow {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.user-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.refresh-btn {
+  background-color: #007aff;
+  color: #ffffff;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  border: none;
+  padding: 12rpx 24rpx;
+}
+
+.logout-btn {
+  background-color: #ff4757;
+  color: #ffffff;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  border: none;
+  padding: 12rpx 24rpx;
+}
+
+/* 菜单区域 */
+.menu-section {
+  background-color: #ffffff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  margin-bottom: 30rpx;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  transition: background-color 0.3s;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:active {
+  background-color: #f8f8f8;
+}
+
+.menu-icon {
+  font-size: 40rpx;
+  width: 60rpx;
+  text-align: center;
+  margin-right: 20rpx;
+}
+
+.menu-content {
+  flex: 1;
+}
+
+.menu-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 6rpx;
+}
+
+.menu-desc {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.menu-arrow {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* 调试工具区域 */
+.debug-section {
+  background-color: #fff3cd;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  border: 2rpx solid #ffc107;
+}
+
+.debug-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #856404;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.debug-btn {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #007aff;
+  color: #ffffff;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  margin-bottom: 15rpx;
+  border: none;
+}
+
+.debug-btn:last-child {
+  margin-bottom: 0;
+}
+
+.debug-btn::after {
+  border: none;
+}
+
+.debug-btn:active {
+  opacity: 0.8;
+}
+
+/* 版本信息 */
+.version-info {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.version-text {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* 用户操作按钮 */
+.user-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 20rpx;
+}
+
+.edit-btn,
+.logout-btn {
+  flex: 1;
+  height: 70rpx;
+  line-height: 70rpx;
+  font-size: 28rpx;
+  border-radius: 12rpx;
+  border: none;
+  text-align: center;
+  padding: 0;
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+}
+
+.logout-btn {
+  background: #ff4757;
+  color: #ffffff;
+}
+
+.edit-btn::after,
+.logout-btn::after {
+  border: none;
+}
+
+.edit-btn:active,
+.logout-btn:active {
+  opacity: 0.8;
+}

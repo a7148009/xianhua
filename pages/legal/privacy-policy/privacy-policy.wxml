@@ -1,0 +1,17 @@
+<view class="page">
+  <scroll-view class="content" scroll-y="true">
+    <view class="card">
+      <view class="page-title">隐私政策</view>
+      <view class="update-time">更新日期：{{updateDate}}</view>
+      <block wx:for="{{sections}}" wx:key="title">
+        <view class="section">
+          <view class="section-title">{{item.title}}</view>
+          <block wx:for="{{item.paragraphs}}" wx:key="index">
+            <view class="paragraph">{{item}}</view>
+          </block>
+        </view>
+      </block>
+    </view>
+  </scroll-view>
+  <button class="ack-btn" bindtap="acknowledge">已阅读并知悉</button>
+</view>

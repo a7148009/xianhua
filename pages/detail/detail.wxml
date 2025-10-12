@@ -1,0 +1,126 @@
+<view class="container">
+  <!-- 职位标题区域 -->
+  <view class="job-header">
+    <text class="job-title">{{jobData.title}}</text>
+    <text class="job-salary">{{jobData.salary || '面议'}}</text>
+    <view class="job-meta">
+      <text class="location-icon">📍</text>
+      <text class="meta-item">昆明</text>
+      <text class="meta-separator"> · </text>
+      <text class="meta-item">{{jobData.area || '五华区'}}</text>
+      <block wx:for="{{jobData.categories}}" wx:key="index" wx:for-item="category">
+        <text class="meta-separator"> · </text>
+        <text class="meta-item">{{category}}</text>
+      </block>
+    </view>
+  </view>
+
+  <!-- 招聘人员信息 -->
+  <view class="recruiter-section">
+    <view class="recruiter-info">
+      <view class="recruiter-details">
+        <text class="company-name-bold">{{jobData.company_name || '公司名称'}}</text>
+        <text class="company-meta">总阅读{{totalViews}}次 | 今日阅读{{todayViews}}次</text>
+      </view>
+      <view class="recruiter-tag">
+        <text class="tag-text">昆明·{{jobData.area || '五华区'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 职位详情 -->
+  <view class="job-detail-section">
+    <view class="job-tags">
+      <text wx:for="{{jobData.tags}}" wx:key="index" wx:for-item="tag" class="job-tag">{{tag.name}}</text>
+    </view>
+
+    <!-- 图片展示 -->
+    <view wx:if="{{jobData.images && jobData.images.length > 0}}" class="job-images">
+      <swiper class="image-swiper" indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#007aff">
+        <block wx:for="{{jobData.images}}" wx:key="index">
+          <swiper-item>
+            <image class="swiper-image" src="{{item}}" mode="aspectFill" />
+          </swiper-item>
+        </block>
+      </swiper>
+    </view>
+
+    <text class="job-description-title">【{{workContentLabel}}】</text>
+    <view class="job-description">
+      <view wx:for="{{jobData.descriptionArray}}" wx:key="index" class="desc-item-wrapper">
+        <text class="desc-item">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 费用公示 -->
+  <view class="fee-disclosure-section">
+    <view class="fee-header">
+      <view class="fee-icon">🛡️</view>
+      <text class="fee-title">{{feeNoticeText}}</text>
+    </view>
+    <view class="fee-questions">
+      <text wx:for="{{safetyModeLines}}" wx:key="index" class="fee-question">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 公司信息 -->
+  <view class="company-section">
+    <view class="company-header">
+      <view class="company-logo">
+        <image wx:if="{{jobData.company_logo}}" class="logo-img" src="{{jobData.company_logo}}" mode="aspectFill" />
+        <view wx:else class="logo-img-placeholder">🏢</view>
+      </view>
+      <view class="company-info">
+        <text class="company-name">{{jobData.company_name || '公司名称'}}</text>
+        <text class="company-scale">{{categoriesText || '暂无分类'}}</text>
+      </view>
+    </view>
+
+    <!-- 地图区域 -->
+    <view class="map-container">
+      <map
+        class="map"
+        longitude="{{mapInfo.longitude}}"
+        latitude="{{mapInfo.latitude}}"
+        scale="15"
+        show-location="{{false}}"
+        bindtap="openLocation">
+      </map>
+      <!-- 绿色水滴标记（显示商家位置） -->
+      <view class="map-center-marker">
+        <view class="center-marker-icon"></view>
+        <view class="center-marker-shadow"></view>
+      </view>
+      <view class="map-control">
+        <text class="map-btn" bindtap="openLocation">🗺️ 腾讯地图</text>
+      </view>
+    </view>
+    <text class="company-address">{{jobData.formattedAddress || jobData.address || '昆明·五华区'}}</text>
+  </view>
+
+  <!-- 安全保障 -->
+  <view class="safety-section">
+    <view class="safety-header">
+      <view class="safety-icon">🛡️</view>
+      <text class="safety-title">{{safetyTitleText}}</text>
+    </view>
+    <text class="safety-content">{{warningText}}</text>
+  </view>
+</view>
+
+<!-- 底部操作按钮 -->
+<view class="bottom-actions">
+  <button class="action-btn share-btn" open-type="share">
+    <text class="btn-icon">💬</text>
+    <text class="btn-text">分享</text>
+  </button>
+  <view class="action-btn chat-btn" bindtap="copyWechat">
+    <text class="btn-icon">💬</text>
+    <text class="btn-text">复制微信</text>
+  </view>
+  <view class="action-btn call-btn" bindtap="makeCall">
+    <text class="btn-icon">📞</text>
+    <text class="btn-text">拨打电话</text>
+  </view>
+</view>

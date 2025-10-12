@@ -1,0 +1,54 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/publish/publish",
+    "pages/subscribe/subscribe",
+    "pages/message/message",
+    "pages/profile/profile",
+    "pages/detail/detail",
+    "pages/login/login",
+    "pages/test-location/test-location",
+    "pages/admin/user-management/user-management",
+    "pages/admin/variable-settings/variable-settings",
+    "pages/admin/system-settings/system-settings",
+    "pages/admin/area-management/area-management",
+    "pages/admin/category-management/category-management",
+    "pages/admin/tag-management/tag-management",
+    "pages/admin/price-unit-management/price-unit-management",
+    "pages/admin/vip-settings/vip-settings",
+    "pages/admin/payment-settings/payment-settings",
+    "pages/vip/vip-purchase/vip-purchase",
+    "pages/legal/user-agreement/user-agreement",
+    "pages/legal/privacy-policy/privacy-policy"
+  ],
+  "window": {
+    "backgroundColor": "#f5f5f5",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTitleText": "鲜花信息",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#8a8a8a",
+    "selectedColor": "#FF6B35",
+    "backgroundColor": "#ffffff",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "找工作" },
+      { "pagePath": "pages/publish/publish", "text": "发布" },
+      { "pagePath": "pages/subscribe/subscribe", "text": "订阅" },
+      { "pagePath": "pages/message/message", "text": "更多" },
+      { "pagePath": "pages/profile/profile", "text": "我的" }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于获取当前城市的行政区域信息"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
+  "cloud": true,
+  "style": "v2"
+}
+

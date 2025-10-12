@@ -1,0 +1,9 @@
+{
+  "name": "getEnvConfig",
+  "version": "1.0.0",
+  "description": "获取环境配置的云函数（支持签名验证和频率限制）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

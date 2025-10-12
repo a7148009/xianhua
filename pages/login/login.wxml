@@ -1,0 +1,115 @@
+<view class="container">
+  <!-- 头部Logo -->
+  <view class="header">
+    <view class="logo-container">
+      <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- 渐变定义 -->
+        <defs>
+          <linearGradient id="petalGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF6B9D;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FEC163;stop-opacity:1" />
+          </linearGradient>
+          <linearGradient id="petalGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#C471F5;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FA71CD;stop-opacity:1" />
+          </linearGradient>
+          <linearGradient id="centerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+
+        <!-- 花瓣组 -->
+        <g class="petals">
+          <!-- 顶部花瓣 -->
+          <ellipse cx="100" cy="50" rx="30" ry="45" fill="url(#petalGradient1)" opacity="0.9" />
+          <!-- 右上花瓣 -->
+          <ellipse cx="145" cy="75" rx="30" ry="45" fill="url(#petalGradient2)" opacity="0.9" transform="rotate(72 145 75)" />
+          <!-- 右下花瓣 -->
+          <ellipse cx="130" cy="135" rx="30" ry="45" fill="url(#petalGradient1)" opacity="0.9" transform="rotate(144 130 135)" />
+          <!-- 左下花瓣 -->
+          <ellipse cx="70" cy="135" rx="30" ry="45" fill="url(#petalGradient2)" opacity="0.9" transform="rotate(-144 70 135)" />
+          <!-- 左上花瓣 -->
+          <ellipse cx="55" cy="75" rx="30" ry="45" fill="url(#petalGradient1)" opacity="0.9" transform="rotate(-72 55 75)" />
+        </g>
+
+        <!-- 花心 -->
+        <circle cx="100" cy="100" r="25" fill="url(#centerGradient)" />
+
+        <!-- 装饰光点 -->
+        <circle cx="100" cy="90" r="8" fill="white" opacity="0.6" />
+      </svg>
+    </view>
+    <text class="app-name">鲜花发布系统</text>
+    <text class="welcome-text">欢迎使用</text>
+  </view>
+
+  <!-- 用户信息完善区域 -->
+  <view class="profile-section" wx:if="{{showProfileForm}}">
+    <text class="section-title">{{isUpdatingProfile ? '更新个人资料' : '完善个人资料'}}</text>
+    <view class="update-tip" wx:if="{{isUpdatingProfile}}">
+      <text class="tip-text">📝 为了更好的体验，请设置个性化头像和昵称</text>
+    </view>
+    
+    <!-- 使用 form 组件确保安全检测生效 -->
+    <form bindsubmit="onFormSubmit" bindreset="onFormReset">
+      <!-- 头像选择 -->
+      <view class="avatar-section">
+        <text class="label">设置头像</text>
+        <button class="avatar-wrapper" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+          <image class="avatar" src="{{avatarUrl}}" mode="aspectFill"></image>
+          <view class="avatar-edit-icon">📷</view>
+        </button>
+      </view>
+      
+      <!-- 昵称填写 -->
+      <view class="nickname-section">
+        <text class="label">设置昵称</text>
+        <input 
+          type="nickname" 
+          class="nickname-input" 
+          placeholder="请输入昵称" 
+          value="{{nickName}}"
+          name="nickName"
+          bindinput="onNicknameInput"
+          bindblur="onNicknameBlur"
+          maxlength="20"
+        />
+      </view>
+      
+      <!-- 提交按钮（使用 form-type="submit" 确保安全检测） -->
+      <button 
+        class="complete-btn" 
+        form-type="submit" 
+        disabled="{{!canComplete}}"
+      >
+        {{isUpdatingProfile ? '更新资料' : '完成设置'}}
+      </button>
+    </form>
+  </view>
+
+  <!-- 登录区域 -->
+  <view class="login-section" wx:else>
+    <!-- 微信一键登录 -->
+    <button class="login-btn wx-login" bindtap="wxLogin">
+      <view class="btn-content">
+        <text class="btn-icon">💬</text>
+        <text class="btn-text">微信一键登录</text>
+      </view>
+    </button>
+    
+    <!-- 提示信息 -->
+    <view class="login-tips">
+      <text class="tips-text">• 首次登录需要完善个人资料</text>
+      <text class="tips-text">• 帮助其他用户更好地认识您</text>
+    </view>
+  </view>
+
+  <!-- 底部说明 -->
+    <view class="footer">
+    <text class="footer-text">登录即表示同意</text>
+    <text class="footer-link" bindtap="openUserAgreement">《用户协议》</text>
+    <text class="footer-text">和</text>
+    <text class="footer-link" bindtap="openPrivacyPolicy">《隐私政策》</text>
+  </view>
+</view>

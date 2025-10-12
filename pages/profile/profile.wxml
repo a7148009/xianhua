@@ -1,0 +1,68 @@
+<view class="container">
+  <!-- 用户信息区域 -->
+  <view class="user-section">
+    <!-- 未登录状态 -->
+    <view wx:if="{{!isLoggedIn}}" class="login-area" bindtap="wxLogin">
+      <view class="avatar-placeholder">👤</view>
+      <view class="login-info">
+        <text class="login-text">点击登录</text>
+        <text class="login-desc">登录后享受更多服务</text>
+      </view>
+      <view class="login-arrow">></view>
+    </view>
+
+    <!-- 已登录状态 -->
+    <view wx:else class="user-info-wrapper">
+      <view class="user-info-row">
+        <view class="user-avatar-wrapper">
+          <image class="user-avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill" binderror="onAvatarError" />
+        </view>
+        <view class="user-details">
+          <view class="user-name-row">
+            <text class="user-name">{{userInfo.nickName || '微信用户'}}</text>
+          </view>
+          <text class="user-desc">
+            {{userInfo.role === 'vip' && userInfo.vipExpireDate ? 'VIP至' + formatVipExpireDate(userInfo.vipExpireDate) : '已登录，享受完整服务'}}
+          </text>
+          <!-- 移除OpenID显示，只在调试模式下显示 -->
+          <text class="debug-info" wx:if="{{showDebug}}">调试信息: OpenID: {{userInfo.openid || '未获取'}}</text>
+        </view>
+      </view>
+      <view class="user-actions">
+        <button class="edit-btn" bindtap="updateProfile">编辑</button>
+        <button class="logout-btn" bindtap="logout">退出</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 菜单列表 -->
+  <view class="menu-section">
+    <view
+      wx:for="{{menuItems}}"
+      wx:key="title"
+      class="menu-item"
+      data-item="{{item}}"
+      bindtap="onMenuTap"
+    >
+      <view class="menu-icon">{{item.icon}}</view>
+      <view class="menu-content">
+        <text class="menu-title">{{item.title}}</text>
+        <text class="menu-desc">{{item.desc}}</text>
+      </view>
+      <view class="menu-arrow">></view>
+    </view>
+  </view>
+
+  <!-- 调试工具（仅管理员可见） -->
+  <view wx:if="{{showDebug && userInfo && userInfo.role === 'admin'}}" class="debug-section">
+    <view class="debug-title">🔧 管理员调试工具</view>
+    <button class="debug-btn" bindtap="diagnoseVIP">🔍 诊断VIP状态</button>
+    <button class="debug-btn" bindtap="initializeVariables">初始化系统变量</button>
+    <button class="debug-btn" bindtap="copyOpenId">复制OpenID</button>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-info" bindtap="onTitleTap">
+    <text class="version-text">鲜花发布系统 v1.0.0</text>
+  </view>
+</view>

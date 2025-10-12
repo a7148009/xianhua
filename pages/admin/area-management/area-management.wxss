@@ -1,0 +1,352 @@
+/* pages/admin/area-management/area-management.wxss */
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* 头部 */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 30rpx;
+  background: #ffffff;
+  border-bottom: 1rpx solid #e0e0e0;
+}
+
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  font-size: 40rpx;
+  color: #333;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.placeholder {
+  width: 60rpx;
+}
+
+/* 操作按钮区 */
+.action-buttons {
+  display: flex;
+  gap: 15rpx;
+  padding: 30rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn.primary {
+  background: #FF6B35;
+  color: #ffffff;
+}
+
+.action-btn.secondary {
+  background: #4CAF50;
+  color: #ffffff;
+}
+
+.action-btn.danger {
+  background: #f44336;
+  color: #ffffff;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+/* 城市筛选 */
+.city-filter {
+  padding: 20rpx 30rpx;
+  background: #ffffff;
+  margin: 0 30rpx 20rpx;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+}
+
+.filter-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-right: 10rpx;
+}
+
+.city-picker {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 600;
+  padding: 10rpx 20rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+}
+
+/* 说明信息 */
+.info-card {
+  margin: 0 30rpx 30rpx;
+  padding: 25rpx;
+  background: #E3F2FD;
+  border-left: 6rpx solid #2196F3;
+  border-radius: 8rpx;
+}
+
+.info-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1976D2;
+  margin-bottom: 15rpx;
+}
+
+.info-text {
+  font-size: 26rpx;
+  color: #0D47A1;
+  line-height: 1.6;
+  margin-bottom: 8rpx;
+}
+
+/* 区域列表 */
+.area-list {
+  padding: 0 30rpx;
+}
+
+.list-header {
+  padding: 15rpx 0;
+  margin-bottom: 15rpx;
+}
+
+.list-count {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 100rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.empty-hint {
+  font-size: 24rpx;
+  color: #ccc;
+}
+
+.area-item {
+  background: #ffffff;
+  border-radius: 12rpx;
+  padding: 25rpx 20rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  min-height: 80rpx;
+}
+
+.area-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  margin-right: 20rpx;
+  overflow: visible;
+}
+
+.area-name {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.area-city {
+  font-size: 24rpx;
+  color: #999;
+  white-space: nowrap;
+}
+
+.area-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8rpx;
+  flex-shrink: 0;
+  align-items: center;
+  margin-left: 10rpx;
+}
+
+.edit-btn,
+.delete-btn {
+  width: 240rpx !important;
+  min-width: 240rpx !important;
+  height: 56rpx;
+  line-height: 56rpx;
+  font-size: 26rpx;
+  border-radius: 8rpx;
+  text-align: center;
+  border: none;
+  margin: 0;
+  padding: 0 !important;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.edit-btn {
+  background: #4CAF50;
+  color: #ffffff;
+}
+
+.delete-btn {
+  background: #f44336;
+  color: #ffffff;
+}
+
+.edit-btn::after,
+.delete-btn::after {
+  border: none;
+}
+
+/* 弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 85%;
+  background: #ffffff;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 30rpx;
+  border-bottom: 1rpx solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  font-size: 50rpx;
+  color: #999;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 30rpx;
+}
+
+.form-item {
+  margin-bottom: 30rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 15rpx;
+  font-weight: 500;
+}
+
+.form-value {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  padding: 20rpx 0;
+}
+
+.form-input {
+  width: 100%;
+  height: 80rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.form-picker {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  background: #fafafa;
+}
+
+.form-hint {
+  font-size: 24rpx;
+  color: #999;
+  padding: 10rpx 0;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 30rpx 30rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-btn.cancel {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.modal-btn.confirm {
+  background: #FF6B35;
+  color: #ffffff;
+}

@@ -1,0 +1,9 @@
+{
+  "name": "checkVipExpire",
+  "version": "1.0.0",
+  "description": "检查VIP过期",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

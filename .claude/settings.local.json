@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(exit 0)",
+      "Bash(if [ -d \"cloudfunctions/createTestData\" ])",
+      "Bash(then echo \"Directory exists\")",
+      "Bash(else echo \"Directory does not exist\")",
+      "Bash(fi)",
+      "Bash(if [ -f \"pages/publish/publish.wxss\" ])",
+      "Bash(then echo \"File exists\")",
+      "Bash(else echo \"File does not exist\")",
+      "Bash(if [ -d \"cloudfunctions/validateAddress\" ])",
+      "Bash(find:*)",
+      "Bash(if [ -d \"cloudfunctions/reverseGeocode\" ])",
+      "Bash(cat -A)",
+      "Bash(npm install)",
+      "Bash(wxcloud functions:deploy:*)",
+      "Bash(if [ -d \"moreInfoManager\" ])",
+      "Bash(if [ -d \"cloudfunctions/variableManager\" ])",
+      "Bash(if [ -d \"D:\\鲜花发布系统鲜花小程序原生版重构项目\\cloudfunctions\\getFlowerList\" ])",
+      "Bash(npm run deploy:getFlowerList:*)",
+      "Bash(echo:*)",
+      "Bash(if [ -d \"pages/vip\" ])",
+      "Bash(if [ -d \"cloudfunctions/vipManager\" ])",
+      "Bash(if [ -d \"images\" ])",
+      "Bash(if [ -f \"pages/admin/area-management/area-management.wxml\" ])",
+      "Bash(if [ -f \"pages/admin/area-management/area-management.wxss\" ])",
+      "Bash(if [ -d \"cloudfunctions/getDistricts\" ])",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

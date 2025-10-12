@@ -1,0 +1,123 @@
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="header-title">VIP价格设置</text>
+    <text class="header-subtitle">管理VIP会员套餐和价格</text>
+  </view>
+
+  <!-- VIP套餐列表 -->
+  <view class="plans-section">
+    <view class="section-title">
+      <text class="title-text">VIP套餐管理</text>
+      <view class="add-btn" bindtap="onAddPlan">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加套餐</text>
+      </view>
+    </view>
+
+    <view class="plans-list">
+      <view class="plan-card" wx:for="{{plans}}" wx:key="id">
+        <view class="plan-header">
+          <text class="plan-title">{{item.duration}}</text>
+          <view class="plan-actions">
+            <view class="action-btn edit" bindtap="onEditPlan" data-index="{{index}}">
+              <text>✏️</text>
+            </view>
+            <view class="action-btn delete" bindtap="onDeletePlan" data-index="{{index}}">
+              <text>🗑️</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="plan-info">
+          <view class="info-row">
+            <text class="info-label">价格：</text>
+            <text class="info-value price">¥{{item.price}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.originalPrice}}">
+            <text class="info-label">原价：</text>
+            <text class="info-value">¥{{item.originalPrice}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.save}}">
+            <text class="info-label">优惠：</text>
+            <text class="info-value save">立省¥{{item.save}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">时长：</text>
+            <text class="info-value">{{item.months}}个月</text>
+          </view>
+          <view class="info-row" wx:if="{{item.badge}}">
+            <text class="info-label">标签：</text>
+            <text class="info-value badge">{{item.badge}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 空状态 -->
+      <view wx:if="{{plans.length === 0}}" class="empty-state">
+        <text class="empty-icon">💎</text>
+        <text class="empty-text">暂无VIP套餐</text>
+        <text class="empty-desc">点击右上角添加套餐</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="save-button-container">
+    <view class="save-button" bindtap="onSave">
+      <text class="button-text">保存设置</text>
+    </view>
+  </view>
+</view>
+
+<!-- 编辑套餐弹窗 -->
+<view wx:if="{{showEditModal}}" class="modal-overlay" catchtap="onCloseModal">
+  <view class="modal-content" catchtap="stopPropagation">
+    <view class="modal-header">
+      <text class="modal-title">{{editingPlan ? '编辑套餐' : '添加套餐'}}</text>
+      <view class="modal-close" bindtap="onCloseModal">×</view>
+    </view>
+
+    <view class="modal-body">
+      <view class="form-item">
+        <text class="form-label">套餐时长</text>
+        <input class="form-input" type="text" placeholder="例如：1个月" value="{{editForm.duration}}" bindinput="onInputDuration" />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">单位</text>
+        <input class="form-input" type="text" placeholder="例如：月" value="{{editForm.unit}}" bindinput="onInputUnit" />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">价格（元）</text>
+        <input class="form-input" type="digit" placeholder="例如：29.9" value="{{editForm.price}}" bindinput="onInputPrice" />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">原价（元，可选）</text>
+        <input class="form-input" type="digit" placeholder="例如：39.9" value="{{editForm.originalPrice}}" bindinput="onInputOriginalPrice" />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">优惠金额（元，可选）</text>
+        <input class="form-input" type="digit" placeholder="例如：10" value="{{editForm.save}}" bindinput="onInputSave" />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">时长（月数）</text>
+        <input class="form-input" type="number" placeholder="例如：1" value="{{editForm.months}}" bindinput="onInputMonths" />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">标签（可选）</text>
+        <input class="form-input" type="text" placeholder="例如：推荐" value="{{editForm.badge}}" bindinput="onInputBadge" />
+      </view>
+    </view>
+
+    <view class="modal-footer">
+      <view class="modal-btn cancel" bindtap="onCloseModal">取消</view>
+      <view class="modal-btn confirm" bindtap="onConfirmEdit">确定</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,110 @@
+<!-- pages/admin/tag-management/tag-management.wxml -->
+<view class="container">
+  <!-- 操作按钮区 -->
+  <view class="action-buttons">
+    <button class="action-btn primary" bindtap="openAddModal" disabled="{{tagList.length >= 20}}">
+      ➕ 添加标签 ({{tagList.length}}/20)
+    </button>
+  </view>
+
+  <!-- 说明信息 -->
+  <view class="info-card">
+    <view class="info-title">💡 标签说明</view>
+    <view class="info-text">
+      标签用于信息发布时快速选择常用属性，如：C1驾照、有经验者优先、包吃包住等。最多支持20个标签。
+    </view>
+  </view>
+
+  <!-- 标签列表 -->
+  <view class="tag-list">
+    <view wx:if="{{loading}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:elif="{{tagList.length === 0}}" class="empty-state">
+      <text>暂无标签数据</text>
+      <text class="empty-hint">点击上方按钮添加标签</text>
+    </view>
+
+    <view wx:else>
+      <view wx:for="{{tagList}}" wx:key="_id" class="tag-item">
+        <view class="tag-info">
+          <view class="tag-name">{{item.name}}</view>
+          <view class="tag-meta">
+            <text class="tag-order">排序: {{item.order}}</text>
+          </view>
+        </view>
+        <view class="tag-actions">
+          <button class="edit-btn" bindtap="openEditModal" data-tag="{{item}}">
+            编辑
+          </button>
+          <button class="delete-btn" bindtap="deleteTag" data-tag="{{item}}">
+            删除
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加标签弹窗 -->
+  <view wx:if="{{showAddModal}}" class="modal-overlay" catchtap="closeAddModal">
+    <view class="modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">添加标签</text>
+        <text class="close-btn" catchtap="closeAddModal">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">标签名称:</text>
+          <input
+            class="form-input"
+            placeholder="请输入标签名称，如：C1驾照"
+            value="{{newTagName}}"
+            bindinput="onNewTagInput"
+            focus="{{showAddModal}}"
+            maxlength="10"
+          />
+        </view>
+
+        <view class="form-hint">
+          提示：标签名称不超过10个字
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel" catchtap="closeAddModal">取消</button>
+        <button class="modal-btn confirm" catchtap="confirmAdd">确认添加</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑标签弹窗 -->
+  <view wx:if="{{showEditModal}}" class="modal-overlay" catchtap="closeEditModal">
+    <view class="modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">编辑标签</text>
+        <text class="close-btn" catchtap="closeEditModal">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">标签名称:</text>
+          <input
+            class="form-input"
+            placeholder="请输入标签名称"
+            value="{{editTagName}}"
+            bindinput="onEditTagInput"
+            focus="{{showEditModal}}"
+            maxlength="10"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel" catchtap="closeEditModal">取消</button>
+        <button class="modal-btn confirm" catchtap="confirmEdit">确认修改</button>
+      </view>
+    </view>
+  </view>
+</view>

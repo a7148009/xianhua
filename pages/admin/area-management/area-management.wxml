@@ -1,0 +1,153 @@
+<!-- pages/admin/area-management/area-management.wxml -->
+<view class="container">
+  <!-- 操作按钮区 -->
+  <view class="action-buttons">
+    <button class="action-btn primary" bindtap="openAddModal">
+      ➕ 添加区域
+    </button>
+    <button class="action-btn secondary" bindtap="addByLocation">
+      📍 根据位置添加
+    </button>
+    <button class="action-btn danger" bindtap="clearCurrentCityAreas">
+      🗑️ 清空区域
+    </button>
+  </view>
+
+  <!-- 城市筛选 -->
+  <view class="city-filter">
+    <text class="filter-label">当前城市：</text>
+    <picker
+      mode="selector"
+      range="{{cityList}}"
+      value="{{currentCity}}"
+      bindchange="onCityChange"
+    >
+      <view class="city-picker">
+        {{currentCity}} ▼
+      </view>
+    </picker>
+  </view>
+
+  <!-- 说明信息 -->
+  <view class="info-card">
+    <view class="info-title">💡 区域说明</view>
+    <view class="info-text">
+      这里管理的是行政区域，如：五华区、盘龙区、官渡区等。添加后会在发布页和首页筛选器中显示。
+    </view>
+    <view class="info-text">
+      📍 点击"根据位置添加"将自动获取您当前所在城市的所有下级行政区域并批量添加，已存在的区域将自动跳过。
+    </view>
+  </view>
+
+  <!-- 区域列表 -->
+  <view class="area-list">
+    <view wx:if="{{loading}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:elif="{{areaList.length === 0}}" class="empty-state">
+      <text>暂无区域数据</text>
+      <text class="empty-hint">点击上方按钮添加区域</text>
+    </view>
+
+    <view wx:else>
+      <view class="list-header">
+        <text class="list-count">共 {{areaList.length}} 个区域</text>
+      </view>
+      <view wx:for="{{areaList}}" wx:key="_id" class="area-item">
+        <view class="area-info">
+          <text class="area-name">{{item.name}}</text>
+          <text class="area-city">{{item.city || '昆明市'}}</text>
+        </view>
+        <view class="area-actions">
+          <button class="edit-btn" bindtap="openEditModal" data-area="{{item}}">
+            编辑
+          </button>
+          <button class="delete-btn" bindtap="deleteArea" data-area="{{item}}">
+            删除
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加区域弹窗 -->
+  <view wx:if="{{showAddModal}}" class="modal-overlay" catchtap="closeAddModal">
+    <view class="modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">添加区域</text>
+        <text class="close-btn" catchtap="closeAddModal">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">所属城市:</text>
+          <picker
+            mode="selector"
+            range="{{cityList}}"
+            value="{{newAreaCity}}"
+            bindchange="onNewCityChange"
+          >
+            <view class="form-picker">
+              {{newAreaCity}} ▼
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">区域名称:</text>
+          <input
+            class="form-input"
+            placeholder="请输入区域名称，如：五华区"
+            value="{{newAreaName}}"
+            bindinput="onNewAreaInput"
+            focus="{{showAddModal}}"
+          />
+        </view>
+
+        <view class="form-hint">
+          提示：建议使用标准行政区域名称
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel" catchtap="closeAddModal">取消</button>
+        <button class="modal-btn confirm" catchtap="confirmAdd">确认添加</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑区域弹窗 -->
+  <view wx:if="{{showEditModal}}" class="modal-overlay" catchtap="closeEditModal">
+    <view class="modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">编辑区域</text>
+        <text class="close-btn" catchtap="closeEditModal">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">所属城市:</text>
+          <text class="form-value">{{editAreaCity}}</text>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">区域名称:</text>
+          <input
+            class="form-input"
+            placeholder="请输入区域名称"
+            value="{{editAreaName}}"
+            bindinput="onEditAreaInput"
+            focus="{{showEditModal}}"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel" catchtap="closeEditModal">取消</button>
+        <button class="modal-btn confirm" catchtap="confirmEdit">确认修改</button>
+      </view>
+    </view>
+  </view>
+
+</view>

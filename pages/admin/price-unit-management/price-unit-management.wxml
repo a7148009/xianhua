@@ -1,0 +1,110 @@
+<!-- pages/admin/price-unit-management/price-unit-management.wxml -->
+<view class="container">
+  <!-- 操作按钮区 -->
+  <view class="action-buttons">
+    <button class="action-btn primary" bindtap="openAddModal" disabled="{{priceUnitList.length >= 10}}">
+      ➕ 添加价格单位 ({{priceUnitList.length}}/10)
+    </button>
+  </view>
+
+  <!-- 说明信息 -->
+  <view class="info-card">
+    <view class="info-title">💡 价格单位说明</view>
+    <view class="info-text">
+      价格单位用于信息发布时显示价格格式，如：元/束、元/盆、元/支等。每条信息最多可选择3个价格单位。
+    </view>
+  </view>
+
+  <!-- 价格单位列表 -->
+  <view class="tag-list">
+    <view wx:if="{{loading}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:elif="{{priceUnitList.length === 0}}" class="empty-state">
+      <text>暂无价格单位数据</text>
+      <text class="empty-hint">点击上方按钮添加价格单位</text>
+    </view>
+
+    <view wx:else>
+      <view wx:for="{{priceUnitList}}" wx:key="_id" class="tag-item">
+        <view class="tag-info">
+          <view class="tag-name">{{item.name}}</view>
+          <view class="tag-meta">
+            <text class="tag-order">排序: {{item.order}}</text>
+          </view>
+        </view>
+        <view class="tag-actions">
+          <button class="edit-btn" bindtap="openEditModal" data-priceunit="{{item}}">
+            编辑
+          </button>
+          <button class="delete-btn" bindtap="deletePriceUnit" data-priceunit="{{item}}">
+            删除
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加价格单位弹窗 -->
+  <view wx:if="{{showAddModal}}" class="modal-overlay" catchtap="closeAddModal">
+    <view class="modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">添加价格单位</text>
+        <text class="close-btn" catchtap="closeAddModal">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">价格单位:</text>
+          <input
+            class="form-input"
+            placeholder="请输入价格单位，如：元/束"
+            value="{{newPriceUnitName}}"
+            bindinput="onNewPriceUnitInput"
+            focus="{{showAddModal}}"
+            maxlength="15"
+          />
+        </view>
+
+        <view class="form-hint">
+          提示：价格单位不超过15个字，建议格式：元/单位
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel" catchtap="closeAddModal">取消</button>
+        <button class="modal-btn confirm" catchtap="confirmAdd">确认添加</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑价格单位弹窗 -->
+  <view wx:if="{{showEditModal}}" class="modal-overlay" catchtap="closeEditModal">
+    <view class="modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">编辑价格单位</text>
+        <text class="close-btn" catchtap="closeEditModal">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">价格单位:</text>
+          <input
+            class="form-input"
+            placeholder="请输入价格单位"
+            value="{{editPriceUnitName}}"
+            bindinput="onEditPriceUnitInput"
+            focus="{{showEditModal}}"
+            maxlength="15"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel" catchtap="closeEditModal">取消</button>
+        <button class="modal-btn confirm" catchtap="confirmEdit">确认修改</button>
+      </view>
+    </view>
+  </view>
+</view>

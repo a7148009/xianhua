@@ -1,0 +1,114 @@
+<!-- pages/admin/category-management/category-management.wxml -->
+<view class="container">
+  <!-- 操作按钮区 -->
+  <view class="action-buttons">
+    <button class="action-btn primary" bindtap="openAddModal">
+      ➕ 添加分类
+    </button>
+  </view>
+
+  <!-- 说明信息 -->
+  <view class="info-card">
+    <view class="info-title">💡 分类说明</view>
+    <view class="info-text">
+      这里管理的是工作信息分类，如：日结、短期工、长期工、高工资等。添加后会在首页筛选器中显示。
+    </view>
+    <view class="info-text vip-hint">
+      🌟 点击分类名称可设置VIP分类（VIP分类在首页显示金色"高"标识）
+    </view>
+  </view>
+
+  <!-- 分类列表 -->
+  <view class="category-list">
+    <view wx:if="{{loading}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:elif="{{categoryList.length === 0}}" class="empty-state">
+      <text>暂无分类数据</text>
+      <text class="empty-hint">点击上方按钮添加分类</text>
+    </view>
+
+    <view wx:else>
+      <view wx:for="{{categoryList}}" wx:key="_id" class="category-item">
+        <view class="category-info">
+          <view class="category-name-wrapper" bindtap="onCategoryNameTap" data-category="{{item}}">
+            <text class="category-name {{item.isVIP ? 'vip-category' : ''}}">{{item.name}}</text>
+            <text wx:if="{{item.isVIP}}" class="vip-badge">VIP</text>
+          </view>
+          <view class="category-meta">
+            <text class="category-order">排序: {{item.order}}</text>
+          </view>
+        </view>
+        <view class="category-actions">
+          <button class="edit-btn" bindtap="openEditModal" data-category="{{item}}">
+            编辑
+          </button>
+          <button class="delete-btn" bindtap="deleteCategory" data-category="{{item}}">
+            删除
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加分类弹窗 -->
+  <view wx:if="{{showAddModal}}" class="modal-overlay" catchtap="closeAddModal">
+    <view class="modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">添加分类</text>
+        <text class="close-btn" catchtap="closeAddModal">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">分类名称:</text>
+          <input
+            class="form-input"
+            placeholder="请输入分类名称，如：日结、短期工"
+            value="{{newCategoryName}}"
+            bindinput="onNewCategoryInput"
+            focus="{{showAddModal}}"
+          />
+        </view>
+
+        <view class="form-hint">
+          提示：建议使用简洁明了的分类名称
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel" catchtap="closeAddModal">取消</button>
+        <button class="modal-btn confirm" catchtap="confirmAdd">确认添加</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑分类弹窗 -->
+  <view wx:if="{{showEditModal}}" class="modal-overlay" catchtap="closeEditModal">
+    <view class="modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">编辑分类</text>
+        <text class="close-btn" catchtap="closeEditModal">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">分类名称:</text>
+          <input
+            class="form-input"
+            placeholder="请输入分类名称"
+            value="{{editCategoryName}}"
+            bindinput="onEditCategoryInput"
+            focus="{{showEditModal}}"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel" catchtap="closeEditModal">取消</button>
+        <button class="modal-btn confirm" catchtap="confirmEdit">确认修改</button>
+      </view>
+    </view>
+  </view>
+</view>

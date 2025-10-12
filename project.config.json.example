@@ -1,0 +1,33 @@
+{
+  "description": "鲜花发布系统 - 配置文件示例",
+  "setting": {
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "uglifyFileName": false,
+    "enhance": true,
+    "packNpmRelationList": [],
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "useCompilerPlugins": false,
+    "minifyWXML": true
+  },
+  "compileType": "miniprogram",
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "appid": "your_appid_here",
+  "projectname": "鲜花发布系统",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "description_zh": "说明：请复制此文件为 project.private.config.json 并填入真实的 appid",
+  "warning": "⚠️ 警告：请勿将真实的 appid 提交到代码仓库！"
+}

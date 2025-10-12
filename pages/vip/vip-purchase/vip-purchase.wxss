@@ -1,0 +1,279 @@
+/* 页面 */
+page {
+  background-color: #f5f5f5;
+}
+
+/* 容器 */
+.container {
+  min-height: 100vh;
+  padding-bottom: 200rpx;
+}
+
+/* 页面标题 */
+.page-header {
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+  padding: 60rpx 40rpx;
+  text-align: center;
+  color: #ffffff;
+}
+
+.header-title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  margin-bottom: 16rpx;
+}
+
+.header-subtitle {
+  display: block;
+  font-size: 28rpx;
+  opacity: 0.9;
+}
+
+/* 区块标题 */
+.section-title {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 40rpx 20rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.title-icon {
+  font-size: 36rpx;
+  margin-right: 12rpx;
+}
+
+.title-text {
+  flex: 1;
+}
+
+/* VIP特权区域 */
+.privilege-section {
+  background-color: #ffffff;
+  margin: 20rpx 0;
+}
+
+.privilege-list {
+  padding: 0 40rpx 30rpx;
+}
+
+.privilege-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 32rpx;
+}
+
+.privilege-item:last-child {
+  margin-bottom: 0;
+}
+
+.privilege-icon {
+  font-size: 40rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.privilege-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.privilege-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 8rpx;
+}
+
+.privilege-desc {
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.6;
+}
+
+/* 套餐选择区域 */
+.plan-section {
+  background-color: #ffffff;
+  margin: 20rpx 0;
+}
+
+.plan-list {
+  padding: 0 40rpx 30rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.plan-item {
+  position: relative;
+  background-color: #f8f8f8;
+  border: 3rpx solid #e8e8e8;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  transition: all 0.3s ease;
+}
+
+.plan-item.active {
+  background: linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%);
+  border-color: #ffd700;
+  transform: scale(1.02);
+  box-shadow: 0 8rpx 24rpx rgba(255, 215, 0, 0.3);
+}
+
+.plan-badge {
+  position: absolute;
+  top: -10rpx;
+  right: 30rpx;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+  color: #ffffff;
+  font-size: 22rpx;
+  font-weight: bold;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.4);
+}
+
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.plan-duration {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.plan-original-price {
+  font-size: 24rpx;
+  color: #999999;
+  text-decoration: line-through;
+}
+
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 12rpx;
+}
+
+.price-symbol {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #ff6b35;
+}
+
+.price-value {
+  font-size: 56rpx;
+  font-weight: bold;
+  color: #ff6b35;
+  margin: 0 8rpx;
+}
+
+.price-unit {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.plan-save {
+  font-size: 24rpx;
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.check-mark {
+  position: absolute;
+  top: 32rpx;
+  right: 32rpx;
+  width: 48rpx;
+  height: 48rpx;
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: bold;
+  box-shadow: 0 4rpx 12rpx rgba(255, 215, 0, 0.4);
+}
+
+/* 支付说明 */
+.payment-info {
+  background-color: #ffffff;
+  margin: 20rpx 0;
+  padding: 30rpx 40rpx;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-icon {
+  font-size: 28rpx;
+  margin-right: 16rpx;
+  color: #52c41a;
+}
+
+.info-text {
+  font-size: 26rpx;
+  color: #666666;
+}
+
+/* 底部占位 */
+.bottom-placeholder {
+  height: 200rpx;
+}
+
+/* 购买按钮 */
+.purchase-button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  padding: 20rpx 40rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  z-index: 9999;
+}
+
+.purchase-button {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(255, 215, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.purchase-button:active {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 16rpx rgba(255, 215, 0, 0.3);
+}
+
+.button-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #ffffff;
+  margin-right: 16rpx;
+}
+
+.button-price {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ffffff;
+}

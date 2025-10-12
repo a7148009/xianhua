@@ -1,0 +1,12 @@
+{
+  "name": "variableManager",
+  "version": "1.0.0",
+  "description": "系统变量管理云函数",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

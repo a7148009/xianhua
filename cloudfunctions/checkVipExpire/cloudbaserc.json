@@ -1,0 +1,19 @@
+{
+      "envId": "your-env-id",
+      "functions": [
+        {
+          "name": "vipChecker",
+          "handler": "index.main",
+          "runtime": "Nodejs16.13",
+          "memorySize": 256,
+          "timeout": 3,
+          "triggers": [
+            {
+              "name": "vipCheckDaily",
+              "type": "timer",
+              "config": "0 0 0 * * * *"
+            }
+          ]
+        }
+      ]
+    }

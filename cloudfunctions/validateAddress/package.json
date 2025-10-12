@@ -1,0 +1,9 @@
+{
+  "name": "validateAddress",
+  "version": "1.0.0",
+  "description": "验证地址是否在运营范围内",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

@@ -1,0 +1,354 @@
+<!-- pages/publish/publish.wxml -->
+<wxs module="utils">
+  var isSelected = function(arr, id) {
+    if (!arr || arr.length === 0) return false;
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i] === id) return true;
+    }
+    return false;
+  };
+
+  module.exports = {
+    isSelected: isSelected
+  };
+</wxs>
+
+<view class="container">
+  <view class="content">
+    <!-- 基本信息 -->
+    <view class="section">
+      <view class="section-title">基本信息</view>
+
+      <!-- 标题 -->
+      <view class="form-item">
+        <text class="label required">标题</text>
+        <input
+          class="input"
+          placeholder="请输入标题，如：精品玫瑰花束 - 情人节特供"
+          value="{{formData.title}}"
+          bindinput="onInputChange"
+          data-field="title"
+          maxlength="100"
+          adjust-position="{{false}}"
+        />
+      </view>
+
+      <!-- 分类选择 -->
+      <view class="form-item">
+        <text class="label required">分类</text>
+        <view class="tag-selector">
+          <view
+            wx:for="{{categoryList}}"
+            wx:key="_id"
+            class="tag-item {{utils.isSelected(selectedCategories, item._id) ? 'active' : ''}}"
+            bindtap="toggleCategory"
+            data-id="{{item._id}}"
+          >
+            <text class="tag-text">{{item.name}}</text>
+            <view wx:if="{{utils.isSelected(selectedCategories, item._id)}}" class="check-icon">✓</view>
+          </view>
+        </view>
+        <text class="hint">最多选择3个分类</text>
+      </view>
+
+      <!-- 区域选择 -->
+      <view class="form-item">
+        <text class="label required">区域</text>
+        <picker
+          mode="selector"
+          range="{{areaList}}"
+          range-key="name"
+          value="{{areaIndex}}"
+          bindchange="onAreaChange"
+        >
+          <view class="picker {{formData.area_name ? '' : 'picker-placeholder'}}">
+            {{formData.area_name || '请选择区域'}}
+          </view>
+        </picker>
+      </view>
+
+      <!-- 标签选择 -->
+      <view class="form-item">
+        <text class="label">标签</text>
+        <view class="tag-selector">
+          <view
+            wx:for="{{tagList}}"
+            wx:key="_id"
+            class="tag-item {{utils.isSelected(selectedTags, item._id) ? 'active' : ''}}"
+            bindtap="toggleTag"
+            data-id="{{item._id}}"
+          >
+            <text class="tag-text">{{item.name}}</text>
+            <view wx:if="{{utils.isSelected(selectedTags, item._id)}}" class="check-icon">✓</view>
+          </view>
+        </view>
+        <text class="hint">最多选择10个标签</text>
+      </view>
+
+      <!-- 访问权限选择 -->
+      <view class="form-item">
+        <text class="label required">访问权限</text>
+        <view class="access-level-selector">
+          <view
+            class="access-level-item {{formData.access_level === 'free' ? 'active' : ''}}"
+            bindtap="onAccessLevelChange"
+            data-level="free"
+          >
+            <text class="access-text">普通用户可看</text>
+            <view wx:if="{{formData.access_level === 'free'}}" class="check-icon">✓</view>
+          </view>
+          <view
+            class="access-level-item {{formData.access_level === 'vip' ? 'active' : ''}}"
+            bindtap="onAccessLevelChange"
+            data-level="vip"
+          >
+            <text class="access-text">仅VIP用户可看</text>
+            <view wx:if="{{formData.access_level === 'vip'}}" class="check-icon">✓</view>
+          </view>
+        </view>
+        <text class="hint">选择谁可以查看这条信息</text>
+      </view>
+    </view>
+
+    <!-- 价格信息 -->
+    <view class="section">
+      <view class="section-title">价格信息</view>
+
+      <view class="form-item">
+        <text class="label required">价格范围</text>
+        <view class="price-input-group">
+          <input
+            class="price-input"
+            type="digit"
+            placeholder="最低价"
+            value="{{formData.price_min}}"
+            bindinput="onInputChange"
+            data-field="price_min"
+            adjust-position="{{false}}"
+          />
+          <text class="separator">-</text>
+          <input
+            class="price-input"
+            type="digit"
+            placeholder="最高价"
+            value="{{formData.price_max}}"
+            bindinput="onInputChange"
+            data-field="price_max"
+            adjust-position="{{false}}"
+          />
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="label required">价格单位</text>
+        <picker
+          mode="selector"
+          range="{{priceUnitList}}"
+          range-key="name"
+          value="{{priceUnitIndex}}"
+          bindchange="onPriceUnitChange"
+        >
+          <view class="picker {{formData.price_unit_name ? '' : 'picker-placeholder'}}">
+            {{formData.price_unit_name || '请选择价格单位'}}
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 职位描述 -->
+    <view class="section">
+      <view class="section-title">职位描述</view>
+      <view class="form-item">
+        <text class="label required">描述内容</text>
+        <textarea
+          class="textarea"
+          placeholder="请输入职位描述，每行一条内容，支持换行"
+          value="{{descriptionText}}"
+          bindinput="onDescriptionInput"
+          maxlength="1000"
+          auto-height
+          show-confirm-bar="{{false}}"
+          adjust-position="{{false}}"
+          hold-keyboard="{{false}}"
+        />
+        <text class="char-count">{{descriptionText.length}}/1000</text>
+      </view>
+
+      <view class="form-item">
+        <text class="label">图片展示</text>
+        <view class="image-upload-container">
+          <view wx:for="{{images}}" wx:key="index" class="image-item">
+            <image class="preview-image" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
+            <view class="delete-btn" bindtap="deleteImage" data-index="{{index}}">×</view>
+          </view>
+          <view wx:if="{{images.length < 9}}" class="add-image-btn" bindtap="chooseImages">
+            <text class="add-icon">+</text>
+            <text class="add-text">添加图片</text>
+          </view>
+        </view>
+        <text class="hint">最多上传9张图片</text>
+      </view>
+    </view>
+
+    <!-- 公司信息 -->
+    <view class="section">
+      <view class="section-title">公司信息</view>
+
+      <view class="form-item">
+        <text class="label required">公司名称</text>
+        <input
+          class="input"
+          placeholder="请输入公司名称"
+          value="{{formData.company_name}}"
+          bindinput="onInputChange"
+          bindfocus="onInputFocus"
+          data-field="company_name"
+          maxlength="50"
+          adjust-position="{{false}}"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="label">公司Logo</text>
+        <view class="logo-upload" bindtap="uploadLogo">
+          <image wx:if="{{formData.company_logo}}" class="logo-preview" src="{{formData.company_logo}}" mode="aspectFill" />
+          <view wx:else class="logo-placeholder">
+            <text class="upload-icon">📷</text>
+            <text class="upload-text">点击上传Logo</text>
+          </view>
+          <!-- 删除按钮 -->
+          <view wx:if="{{formData.company_logo}}" class="delete-btn" catchtap="deleteLogo">×</view>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="label">公司地址</text>
+        <view class="address-input-group">
+          <input
+            class="input address-input"
+            placeholder="请输入公司地址"
+            value="{{formData.company_address}}"
+            bindinput="onInputChange"
+            bindfocus="onInputFocus"
+            data-field="company_address"
+            maxlength="100"
+            adjust-position="{{false}}"
+          />
+          <button class="search-location-btn" bindtap="searchLocation">
+            <text class="search-icon">🔍</text>
+          </button>
+        </view>
+        <text class="hint">输入地址后点击搜索图标定位</text>
+      </view>
+
+      <view class="form-item">
+        <text class="label">位置信息</text>
+        <view class="location-buttons">
+          <button class="location-btn" bindtap="getLocation">
+            <text class="btn-icon">📍</text>
+            <text>获取当前位置</text>
+          </button>
+        </view>
+      </view>
+
+      <!-- 地图卡片 -->
+      <view wx:if="{{showMapCard}}" class="map-card">
+        <view class="map-container">
+          <map
+            id="publishMap"
+            class="mini-map"
+            longitude="{{mapCenter.longitude}}"
+            latitude="{{mapCenter.latitude}}"
+            show-location="{{false}}"
+            scale="16"
+            enable-scroll="{{true}}"
+            enable-zoom="{{true}}"
+            bindregionchange="onMapRegionChange"
+          >
+          </map>
+          <!-- 固定在地图中心的定位图标 - 绿色原生风格 -->
+          <view class="map-center-marker {{isDragging ? 'dragging' : ''}}">
+            <view class="center-marker-icon"></view>
+            <view class="center-marker-shadow"></view>
+          </view>
+        </view>
+        <view class="map-info">
+          <!-- 完整地址显示（公司地址输入框的值 - standardAddress） -->
+          <text class="map-full-address" wx:if="{{formData.company_address}}">📍 {{formData.company_address}}</text>
+
+          <!-- 简化地址显示（格式：城市·区域·街道·地标） -->
+          <text class="map-address" wx:if="{{!isInitialLocation}}">{{detailedAddress}}</text>
+          <text class="map-address map-placeholder" wx:else>{{detailedAddress}}</text>
+
+          <!-- 经纬度 -->
+          <text class="map-coords" wx:if="{{formData.longitude}}">经度: {{formData.longitude}} | 纬度: {{formData.latitude}}</text>
+
+          <!-- 提示信息 -->
+          <text class="map-hint" wx:if="{{isInitialLocation}}">💡 点击上方"获取当前位置"按钮更新到真实位置</text>
+          <text class="map-tip" wx:else>💡 提示：拖动地图调整位置，松手后自动更新地址</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="section">
+      <view class="section-title">联系方式</view>
+
+      <view class="form-item">
+        <text class="label required">联系人</text>
+        <input
+          id="input-contact_name"
+          class="input"
+          placeholder="请输入联系人姓名"
+          value="{{formData.contact_name}}"
+          bindinput="onInputChange"
+          bindfocus="onInputFocus"
+          data-field="contact_name"
+          maxlength="20"
+          adjust-position="{{false}}"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="label required">联系电话</text>
+        <input
+          id="input-contact_phone"
+          class="input"
+          type="number"
+          placeholder="请输入联系电话"
+          value="{{formData.contact_phone}}"
+          bindinput="onInputChange"
+          bindfocus="onInputFocus"
+          data-field="contact_phone"
+          maxlength="11"
+          adjust-position="{{false}}"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="label required">微信号</text>
+        <input
+          id="input-contact_wechat"
+          class="input"
+          placeholder="请输入微信号"
+          value="{{formData.contact_wechat}}"
+          bindinput="onInputChange"
+          bindfocus="onInputFocus"
+          data-field="contact_wechat"
+          maxlength="30"
+          adjust-position="{{false}}"
+        />
+      </view>
+    </view>
+
+    <!-- 底部占位（增加高度以确保输入框可以滚动到键盘上方） -->
+    <view style="height: {{keyboardHeight > 0 ? (keyboardHeight + 200) + 'px' : '200rpx'}};"></view>
+  </view>
+</view>
+
+<!-- ✅ 采用测试页面的按钮方案（普通view，测试页面证明有效） ✅ -->
+<view class="submit-button-container">
+  <view class="submit-button" bindtap="handleSubmit">
+    <text style="color: #fff;">{{isEditMode ? '保存修改' : '立即发布'}}</text>
+  </view>
+</view>

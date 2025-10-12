@@ -1,0 +1,77 @@
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120rpx;
+  background: #ffffff; /* 纯白色不透明背景 */
+  display: flex;
+  border-top: 1rpx solid #f0f0f0;
+  z-index: 9999;
+  box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.08);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab-bar-item {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12rpx 0;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+
+.tab-bar-item-active {
+  transform: translateY(-4rpx);
+}
+
+.tab-bar-item-active::before {
+  content: '';
+  position: absolute;
+  top: -2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 6rpx;
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  border-radius: 0 0 6rpx 6rpx;
+  box-shadow: 0 2rpx 8rpx rgba(255, 107, 53, 0.4); /* 指示条阴影 */
+}
+
+.tab-bar-icon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-bottom: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.icon-emoji {
+  font-size: 38rpx;
+  line-height: 48rpx;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  filter: grayscale(0.8); /* 轻微去色，保持可读性 */
+}
+
+.tab-bar-item-active .icon-emoji {
+  transform: scale(1.15);
+  filter: grayscale(0);
+  text-shadow: 0 4rpx 12rpx rgba(255, 107, 53, 0.3);
+}
+
+.tab-bar-text {
+  font-size: 20rpx;
+  line-height: 24rpx;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.tab-bar-item-active .tab-bar-text {
+  font-weight: 600;
+  text-shadow: 0 2rpx 8rpx rgba(255, 107, 53, 0.2);
+}

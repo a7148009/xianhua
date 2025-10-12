@@ -1,0 +1,9 @@
+{
+  "name": "systemConfigManager",
+  "version": "1.0.0",
+  "description": "系统配置管理：行政区域和信息分类管理",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -1,0 +1,111 @@
+<!-- pages/admin/system-settings.wxml -->
+<view class="container">
+  <!-- 系统信息卡片 -->
+  <view class="info-section">
+    <view class="info-card">
+      <view class="card-header">
+        <text class="card-title">系统信息</text>
+      </view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="info-label">版本号：</text>
+          <text class="info-value">{{systemInfo.version}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">构建日期：</text>
+          <text class="info-value">{{systemInfo.buildDate}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">运行环境：</text>
+          <text class="info-value">{{systemInfo.environment}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设置菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="onMenuTap" data-action="initSystemConfig">
+      <view class="menu-icon">⚡</view>
+      <view class="menu-content">
+        <text class="menu-title">初始化系统配置</text>
+        <text class="menu-desc">创建数据库集合并导入默认数据</text>
+      </view>
+      <view class="menu-arrow">></view>
+    </view>
+
+    <view class="menu-item" bindtap="onMenuTap" data-action="areaManagement">
+      <view class="menu-icon">🗺️</view>
+      <view class="menu-content">
+        <text class="menu-title">设置行政区域</text>
+        <text class="menu-desc">管理城市行政区域划分</text>
+      </view>
+      <view class="menu-arrow">></view>
+    </view>
+
+    <view class="menu-item" bindtap="onMenuTap" data-action="categoryManagement">
+      <view class="menu-icon">📋</view>
+      <view class="menu-content">
+        <text class="menu-title">设置信息分类</text>
+        <text class="menu-desc">管理工作类型分类</text>
+      </view>
+      <view class="menu-arrow">></view>
+    </view>
+
+    <view class="menu-item" bindtap="onMenuTap" data-action="tagManagement">
+      <view class="menu-icon">🏷️</view>
+      <view class="menu-content">
+        <text class="menu-title">设置标签</text>
+        <text class="menu-desc">管理信息标签，最多20个</text>
+      </view>
+      <view class="menu-arrow">></view>
+    </view>
+
+    <view class="menu-item" bindtap="onMenuTap" data-action="priceUnitManagement">
+      <view class="menu-icon">💰</view>
+      <view class="menu-content">
+        <text class="menu-title">设置价格单位</text>
+        <text class="menu-desc">管理价格单位，最多10个</text>
+      </view>
+      <view class="menu-arrow">></view>
+    </view>
+  </view>
+
+  <!-- 管理员信息 -->
+  <view wx:if="{{currentUser}}" class="admin-info">
+    <view class="admin-card">
+      <image class="admin-avatar" src="{{currentUser.avatarUrl}}" mode="aspectFill"></image>
+      <view class="admin-details">
+        <view class="admin-name">{{currentUser.nickName}}</view>
+        <view class="admin-role">管理员</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部导航栏 -->
+  <cover-view class="tab-bar">
+    <cover-view
+      wx:for="{{tabBarList}}"
+      wx:key="index"
+      class="tab-bar-item {{tabBarSelected === index ? 'tab-bar-item-active' : ''}}"
+      data-path="{{item.pagePath}}"
+      data-index="{{index}}"
+      bindtap="switchTab"
+    >
+      <cover-view class="tab-bar-icon">
+        <cover-view
+          class="icon-emoji"
+          style="color: {{tabBarSelected === index ? tabBarSelectedColor : tabBarColor}}"
+        >
+          {{tabBarSelected === index ? item.selectedEmoji : item.emoji}}
+        </cover-view>
+      </cover-view>
+      <cover-view
+        class="tab-bar-text"
+        style="color: {{tabBarSelected === index ? tabBarSelectedColor : tabBarColor}}"
+      >
+        {{item.text}}
+      </cover-view>
+    </cover-view>
+  </cover-view>
+</view>

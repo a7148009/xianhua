@@ -1,0 +1,135 @@
+<view class="container">
+  <view class="header">
+    <text class="title">📍 位置信息调试工具</text>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="button-group">
+    <button class="debug-btn" bindtap="getCurrentLocation" type="primary">
+      获取当前位置
+    </button>
+    <button class="debug-btn" bindtap="testReverseGeocode" type="default">
+      测试逆地址解析
+    </button>
+    <button class="debug-btn" bindtap="showFullAddressInfo" type="default">
+      显示完整地址信息
+    </button>
+    <button class="debug-btn" bindtap="addMoreInfoData" style="background-color: #52c41a; color: white;">
+      📋 添加更多页面数据
+    </button>
+    <button class="debug-btn" bindtap="clearLog" type="warn">
+      清空日志
+    </button>
+  </view>
+
+  <!-- 位置信息展示 -->
+  <view class="info-section" wx:if="{{locationInfo}}">
+    <view class="section-title">📌 位置信息</view>
+    <view class="info-item">
+      <text class="label">经度：</text>
+      <text class="value">{{locationInfo.longitude}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">纬度：</text>
+      <text class="value">{{locationInfo.latitude}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">精度：</text>
+      <text class="value">{{locationInfo.accuracy}} 米</text>
+    </view>
+
+    <!-- 精度提示 -->
+    <view class="accuracy-tip" wx:if="{{locationInfo.accuracy > 50}}">
+      <text class="tip-icon">⚠️</text>
+      <text class="tip-text">定位精度较低（>50米），建议：\n1. 移到室外空旷处\n2. 确保GPS已开启\n3. 等待几秒后重新获取</text>
+    </view>
+    <view class="accuracy-tip success" wx:elif="{{locationInfo.accuracy <= 20}}">
+      <text class="tip-icon">✅</text>
+      <text class="tip-text">定位精度良好（≤20米）</text>
+    </view>
+    <view class="accuracy-tip warning" wx:else>
+      <text class="tip-icon">⚡</text>
+      <text class="tip-text">定位精度一般（20-50米）</text>
+    </view>
+
+    <view class="info-item">
+      <text class="label">高度：</text>
+      <text class="value">{{locationInfo.altitude}} 米</text>
+    </view>
+    <view class="info-item">
+      <text class="label">速度：</text>
+      <text class="value">{{locationInfo.speed}} m/s</text>
+    </view>
+  </view>
+
+  <!-- 腾讯地图API返回数据 -->
+  <view class="info-section" wx:if="{{addressData}}">
+    <view class="section-title">🗺️ 腾讯地图API返回数据</view>
+
+    <!-- 标准地址 -->
+    <view class="info-group">
+      <text class="group-title">标准地址：</text>
+      <text class="value full-width">{{addressData.address}}</text>
+    </view>
+
+    <!-- 格式化地址 -->
+    <view class="info-group">
+      <text class="group-title">格式化地址：</text>
+      <text class="value full-width">{{addressData.formatted_addresses.recommend}}</text>
+    </view>
+
+    <!-- 地址组件 -->
+    <view class="info-group">
+      <text class="group-title">地址组件：</text>
+      <view class="info-item">
+        <text class="label">省：</text>
+        <text class="value">{{addressData.address_component.province}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">市：</text>
+        <text class="value">{{addressData.address_component.city}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">区：</text>
+        <text class="value">{{addressData.address_component.district}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">街道：</text>
+        <text class="value">{{addressData.address_component.street}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">街道号：</text>
+        <text class="value">{{addressData.address_component.street_number}}</text>
+      </view>
+    </view>
+
+    <!-- POI信息 -->
+    <view class="info-group" wx:if="{{addressData.pois && addressData.pois.length > 0}}">
+      <text class="group-title">附近POI（前3个）：</text>
+      <view class="poi-item" wx:for="{{addressData.pois}}" wx:key="id" wx:if="{{index < 3}}">
+        <text class="poi-name">{{item.title}}</text>
+        <text class="poi-address">{{item.address}}</text>
+        <text class="poi-distance">距离: {{item._distance}}米</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 完整JSON数据 -->
+  <view class="info-section" wx:if="{{rawData}}">
+    <view class="section-title">📋 完整JSON数据</view>
+    <view class="json-box">
+      <text class="json-text" user-select="true">{{rawData}}</text>
+    </view>
+  </view>
+
+  <!-- 日志输出 -->
+  <view class="info-section" wx:if="{{logs.length > 0}}">
+    <view class="section-title">📝 调试日志</view>
+    <view class="log-box">
+      <view class="log-item" wx:for="{{logs}}" wx:key="index">
+        <text class="log-time">{{item.time}}</text>
+        <text class="log-text" user-select="true">{{item.text}}</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,83 @@
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="header-title">开通VIP会员</text>
+    <text class="header-subtitle">享受专属特权，畅享全部服务</text>
+  </view>
+
+  <!-- VIP特权展示 -->
+  <view class="privilege-section">
+    <view class="section-title">
+      <text class="title-icon">👑</text>
+      <text class="title-text">VIP特权</text>
+    </view>
+    <view class="privilege-list">
+      <view class="privilege-item" wx:for="{{privileges}}" wx:key="index">
+        <text class="privilege-icon">{{item.icon}}</text>
+        <view class="privilege-content">
+          <text class="privilege-title">{{item.title}}</text>
+          <text class="privilege-desc">{{item.description}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- VIP套餐选择 -->
+  <view class="plan-section">
+    <view class="section-title">
+      <text class="title-icon">💎</text>
+      <text class="title-text">选择套餐</text>
+    </view>
+    <view class="plan-list">
+      <view
+        class="plan-item {{selectedPlan === item.id ? 'active' : ''}}"
+        wx:for="{{plans}}"
+        wx:key="id"
+        bindtap="onSelectPlan"
+        data-id="{{item.id}}"
+      >
+        <view class="plan-badge" wx:if="{{item.badge}}">{{item.badge}}</view>
+        <view class="plan-header">
+          <text class="plan-duration">{{item.duration}}</text>
+          <text class="plan-original-price" wx:if="{{item.originalPrice}}">原价¥{{item.originalPrice}}</text>
+        </view>
+        <view class="plan-price">
+          <text class="price-symbol">¥</text>
+          <text class="price-value">{{item.price}}</text>
+          <text class="price-unit">/{{item.unit}}</text>
+        </view>
+        <view class="plan-save" wx:if="{{item.save}}">
+          <text>立省¥{{item.save}}</text>
+        </view>
+        <view class="check-mark" wx:if="{{selectedPlan === item.id}}">✓</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 支付说明 -->
+  <view class="payment-info">
+    <view class="info-item">
+      <text class="info-icon">✅</text>
+      <text class="info-text">支持微信支付，安全便捷</text>
+    </view>
+    <view class="info-item">
+      <text class="info-icon">✅</text>
+      <text class="info-text">开通即生效，立即享受VIP特权</text>
+    </view>
+    <view class="info-item">
+      <text class="info-icon">✅</text>
+      <text class="info-text">到期前会提醒，可随时续费</text>
+    </view>
+  </view>
+
+  <!-- 底部占位 -->
+  <view class="bottom-placeholder"></view>
+
+  <!-- 购买按钮 -->
+  <view class="purchase-button-container">
+    <view class="purchase-button" bindtap="onPurchase">
+      <text class="button-text">立即开通VIP</text>
+      <text class="button-price">¥{{selectedPlanPrice}}</text>
+    </view>
+  </view>
+</view>

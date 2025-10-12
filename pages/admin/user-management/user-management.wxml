@@ -1,0 +1,251 @@
+<!-- pages/admin/user-management.wxml -->
+<wxs module="utils" src="./user-management.wxs"></wxs>
+<view class="container">
+  <!-- 内容区域 -->
+  <view class="content">
+    <!-- 页面标题 -->
+    <view class="page-title">{{filterTitle}}</view>
+    
+    <!-- 用户统计区域 -->
+    <view class="stats-container">
+      <view class="stats-title">用户统计</view>
+      <view class="stats-row">
+        <view class="stat-item total" bindtap="onFilterByRole" data-role="all">
+          <view class="stat-number">{{totalUsers}}</view>
+          <view class="stat-label">总用户</view>
+        </view>
+        <view class="stat-item admin" bindtap="onFilterByRole" data-role="admin">
+          <view class="stat-number">{{adminCount}}</view>
+          <view class="stat-label">管理员</view>
+        </view>
+        <view class="stat-item user" bindtap="onFilterByRole" data-role="user">
+          <view class="stat-number">{{userCount}}</view>
+          <view class="stat-label">普通用户</view>
+        </view>
+        <view class="stat-item vip" bindtap="onFilterByRole" data-role="vip">
+          <view class="stat-number">{{vipCount}}</view>
+          <view class="stat-label">VIP用户</view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 搜索区域 -->
+    <view class="search-container">
+      <view class="search-input-wrapper">
+        <input 
+          class="search-input" 
+          placeholder="搜索用户" 
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+          bindconfirm="onSearch"
+        />
+      </view>
+      <view class="search-buttons">
+        <button class="search-btn" bindtap="onSearch">搜索</button>
+        <button class="clear-btn" bindtap="onClearSearch">清空</button>
+      </view>
+    </view>
+
+    <!-- 用户列表 -->
+    <view class="user-list">
+      <view wx:for="{{userList}}" wx:key="openid" class="user-card">
+        <view class="user-header">
+          <view class="user-avatar-container">
+            <image
+              wx:if="{{item.avatarUrl && item.avatarUrl !== ''}}"
+              class="user-avatar"
+              src="{{item.avatarUrl}}"
+              mode="aspectFill"
+              binderror="onAvatarError"
+              data-openid="{{item.openid}}"
+              data-index="{{index}}"
+              lazy-load="{{true}}"
+            />
+            <view wx:else class="avatar-placeholder">👤</view>
+          </view>
+          <view class="user-basic-info">
+            <view class="user-nickname">{{item.nickName || '微信用户'}}</view>
+            <view class="user-role-tag {{getRoleClass(item.role)}}">{{getRoleName(item.role)}}</view>
+          </view>
+        </view>
+
+        <view class="user-details">
+          <view class="detail-item">
+            <text class="detail-label">OpenID:</text>
+            <text class="detail-value openid-value-full">{{item.openid}}</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">VIP到期:</text>
+            <text class="detail-value vip-expire-value">{{utils.formatTime(item.vipExpireDate) || '无'}}</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">最近登录:</text>
+            <text class="detail-value login-time-value">{{utils.formatTime(item.loginTime) || '未登录'}}</text>
+          </view>
+        </view>
+
+        <view class="user-actions">
+          <button class="action-btn copy-btn" bindtap="copyOpenid" data-openid="{{item.openid}}">
+            复制ID
+          </button>
+          <button class="action-btn setting-btn" bindtap="onUserSetting" data-user="{{item}}">
+            用户设置
+          </button>
+          <button class="action-btn vip-btn" bindtap="onSetVip" data-user="{{item}}">
+            设为VIP
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态（优化：首次加载时不显示） -->
+    <view wx:if="{{!initialLoading && !loading && userList.length === 0}}" class="empty-state">
+      <text>暂无用户数据</text>
+    </view>
+
+    <!-- 加载更多状态（仅在加载更多时显示） -->
+    <view wx:if="{{loading && !initialLoading}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+
+    <!-- 没有更多 -->
+    <view wx:if="{{!hasMore && userList.length > 0}}" class="no-more-state">
+      <text>没有更多了</text>
+    </view>
+  </view>
+
+  <!-- 用户设置弹窗 -->
+  <view wx:if="{{showUserSettingModal}}" class="modal-overlay" bindtap="onCancelUserSetting">
+    <view class="modal" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">用户设置</text>
+        <text class="close-btn" bindtap="onCancelUserSetting">×</text>
+      </view>
+      
+      <view class="modal-body">
+        <view class="user-preview">
+          <image wx:if="{{selectedUser.avatarUrl}}" class="preview-avatar" src="{{selectedUser.avatarUrl}}" mode="aspectFill"></image>
+          <view wx:else class="preview-avatar-placeholder">👤</view>
+          <view class="preview-info">
+            <view class="preview-nickname">{{selectedUser.nickName || '微信用户'}}</view>
+            <view class="preview-role">当前角色: <text class="role-highlight">{{getRoleName(selectedUser.role || 'user')}}</text></view>
+            <view class="preview-openid">用户ID: {{selectedUser.openid}}</view>
+          </view>
+        </view>
+
+        <view class="role-options">
+          <text class="section-title">选择角色:</text>
+          <view class="role-buttons">
+            <button
+              class="role-option-btn {{newRole === 'user' ? 'active' : ''}}"
+              bindtap="selectRole"
+              data-role="user"
+            >
+              普通用户
+            </button>
+            <button
+              class="role-option-btn {{newRole === 'admin' ? 'active' : ''}}"
+              bindtap="selectRole"
+              data-role="admin"
+            >
+              管理员
+            </button>
+            <button
+              class="role-option-btn {{newRole === 'publisher' ? 'active' : ''}}"
+              bindtap="selectRole"
+              data-role="publisher"
+            >
+              发布者
+            </button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- VIP设置弹窗 -->
+  <view wx:if="{{showVipModal}}" class="modal-overlay" bindtap="onCancelVipSetting">
+    <view class="modal" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">设置VIP</text>
+        <text class="close-btn" bindtap="onCancelVipSetting">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="user-preview">
+          <image wx:if="{{selectedUser.avatarUrl}}" class="preview-avatar" src="{{selectedUser.avatarUrl}}" mode="aspectFill"></image>
+          <view wx:else class="preview-avatar-placeholder">👤</view>
+          <view class="preview-info">
+            <view class="preview-nickname">{{selectedUser.nickName || '微信用户'}}</view>
+            <view class="preview-role">当前角色: <text class="role-highlight">{{getRoleName(selectedUser.role || 'user')}}</text></view>
+            <view class="preview-openid">用户ID: {{selectedUser.openid}}</view>
+          </view>
+        </view>
+
+        <view class="vip-options">
+          <text class="section-title">选择VIP时长:</text>
+          <view class="vip-duration-buttons">
+            <button
+              class="vip-option-btn {{vipDuration === 1 ? 'active' : ''}}"
+              bindtap="selectVipDuration"
+              data-duration="1"
+            >
+              1个月
+            </button>
+            <button
+              class="vip-option-btn {{vipDuration === 3 ? 'active' : ''}}"
+              bindtap="selectVipDuration"
+              data-duration="3"
+            >
+              3个月
+            </button>
+            <button
+              class="vip-option-btn {{vipDuration === 6 ? 'active' : ''}}"
+              bindtap="selectVipDuration"
+              data-duration="6"
+            >
+              6个月
+            </button>
+            <button
+              class="vip-option-btn {{vipDuration === 12 ? 'active' : ''}}"
+              bindtap="selectVipDuration"
+              data-duration="12"
+            >
+              1年
+            </button>
+          </view>
+          <view wx:if="{{vipDuration}}" class="vip-expire-info">
+            到期时间: {{vipExpireTime}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部导航栏 -->
+  <cover-view class="tab-bar">
+    <cover-view
+      wx:for="{{tabBarList}}"
+      wx:key="index"
+      class="tab-bar-item {{tabBarSelected === index ? 'tab-bar-item-active' : ''}}"
+      data-path="{{item.pagePath}}"
+      data-index="{{index}}"
+      bindtap="switchTab"
+    >
+      <cover-view class="tab-bar-icon">
+        <cover-view
+          class="icon-emoji"
+          style="color: {{tabBarSelected === index ? tabBarSelectedColor : tabBarColor}}"
+        >
+          {{tabBarSelected === index ? item.selectedEmoji : item.emoji}}
+        </cover-view>
+      </cover-view>
+      <cover-view
+        class="tab-bar-text"
+        style="color: {{tabBarSelected === index ? tabBarSelectedColor : tabBarColor}}"
+      >
+        {{item.text}}
+      </cover-view>
+    </cover-view>
+  </cover-view>
+</view>

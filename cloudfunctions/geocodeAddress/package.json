@@ -1,0 +1,10 @@
+{
+  "name": "geocodeAddress",
+  "version": "1.0.0",
+  "description": "地址解析（正向地理编码）- 将地址转换为经纬度",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

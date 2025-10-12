@@ -1,0 +1,154 @@
+<view class="container">
+  <!-- 页面说明 -->
+  <view class="page-header">
+    <text class="header-title">系统变量设置</text>
+    <text class="header-desc">自定义系统中各种文字显示内容，不改变样式，只修改文字</text>
+  </view>
+
+  <!-- 变量列表 -->
+  <view class="variable-list">
+    <!-- 首页相关变量 -->
+    <view class="variable-section">
+      <view class="section-title">首页相关</view>
+
+      <view class="variable-item">
+        <view class="variable-header">
+          <text class="variable-number">1</text>
+          <text class="variable-label">首页顶部页面标题</text>
+        </view>
+        <input
+          class="variable-input"
+          value="{{variables.home_page_title}}"
+          data-key="home_page_title"
+          bindinput="onInputChange"
+          placeholder="请输入标题"
+        />
+      </view>
+
+      <view class="variable-item">
+        <view class="variable-header">
+          <text class="variable-number">2</text>
+          <text class="variable-label">搜索框提示文字</text>
+        </view>
+        <input
+          class="variable-input"
+          value="{{variables.home_search_placeholder}}"
+          data-key="home_search_placeholder"
+          bindinput="onInputChange"
+          placeholder="请输入提示文字"
+        />
+      </view>
+
+      <view class="variable-item">
+        <view class="variable-header">
+          <text class="variable-number">3</text>
+          <text class="variable-label">信息列表中的"鲜花信息"标签</text>
+        </view>
+        <input
+          class="variable-input"
+          value="{{variables.home_work_content_label}}"
+          data-key="home_work_content_label"
+          bindinput="onInputChange"
+          placeholder="请输入标签文字"
+        />
+      </view>
+
+      <view class="variable-item">
+        <view class="variable-header">
+          <text class="variable-number">4</text>
+          <text class="variable-label">底部导航栏名称</text>
+        </view>
+        <input
+          class="variable-input"
+          value="{{variables.home_tab_name}}"
+          data-key="home_tab_name"
+          bindinput="onInputChange"
+          placeholder="请输入导航栏名称"
+        />
+      </view>
+    </view>
+
+    <!-- 详情页相关变量 -->
+    <view class="variable-section">
+      <view class="section-title">详情页相关</view>
+
+      <view class="variable-item">
+        <view class="variable-header">
+          <text class="variable-number">5</text>
+          <text class="variable-label">详情页顶部页面标题</text>
+        </view>
+        <input
+          class="variable-input"
+          value="{{variables.detail_page_title}}"
+          data-key="detail_page_title"
+          bindinput="onInputChange"
+          placeholder="请输入标题"
+        />
+      </view>
+
+      <view class="variable-item">
+        <view class="variable-header">
+          <text class="variable-number">6</text>
+          <text class="variable-label">费用明细公示标题</text>
+        </view>
+        <input
+          class="variable-input"
+          value="{{variables.detail_fee_notice}}"
+          data-key="detail_fee_notice"
+          bindinput="onInputChange"
+          placeholder="请输入标题"
+        />
+      </view>
+
+      <view class="variable-item">
+        <view class="variable-header">
+          <text class="variable-number">7</text>
+          <text class="variable-label">安全模式说明</text>
+        </view>
+        <textarea
+          class="variable-textarea"
+          value="{{variables.detail_safety_mode}}"
+          data-key="detail_safety_mode"
+          bindinput="onInputChange"
+          placeholder="请输入说明文字"
+          auto-height
+        />
+      </view>
+
+      <view class="variable-item">
+        <view class="variable-header">
+          <text class="variable-number">8</text>
+          <text class="variable-label">安全保障标题</text>
+        </view>
+        <input
+          class="variable-input"
+          value="{{variables.detail_safety_title}}"
+          data-key="detail_safety_title"
+          bindinput="onInputChange"
+          placeholder="请输入标题"
+        />
+      </view>
+
+      <view class="variable-item">
+        <view class="variable-header">
+          <text class="variable-number">9</text>
+          <text class="variable-label">警告提示文字</text>
+        </view>
+        <textarea
+          class="variable-textarea"
+          value="{{variables.detail_warning_text}}"
+          data-key="detail_warning_text"
+          bindinput="onInputChange"
+          placeholder="请输入警告文字"
+          auto-height
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="footer-actions">
+    <button class="action-btn reset-btn" bindtap="resetToDefault">恢复默认</button>
+    <button class="action-btn save-btn" bindtap="saveVariables">保存设置</button>
+  </view>
+</view>

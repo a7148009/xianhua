@@ -370,8 +370,7 @@ Page({
             totalViews: 0,  // 默认值，稍后异步更新
             todayViews: 0,  // 默认值，稍后异步更新
             isVIP,
-            categories, // 多分类数组
-            workType: categories.length > 0 ? categories[0] : '日结',  // 显示第一个分类
+            categories, // 多分类数组（用于显示）
             tags: tags,  // 标签对象数组：[{_id?, name}, ...]
             descriptionPreview // 工作内容预览（前2条，横向显示）
           };

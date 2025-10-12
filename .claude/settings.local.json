@@ -32,7 +32,12 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git branch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(claude --resume)",
+      "Bash(dir:*)",
+      "Read(//c/Users/xyn/AppData/Roaming/**)",
+      "Bash(claude --continue)",
+      "Read(//c/Users/xyn/**)"
     ],
     "deny": [],
     "ask": []

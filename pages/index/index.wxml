@@ -149,9 +149,9 @@
           </view>
         </view>
         <view class="job-location-info">
-          <text class="location-area">{{item.area || '五华区'}}</text>
+          <text wx:if="{{item.area}}" class="location-area">{{item.area}}</text>
           <block wx:for="{{item.categories}}" wx:key="index" wx:for-item="category">
-            <text class="location-separator"> • </text>
+            <text wx:if="{{item.area || index > 0}}" class="location-separator"> • </text>
             <text class="location-category">{{category}}</text>
           </block>
         </view>

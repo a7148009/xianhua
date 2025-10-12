@@ -62,6 +62,7 @@
           bindtap="onTypeChange"
           data-id="{{item._id}}"
           data-name="{{item.name}}"
+          data-is-vip="{{item.isVIP}}"
         >
           <text class="category-text">{{item.name}}</text>
         </view>

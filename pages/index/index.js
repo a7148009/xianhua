@@ -482,14 +482,64 @@ Page({
   },
 
   /**
-   * 类型选择
+   * 类型选择（带VIP权限检查）
    */
-  onTypeChange(e) {
+  async onTypeChange(e) {
     const typeId = e.currentTarget.dataset.id;      // 获取分类ID（升级后）
     const typeName = e.currentTarget.dataset.name;  // 获取分类名称
+    const isVIP = e.currentTarget.dataset.isVip;    // 是否是VIP分类
 
-    console.log('[index] 选择分类 - id:', typeId, 'name:', typeName);
+    console.log('[index] 选择分类 - id:', typeId, 'name:', typeName, 'isVIP:', isVIP);
 
+    // 如果是VIP分类，需要检查用户VIP权限
+    if (isVIP) {
+      try {
+        // 检查用户登录状态
+        const userInfo = wx.getStorageSync('userInfo');
+        if (!userInfo || !userInfo.openid) {
+          wx.showModal({
+            title: '需要登录',
+            content: '请先登录后再使用VIP筛选功能',
+            confirmText: '去登录',
+            success: (res) => {
+              if (res.confirm) {
+                wx.navigateTo({
+                  url: '/pages/profile/profile'
+                });
+              }
+            }
+          });
+          return;
+        }
+
+        // 调用云函数检查VIP状态
+        const result = await wx.cloud.callFunction({
+          name: 'vipManager',
+          data: {
+            action: 'checkVIP',
+            openid: userInfo.openid
+          }
+        });
+
+        if (!result.result || !result.result.success || !result.result.isVIP) {
+          // 不是VIP，显示VIP特权弹窗
+          this.showVIPPrivilegeModal();
+          return;
+        }
+
+        // 是VIP，继续筛选
+        console.log('[index] VIP权限验证通过，允许筛选');
+      } catch (error) {
+        console.error('[index] 检查VIP状态失败:', error);
+        wx.showToast({
+          title: '检查权限失败',
+          icon: 'none'
+        });
+        return;
+      }
+    }
+
+    // 普通分类或VIP权限验证通过，执行筛选
     if (typeId === this.data.currentType) {
       // 取消选中
       this.setData({

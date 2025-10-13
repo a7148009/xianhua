@@ -648,9 +648,12 @@ Page({
     try {
       console.log('[detail] 开始下拉刷新');
 
-      // 如果有 hash_id，重新加载数据
+      // 如果有 hash_id，并行刷新变量和详情数据
       if (this.data.jobData.hash_id) {
-        await this.loadJobDetail(this.data.jobData.hash_id);
+        await Promise.all([
+          this.loadVariables(),                             // 刷新详情页变量（工作内容标签、费用公示、安全保障、警告提示、页面标题）
+          this.loadJobDetail(this.data.jobData.hash_id)    // 刷新职位详情
+        ]);
 
         wx.showToast({
           title: '刷新成功',

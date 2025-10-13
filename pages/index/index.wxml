@@ -95,7 +95,7 @@
     <view class="recommendation-section">
       <view class="rec-header">
         <text class="rec-title">为你推荐</text>
-        <text class="rec-count">{{totalCount}}个职位</text>
+        <text class="rec-count">{{totalCount}}条信息</text>
       </view>
       <view class="rec-tags">
         <text class="rec-tag {{currentSort === 'recommend' ? 'active' : ''}}" bindtap="onSortChange" data-sort="recommend">推荐</text>

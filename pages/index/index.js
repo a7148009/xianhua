@@ -303,9 +303,12 @@ Page({
       }
 
       // 根据排序方式确定sortBy参数
-      let sortBy = 'updated_at'; // 默认推荐排序：按更新时间倒序
+      let sortBy = 'created_at'; // 默认推荐排序：按创建时间倒序（推荐最早发布的）
       if (this.data.currentSort === 'newest') {
         sortBy = 'updated_at'; // 最新排序：按更新时间倒序
+      } else if (this.data.currentSort === 'nearby') {
+        // 附近排序：暂时还是用更新时间，因为需要在前端根据位置排序
+        sortBy = 'updated_at';
       }
 
       const params = {
@@ -436,10 +439,13 @@ Page({
           }
         }
 
+        // 计算实际显示的数量（考虑前端筛选后的结果）
+        const actualTotalCount = newList.length;
+
         // 立即显示列表并隐藏骨架屏
         this.setData({
           jobList: newList,
-          totalCount: result.total || 0,
+          totalCount: actualTotalCount,  // 使用前端筛选后的实际数量
           hasMore: newList.length < (result.total || 0),
           showSkeleton: false // 数据加载完成，隐藏骨架屏
         });
@@ -861,8 +867,9 @@ Page({
     cacheManager.clearAllIndexCache();
     console.log('🗑️ [刷新] 已清除所有缓存');
 
-    // 同时刷新配置和列表
+    // 同时刷新变量、配置和列表
     Promise.all([
+      this.loadVariables(),        // 刷新首页变量（搜索框提示、工作内容标签、页面标题）
       this.loadSystemConfig(),
       this.loadFlowerList(true)
     ]).then(() => {

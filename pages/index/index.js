@@ -328,8 +328,8 @@ Page({
 
     try {
       if (refresh) {
-        this.currentPage = 1;
         this.setData({
+          currentPage: 1,
           jobList: [],
           hasMore: true
         });
@@ -345,7 +345,7 @@ Page({
       }
 
       const params = {
-        page: this.currentPage,
+        page: this.data.currentPage,
         limit: 20,
         type: this.data.currentType || 'all',  // 使用分类ID（升级后）
         areaCode: this.data.currentArea || 'all',  // 使用区域ID（升级后）
@@ -464,15 +464,17 @@ Page({
         });
 
         if (result.data.length > 0) {
-          this.currentPage++;
+          this.setData({
+            currentPage: this.data.currentPage + 1
+          });
         }
 
         // 保存列表数据到缓存（仅首页数据）
-        if (this.currentPage === 2) { // 只缓存第一页数据
+        if (this.data.currentPage === 2) { // 只缓存第一页数据
           cacheManager.saveIndexData({
             jobList: newList,
             totalCount: result.total || 0,
-            currentPage: this.currentPage,
+            currentPage: this.data.currentPage,
             hasMore: newList.length < (result.total || 0)
           });
         }

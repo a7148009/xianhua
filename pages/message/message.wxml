@@ -1,31 +1,14 @@
-<view class="more-page">
-  <!-- 信息列表（公众号文章风格） -->
-  <view class="article-list">
-    <view wx:for="{{infoList}}" wx:key="_id" class="article-item">
-      <!-- 标题行：序号 + 标题 -->
-      <view class="article-header">
-        <view class="article-number">{{item.sortOrder}}</view>
-        <text class="article-title">{{item.title}}</text>
+<view class="article-container">
+  <view class="article-content">
+    <!-- 招聘信息列表 -->
+    <view wx:for="{{jobList}}" wx:key="index" class="job-item">
+      <view class="job-title">
+        <text class="job-number">{{item.number}}</text>
+        <text class="job-name">{{item.title}}</text>
       </view>
-
-      <!-- 内容文本 -->
-      <view class="article-content">{{item.content}}</view>
-    </view>
-
-    <!-- 加载状态 -->
-    <view wx:if="{{loading}}" class="loading-more">
-      <text>加载中...</text>
-    </view>
-
-    <!-- 没有更多 -->
-    <view wx:if="{{!hasMore && infoList.length > 0}}" class="no-more">
-      <text>— 没有更多了 —</text>
-    </view>
-
-    <!-- 空状态 -->
-    <view wx:if="{{infoList.length === 0 && !loading}}" class="empty-state">
-      <text class="empty-icon">📋</text>
-      <text class="empty-text">暂无信息</text>
+      <view wx:for="{{item.details}}" wx:key="index" wx:for-item="detail" class="job-detail">
+        {{detail}}
+      </view>
     </view>
   </view>
 </view>

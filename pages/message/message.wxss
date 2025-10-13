@@ -1,96 +1,84 @@
-/* 更多页面样式 - 公众号文章风格 */
-.more-page {
+/* 页面容器 */
+.article-container {
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: #f5f5f5;
+  padding: 10rpx;
   padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
 }
 
-/* 文章列表 */
-.article-list {
-  padding: 30rpx 30rpx 0 30rpx;
+/* 文章内容区域 */
+.article-content {
+  background-color: #ffffff;
+  border-radius: 20rpx;
+  padding: 50rpx 40rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.15);
+  border: 2rpx dashed #ff9800;
 }
 
-/* 文章条目 */
-.article-item {
-  margin-bottom: 50rpx;
+/* 招聘条目 */
+.job-item {
+  margin-bottom: 40rpx;
+  padding: 30rpx;
+  background: linear-gradient(135deg, #fffbf5 0%, #fff8f0 100%);
+  border-radius: 16rpx;
+  border: 2rpx dashed #ff9800;
+  box-shadow: 0 4rpx 12rpx rgba(255, 152, 0, 0.1);
+  position: relative;
 }
 
-/* 文章标题行 */
-.article-header {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 20rpx;
+.job-item:last-child {
+  margin-bottom: 0;
 }
 
-/* 红色序号框 */
-.article-number {
-  flex-shrink: 0;
-  min-width: 48rpx;
-  height: 48rpx;
-  background-color: #E54D42;
-  border-radius: 8rpx;
+/* 招聘标题行 */
+.job-title {
   display: flex;
   align-items: center;
+  margin-bottom: 28rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid #ffcc80;
+}
+
+/* 红色序号标签 */
+.job-number {
+  flex-shrink: 0;
+  min-width: 56rpx;
+  height: 56rpx;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  border-radius: 12rpx;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  font-size: 28rpx;
+  font-size: 30rpx;
   font-weight: bold;
   color: #ffffff;
-  margin-right: 16rpx;
-  margin-top: 2rpx;
-  padding: 0 8rpx;
+  margin-right: 24rpx;
+  padding: 0 12rpx;
+  box-shadow: 0 6rpx 16rpx rgba(238, 90, 82, 0.4);
+  border: 3rpx solid #ffffff;
 }
 
-/* 文章标题 */
-.article-title {
+/* 招聘职位名称 */
+.job-name {
   flex: 1;
-  font-size: 32rpx;
+  font-size: 36rpx;
   font-weight: bold;
-  color: #000000;
+  color: #d84315;
   line-height: 1.5;
+  text-shadow: 1rpx 1rpx 2rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 招聘详情文本 */
+.job-detail {
+  font-size: 30rpx;
+  line-height: 2.2;
+  color: #424242;
+  margin-bottom: 12rpx;
+  padding: 0;
   word-break: break-all;
 }
 
-/* 文章内容 */
-.article-content {
-  font-size: 28rpx;
-  line-height: 1.8;
-  color: #000000;
-  white-space: pre-wrap;
-  word-break: break-all;
-  padding-left: 64rpx;
-}
-
-/* 加载状态 */
-.loading-more {
-  padding: 60rpx 40rpx;
-  text-align: center;
-  color: #999999;
-  font-size: 26rpx;
-}
-
-/* 没有更多 */
-.no-more {
-  padding: 60rpx 40rpx;
-  text-align: center;
-  color: #cccccc;
-  font-size: 24rpx;
-}
-
-/* 空状态 */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 200rpx 40rpx;
-}
-
-.empty-icon {
-  font-size: 120rpx;
-  margin-bottom: 20rpx;
-}
-
-.empty-text {
-  font-size: 28rpx;
-  color: #999999;
+.job-detail:last-child {
+  margin-bottom: 0;
 }

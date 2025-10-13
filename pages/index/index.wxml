@@ -47,7 +47,9 @@
     <view class="search-container">
       <view class="search-box">
         <text class="search-icon">🔍</text>
-        <input class="search-input" placeholder="{{searchPlaceholder}}" bindinput="onSearchInput" bindconfirm="onSearchConfirm"/>
+        <input class="search-input" placeholder="{{searchPlaceholder}}" value="{{keyword}}" bindinput="onSearchInput" bindconfirm="onSearchConfirm"/>
+        <button class="search-btn" size="mini" bindtap="onSearchConfirm">搜索</button>
+        <button wx:if="{{keyword}}" class="clear-search-btn" size="mini" bindtap="onClearSearch">清空</button>
       </view>
     </view>
 
@@ -128,7 +130,7 @@
       </view>
     </view>
 
-    <!-- 职位列表 -->
+    <!-- 鲜花列表 -->
     <view class="job-list">
       <!-- 智能加载遮罩 -->
       <view wx:if="{{smartLoading}}" class="smart-loading-overlay">
@@ -138,9 +140,9 @@
         </view>
       </view>
 
-      <!-- 职位卡片 -->
-    <view wx:for="{{jobList}}" wx:key="hash_id" class="job-item" bindtap="goToDetail" data-item="{{item}}">
-      <!-- 职位主要信息 -->
+      <!-- 鲜花卡片 -->
+    <view wx:for="{{jobList}}" wx:key="hash_id" class="job-item" bindtap="goToDetail" bindlongpress="onItemLongPress" data-item="{{item}}">
+      <!-- 鲜花主要信息 -->
       <view class="job-main">
         <view class="job-header">
           <text class="job-title">{{item.title}}</text>
@@ -180,7 +182,7 @@
         </view>
       </view>
 
-      <!-- 职位标签 -->
+      <!-- 鲜花标签 -->
       <view class="job-tags-section">
         <view class="job-requirement-tags">
           <text wx:for="{{item.tags}}" wx:key="index" wx:for-item="tag" class="req-tag">{{tag.name}}</text>
@@ -188,9 +190,13 @@
       </view>
 
       <!-- 工作内容预览 -->
-      <view wx:if="{{item.descriptionPreview}}" class="job-description-preview">
+      <view wx:if="{{item.descriptionArray && item.descriptionArray.length > 0}}" class="job-description-preview">
         <view class="desc-title">{{workContentLabel}}：</view>
-        <view class="desc-content">{{item.descriptionPreview}}</view>
+        <view class="desc-list">
+          <view wx:for="{{item.descriptionArray}}" wx:key="index" wx:for-item="desc" class="desc-item">
+            {{desc}}
+          </view>
+        </view>
       </view>
     </view>
   </view>

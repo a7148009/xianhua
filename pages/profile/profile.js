@@ -535,6 +535,43 @@ Page({
   },
 
   /**
+   * 导航到购买VIP页面
+   */
+  navigateToBuyVIP() {
+    if (!this.data.isLoggedIn) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      this.wxLogin();
+      return;
+    }
+
+    // 跳转到VIP购买页面
+    wx.navigateTo({
+      url: '/pages/vip/vip-purchase/vip-purchase'
+    });
+  },
+
+  /**
+   * 导航到我的订单页面
+   */
+  navigateToMyOrders() {
+    if (!this.data.isLoggedIn) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      this.wxLogin();
+      return;
+    }
+
+    wx.navigateTo({
+      url: '/pages/my-orders/my-orders'
+    });
+  },
+
+  /**
    * 初始化系统变量（管理员专用）
    */
   async initializeVariables() {

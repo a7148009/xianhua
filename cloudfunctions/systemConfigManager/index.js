@@ -14,7 +14,8 @@ const _ = db.command;
  *
  * 数据库集合: system_config
  * 字段设计:
- * - _id: 自动生成
+ * - _id: 自动生成（云数据库内部ID）
+ * - custom_id: string (固定业务ID，删除重建也保持不变)
  * - type: 'area' | 'category' (区域或分类)
  * - city: string (城市名称，仅area类型使用)
  * - name: string (区域名称或分类名称)
@@ -25,6 +26,13 @@ const _ = db.command;
  * - updateTime: date (更新时间)
  *
  * ⚠️ 安全加固：所有管理功能都需要管理员权限验证
+ *
+ * ✨ 固定ID方案（序号式）：
+ * - custom_id 是真正的业务ID，用于数据绑定
+ * - 格式：类型前缀_序号（如：area_001, cat_01, tag_001, unit_01）
+ * - 删除重建时可以指定相同的 custom_id 保持数据一致性
+ * - 如果不指定 custom_id，系统自动生成下一个序号
+ * - 序号位数：area(3位), category(2位), tag(3位), price_unit(2位)
  */
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
@@ -107,6 +115,64 @@ exports.main = async (event, context) => {
 };
 
 /**
+ * 生成序号式custom_id
+ * @param {string} type - 配置类型
+ * @returns {string} - 格式如：area_001, cat_01, tag_001, unit_01
+ */
+async function generateSequenceId(type) {
+  try {
+    // 查询该类型的所有数据
+    const result = await db.collection('system_config')
+      .where({ type })
+      .field({ custom_id: true })
+      .get();
+
+    // 提取所有已存在的序号
+    const numbers = result.data
+      .map(item => {
+        if (!item.custom_id) return 0;
+        // 匹配最后的数字序号（如：area_001 -> 1, cat_01 -> 1）
+        const match = item.custom_id.match(/_(\d+)$/);
+        return match ? parseInt(match[1]) : 0;
+      })
+      .filter(n => n > 0);
+
+    // 计算下一个序号
+    const nextNum = numbers.length > 0 ? Math.max(...numbers) + 1 : 1;
+
+    // 根据类型决定补零位数
+    const paddingMap = {
+      'area': 3,        // 001-999
+      'category': 2,    // 01-99
+      'tag': 3,         // 001-999
+      'price_unit': 2   // 01-99
+    };
+
+    const padding = paddingMap[type] || 3;
+    const sequence = String(nextNum).padStart(padding, '0');
+
+    // 类型前缀映射
+    const prefixMap = {
+      'area': 'area',
+      'category': 'cat',
+      'tag': 'tag',
+      'price_unit': 'unit'
+    };
+
+    const prefix = prefixMap[type] || type;
+
+    const customId = `${prefix}_${sequence}`;
+    console.log(`[generateSequenceId] 生成序号ID: type=${type}, customId=${customId}`);
+
+    return customId;
+  } catch (error) {
+    console.error('[generateSequenceId] 错误:', error);
+    // 如果生成失败，返回带时间戳的兜底方案
+    return `${type}_${Date.now()}`;
+  }
+}
+
+/**
  * 获取配置列表
  * @param {Object} event - { type: 'area' | 'category', city?: string }
  */
@@ -136,9 +202,18 @@ async function getList(event) {
 
     console.log(`[getList] 获取${type}配置，数量:`, result.data.length);
 
+    // 为每条数据确保有custom_id（兼容旧数据）
+    const dataWithCustomId = result.data.map(item => {
+      if (!item.custom_id) {
+        // 如果旧数据没有custom_id，使用_id作为临时方案
+        item.custom_id = item._id;
+      }
+      return item;
+    });
+
     return {
       success: true,
-      data: result.data
+      data: dataWithCustomId
     };
   } catch (error) {
     console.error('[getList] 错误:', error);
@@ -172,10 +247,10 @@ async function getConfig(event) {
 
 /**
  * 添加配置项
- * @param {Object} event - { type, city?, name, code?, order? }
+ * @param {Object} event - { type, city?, name, code?, order?, custom_id? }
  */
 async function addConfig(event, operatorOpenid) {
-  const { type, city, name, code, order } = event;
+  const { type, city, name, code, order, custom_id } = event;
 
   if (!type || !name) {
     return {
@@ -193,6 +268,20 @@ async function addConfig(event, operatorOpenid) {
   }
 
   try {
+    // 检查是否已存在相同custom_id（如果指定了custom_id）
+    if (custom_id) {
+      const customIdCheck = await db.collection('system_config')
+        .where({ custom_id })
+        .get();
+
+      if (customIdCheck.data && customIdCheck.data.length > 0) {
+        return {
+          success: false,
+          message: `custom_id "${custom_id}" 已存在，请使用其他ID或留空自动生成`
+        };
+      }
+    }
+
     // 检查是否已存在相同名称
     const whereCondition = { type, name };
     if (type === 'area' && city) {
@@ -227,8 +316,16 @@ async function addConfig(event, operatorOpenid) {
     // 生成code（如果未提供）
     const finalCode = code || `${type}_${Date.now()}`;
 
+    // 生成custom_id（如果未提供）
+    // 使用序号式ID：area_001, cat_01, tag_001, unit_01
+    let finalCustomId = custom_id;
+    if (!finalCustomId) {
+      finalCustomId = await generateSequenceId(type);
+    }
+
     // 构建新配置项
     const newConfig = {
+      custom_id: finalCustomId,  // ✨ 固定业务ID（序号式）
       type,
       name,
       code: finalCode,
@@ -248,13 +345,14 @@ async function addConfig(event, operatorOpenid) {
       data: newConfig
     });
 
-    console.log(`[addConfig] 添加配置成功: ${type} - ${name}, _id: ${addResult._id}`);
+    console.log(`[addConfig] 添加配置成功: ${type} - ${name}, custom_id: ${finalCustomId}, _id: ${addResult._id}`);
 
     return {
       success: true,
       message: '添加成功',
       data: {
         _id: addResult._id,
+        custom_id: finalCustomId,
         ...newConfig
       }
     };
@@ -545,24 +643,33 @@ async function batchAddAreas(event, operatorOpenid) {
       ? maxOrderResult.data[0].order
       : 0;
 
-    // 批量插入新区域
-    const insertPromises = newDistricts.map((districtName, index) => {
+    // 批量插入新区域（使用序号式custom_id）
+    const insertPromises = [];
+    for (let i = 0; i < newDistricts.length; i++) {
+      const districtName = newDistricts[i];
       currentOrder++;
+
+      // 为每个区域生成序号式custom_id
+      const customId = await generateSequenceId('area');
+
       const newArea = {
+        custom_id: customId,  // ✨ 固定业务ID（序号式）
         type: 'area',
         city: city,
         name: districtName,
-        code: `area_${city}_${districtName}_${Date.now()}_${index}`,
+        code: `area_${city}_${districtName}_${Date.now()}_${i}`,
         order: currentOrder,
         enabled: true,
         createTime: new Date(),
         updateTime: new Date()
       };
 
-      return db.collection('system_config').add({
-        data: newArea
-      });
-    });
+      insertPromises.push(
+        db.collection('system_config').add({
+          data: newArea
+        })
+      );
+    }
 
     await Promise.all(insertPromises);
 

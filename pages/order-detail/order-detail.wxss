@@ -1,0 +1,197 @@
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  padding: 200rpx 0;
+  text-align: center;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999999;
+}
+
+/* 详情容器 */
+.detail-container {
+  padding: 20rpx;
+}
+
+/* 订单状态卡片 */
+.status-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20rpx;
+  padding: 50rpx 30rpx;
+  text-align: center;
+  margin-bottom: 20rpx;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.3);
+}
+
+.status-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+}
+
+.status-icon.active {
+  filter: drop-shadow(0 4rpx 8rpx rgba(76, 175, 80, 0.3));
+}
+
+.status-icon.expired {
+  filter: drop-shadow(0 4rpx 8rpx rgba(255, 152, 0, 0.3));
+}
+
+.status-icon.refunded {
+  filter: drop-shadow(0 4rpx 8rpx rgba(244, 67, 54, 0.3));
+}
+
+.status-text {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 12rpx;
+}
+
+.status-desc {
+  display: block;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 信息区块 */
+.info-section {
+  background-color: #ffffff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.info-section.refund-section {
+  background-color: #fff3e0;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+/* 信息列表 */
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.item-label {
+  font-size: 28rpx;
+  color: #666666;
+  min-width: 180rpx;
+}
+
+.item-value {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 500;
+  text-align: right;
+  flex: 1;
+  word-break: break-all;
+}
+
+.item-value.small {
+  font-size: 24rpx;
+}
+
+.item-value.price {
+  color: #ff4757;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.item-value.active-text {
+  color: #4caf50;
+}
+
+.item-value.expired-text {
+  color: #ff9800;
+}
+
+.item-value-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.copy-btn {
+  padding: 6rpx 16rpx;
+  background-color: #667eea;
+  color: #ffffff;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  border: none;
+  height: auto;
+  line-height: 1.5;
+}
+
+.copy-btn::after {
+  border: none;
+}
+
+/* 底部操作按钮 */
+.bottom-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  padding: 20rpx;
+  display: flex;
+  gap: 20rpx;
+  box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+.action-btn {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+}
+
+.action-btn.secondary {
+  background-color: #f5f5f5;
+  color: #333333;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.btn-icon {
+  font-size: 32rpx;
+}

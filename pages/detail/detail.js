@@ -146,7 +146,7 @@ Page({
 
         console.log('[detail] 从列表页传递的数据已加载');
       } catch (e) {
-        console.error('[detail] 解析职位数据失败:', e);
+        console.error('[detail] 解析鲜花数据失败:', e);
         // 解析失败，尝试使用hash_id加载
         if (options.hash_id) {
           this.loadJobDetail(options.hash_id);
@@ -281,7 +281,7 @@ Page({
   },
 
   /**
-   * 根据hash_id加载职位详情
+   * 根据hash_id加载鲜花详情
    */
   async loadJobDetail(hashId) {
     try {
@@ -380,7 +380,7 @@ Page({
         // 刷新阅读统计
         this.loadViewStats(data.hash_id);
 
-        console.log('[detail] 加载职位详情成功:', this.data.jobData);
+        console.log('[detail] 加载鲜花详情成功:', this.data.jobData);
       } else {
         wx.showToast({
           title: result.message || '加载失败',
@@ -389,7 +389,7 @@ Page({
         wx.navigateBack();
       }
     } catch (error) {
-      console.error('[detail] 加载职位详情失败:', error);
+      console.error('[detail] 加载鲜花详情失败:', error);
       wx.showToast({
         title: '加载失败',
         icon: 'none'
@@ -652,7 +652,7 @@ Page({
       if (this.data.jobData.hash_id) {
         await Promise.all([
           this.loadVariables(),                             // 刷新详情页变量（工作内容标签、费用公示、安全保障、警告提示、页面标题）
-          this.loadJobDetail(this.data.jobData.hash_id)    // 刷新职位详情
+          this.loadJobDetail(this.data.jobData.hash_id)    // 刷新鲜花详情
         ]);
 
         wx.showToast({

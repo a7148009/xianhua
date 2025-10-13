@@ -15,7 +15,10 @@ const _ = db.command;
  * 升级说明：
  * - 支持ID引用：使用聚合查询关联system_config
  * - 自动获取最新名称：分类和区域名称实时从system_config获取
- * - 向后兼容：同时支持旧数据（名称字符串）和新数据（ID）
+ * - 向后兼容：同时支持旧数据（名称字符串、_id）和新数据（custom_id）
+ * - ✨ 固定ID方案（序号式）：使用custom_id代替_id进行绑定
+ *   - 格式：area_001, cat_01, tag_001, unit_01
+ *   - 优势：序号永不改变，不受名称变化影响
  */
 exports.main = async (event, context) => {
   const { hash_id } = event;
@@ -32,7 +35,7 @@ exports.main = async (event, context) => {
     const aggregateResult = await db.collection('db_info')
       .aggregate()
       .match({ hash_id })
-      // 关联分类信息（支持多分类）
+      // 关联分类信息（支持多分类）- 使用custom_id
       .lookup({
         from: 'system_config',
         let: { categoryIds: '$category_ids' },
@@ -42,18 +45,23 @@ exports.main = async (event, context) => {
               $expr: {
                 $and: [
                   { $ne: ['$$categoryIds', null] },
-                  { $in: ['$_id', { $ifNull: ['$$categoryIds', []] }] }
+                  {
+                    $or: [
+                      { $in: ['$custom_id', { $ifNull: ['$$categoryIds', []] }] },  // 新数据：使用custom_id
+                      { $in: ['$_id', { $ifNull: ['$$categoryIds', []] }] }        // 旧数据：兼容_id
+                    ]
+                  }
                 ]
               }
             }
           },
           {
-            $project: { name: 1, _id: 0 }
+            $project: { name: 1, custom_id: 1, _id: 0 }
           }
         ],
         as: 'categoryDetails'
       })
-      // 关联区域信息
+      // 关联区域信息 - 使用custom_id
       .lookup({
         from: 'system_config',
         let: { areaId: '$area_id' },
@@ -63,18 +71,23 @@ exports.main = async (event, context) => {
               $expr: {
                 $and: [
                   { $ne: ['$$areaId', null] },
-                  { $eq: ['$_id', '$$areaId'] }
+                  {
+                    $or: [
+                      { $eq: ['$custom_id', '$$areaId'] },  // 新数据：使用custom_id
+                      { $eq: ['$_id', '$$areaId'] }         // 旧数据：兼容_id
+                    ]
+                  }
                 ]
               }
             }
           },
           {
-            $project: { name: 1, _id: 0 }
+            $project: { name: 1, custom_id: 1, _id: 0 }
           }
         ],
         as: 'areaDetails'
       })
-      // 关联标签信息（支持多标签）
+      // 关联标签信息（支持多标签）- 使用custom_id
       .lookup({
         from: 'system_config',
         let: { tagIds: '$tag_ids' },
@@ -84,18 +97,23 @@ exports.main = async (event, context) => {
               $expr: {
                 $and: [
                   { $ne: ['$$tagIds', null] },
-                  { $in: ['$_id', { $ifNull: ['$$tagIds', []] }] }
+                  {
+                    $or: [
+                      { $in: ['$custom_id', { $ifNull: ['$$tagIds', []] }] },  // 新数据：使用custom_id
+                      { $in: ['$_id', { $ifNull: ['$$tagIds', []] }] }         // 旧数据：兼容_id
+                    ]
+                  }
                 ]
               }
             }
           },
           {
-            $project: { name: 1, _id: 1 }
+            $project: { name: 1, custom_id: 1, _id: 1 }
           }
         ],
         as: 'tagDetails'
       })
-      // 关联价格单位信息
+      // 关联价格单位信息 - 使用custom_id
       .lookup({
         from: 'system_config',
         let: { priceUnitId: '$price_unit_id' },
@@ -105,13 +123,18 @@ exports.main = async (event, context) => {
               $expr: {
                 $and: [
                   { $ne: ['$$priceUnitId', null] },
-                  { $eq: ['$_id', '$$priceUnitId'] }
+                  {
+                    $or: [
+                      { $eq: ['$custom_id', '$$priceUnitId'] },  // 新数据：使用custom_id
+                      { $eq: ['$_id', '$$priceUnitId'] }         // 旧数据：兼容_id
+                    ]
+                  }
                 ]
               }
             }
           },
           {
-            $project: { name: 1, _id: 0 }
+            $project: { name: 1, custom_id: 1, _id: 0 }
           }
         ],
         as: 'priceUnitDetails'
@@ -145,10 +168,14 @@ exports.main = async (event, context) => {
       areaName = item.area;
     }
 
-    // 提取标签数据（关联查询结果，包含_id和name）
+    // 提取标签数据（关联查询结果，使用custom_id）
     let tags = [];
     if (item.tagDetails && item.tagDetails.length > 0) {
-      tags = item.tagDetails.map(t => ({ _id: t._id, name: t.name }));
+      // 新数据：使用custom_id，降级使用_id
+      tags = item.tagDetails.map(t => ({
+        _id: t.custom_id || t._id,
+        name: t.name
+      }));
     } else if (Array.isArray(item.tags)) {
       // 兼容旧数据：字符串数组
       tags = item.tags.map(tag => {

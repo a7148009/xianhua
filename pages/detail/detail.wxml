@@ -1,5 +1,5 @@
 <view class="container">
-  <!-- 职位标题区域 -->
+  <!-- 鲜花标题区域 -->
   <view class="job-header">
     <text class="job-title">{{jobData.title}}</text>
     <text class="job-salary">{{jobData.salary || '面议'}}</text>
@@ -28,7 +28,7 @@
     </view>
   </view>
 
-  <!-- 职位详情 -->
+  <!-- 鲜花详情 -->
   <view class="job-detail-section">
     <view class="job-tags">
       <text wx:for="{{jobData.tags}}" wx:key="index" wx:for-item="tag" class="job-tag">{{tag.name}}</text>

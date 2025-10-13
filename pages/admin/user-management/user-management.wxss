@@ -368,6 +368,11 @@
   color: #333;
 }
 
+.order-btn {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  color: #ffffff;
+}
+
 /* 状态提示 */
 .loading-state, .empty-state, .no-more-state {
   text-align: center;

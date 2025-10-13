@@ -89,6 +89,12 @@ Page({
           url: '/pages/admin/price-unit-management/price-unit-management'
         });
         break;
+      case 'orderManagement':
+        // 跳转到订单管理页面
+        wx.navigateTo({
+          url: '/pages/admin/order-management/order-management'
+        });
+        break;
       default:
         wx.showToast({
           title: '功能开发中',

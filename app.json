@@ -15,9 +15,12 @@
     "pages/admin/category-management/category-management",
     "pages/admin/tag-management/tag-management",
     "pages/admin/price-unit-management/price-unit-management",
+    "pages/admin/order-management/order-management",
     "pages/admin/vip-settings/vip-settings",
     "pages/admin/payment-settings/payment-settings",
     "pages/vip/vip-purchase/vip-purchase",
+    "pages/my-orders/my-orders",
+    "pages/order-detail/order-detail",
     "pages/legal/user-agreement/user-agreement",
     "pages/legal/privacy-policy/privacy-policy"
   ],

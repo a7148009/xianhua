@@ -35,6 +35,27 @@
     </view>
   </view>
 
+  <!-- VIP中心卡片（已登录用户可见） -->
+  <view wx:if="{{isLoggedIn}}" class="vip-center-card">
+    <view class="vip-center-header">
+      <view class="vip-icon">💎</view>
+      <view class="vip-center-title">
+        <text class="vip-title-text">VIP会员中心</text>
+        <text class="vip-subtitle">专享特权 畅享服务</text>
+      </view>
+    </view>
+    <view class="vip-actions">
+      <view class="vip-action-btn primary" bindtap="navigateToBuyVIP">
+        <view class="action-icon">🛒</view>
+        <text class="action-text">购买VIP</text>
+      </view>
+      <view class="vip-action-btn secondary" bindtap="navigateToMyOrders">
+        <view class="action-icon">📋</view>
+        <text class="action-text">我的订单</text>
+      </view>
+    </view>
+  </view>
+
   <!-- 菜单列表 -->
   <view class="menu-section">
     <view

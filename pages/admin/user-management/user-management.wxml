@@ -82,6 +82,10 @@
             <text class="detail-label">最近登录:</text>
             <text class="detail-value login-time-value">{{utils.formatTime(item.loginTime) || '未登录'}}</text>
           </view>
+          <view class="detail-item">
+            <text class="detail-label">订单数量:</text>
+            <text class="detail-value order-count-value">{{item.orderCount || 0}}笔</text>
+          </view>
         </view>
 
         <view class="user-actions">
@@ -93,6 +97,9 @@
           </button>
           <button class="action-btn vip-btn" bindtap="onSetVip" data-user="{{item}}">
             设为VIP
+          </button>
+          <button class="action-btn order-btn" bindtap="onViewOrders" data-user="{{item}}">
+            查看订单
           </button>
         </view>
       </view>

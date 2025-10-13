@@ -131,6 +131,94 @@
   padding: 12rpx 24rpx;
 }
 
+/* VIP中心卡片 */
+.vip-center-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20rpx;
+  padding: 40rpx 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.3);
+}
+
+.vip-center-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.vip-icon {
+  font-size: 60rpx;
+  margin-right: 20rpx;
+}
+
+.vip-center-title {
+  flex: 1;
+}
+
+.vip-title-text {
+  display: block;
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8rpx;
+}
+
+.vip-subtitle {
+  display: block;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.vip-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.vip-action-btn {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10rpx);
+  border-radius: 16rpx;
+  padding: 30rpx 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.vip-action-btn.primary {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.vip-action-btn.secondary {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.vip-action-btn:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+.vip-action-btn .action-icon {
+  font-size: 48rpx;
+  margin-bottom: 10rpx;
+}
+
+.vip-action-btn.primary .action-text {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.vip-action-btn.secondary .action-text {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.vip-action-btn .action-text {
+  font-size: 26rpx;
+}
+
 /* 菜单区域 */
 .menu-section {
   background-color: #ffffff;

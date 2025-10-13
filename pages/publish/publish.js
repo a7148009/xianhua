@@ -83,7 +83,8 @@ Page({
     });
 
     // 检查是否是编辑模式
-    if (options.id) {
+    if (options.mode === 'edit' && options.id) {
+      // 管理员编辑模式：通过 mode=edit&id=xxx 进入
       this.setData({
         isEditMode: true,
         editId: options.id
@@ -91,19 +92,80 @@ Page({
       wx.setNavigationBarTitle({
         title: '编辑信息'
       });
+      console.log('✅ 管理员编辑模式，hash_id:', options.id);
+    } else if (options.id) {
+      // 兼容旧版本：通过id参数编辑
+      this.setData({
+        isEditMode: true,
+        editId: options.id
+      });
+      wx.setNavigationBarTitle({
+        title: '编辑信息'
+      });
+      console.log('✅ 编辑模式，hash_id:', options.id);
     }
 
     // 加载系统配置
     this.loadSystemConfig();
 
     // 如果是编辑模式，加载信息数据
-    if (this.data.isEditMode) {
-      this.loadItemData(options.id);
+    if (this.data.isEditMode && this.data.editId) {
+      this.loadItemData(this.data.editId);
     }
   },
 
   onShow() {
     console.log('🔵 发布页面显示');
+
+    // 同步 tabBar 选中状态
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({
+        selected: 1
+      });
+    }
+
+    // 检查是否有待编辑的数据（从首页长按进入的编辑模式）
+    try {
+      const editItemData = wx.getStorageSync('editItemData');
+      if (editItemData && editItemData.mode === 'edit' && editItemData.hash_id) {
+        console.log('🔵 检测到编辑模式数据:', editItemData);
+
+        // 清除本地存储，避免重复加载
+        wx.removeStorageSync('editItemData');
+
+        // 设置编辑模式
+        this.setData({
+          isEditMode: true,
+          editId: editItemData.hash_id
+        });
+
+        wx.setNavigationBarTitle({
+          title: '编辑信息'
+        });
+
+        console.log('🔵 当前系统配置状态:', {
+          categoryCount: this.data.categoryList.length,
+          areaCount: this.data.areaList.length,
+          tagCount: this.data.tagList.length,
+          priceUnitCount: this.data.priceUnitList.length
+        });
+
+        // 加载信息数据（如果系统配置已加载）
+        if (this.data.categoryList.length > 0) {
+          console.log('🔵 系统配置已加载，立即加载编辑数据');
+          this.loadItemData(editItemData.hash_id);
+        } else {
+          // 如果系统配置还没加载，等待加载完成后再加载信息数据
+          console.log('🔵 系统配置未加载，设置待加载编辑ID');
+          this.pendingEditId = editItemData.hash_id;
+
+          // 强制重新加载系统配置（确保一定会加载）
+          this.loadSystemConfig();
+        }
+      }
+    } catch (error) {
+      console.error('🔵 检查编辑数据失败:', error);
+    }
   },
 
   onReady() {
@@ -145,6 +207,13 @@ Page({
       });
 
       console.log('✅ 系统配置加载成功');
+
+      // 如果有待加载的编辑数据，现在加载
+      if (this.pendingEditId) {
+        console.log('🔵 系统配置已加载，现在加载编辑数据:', this.pendingEditId);
+        this.loadItemData(this.pendingEditId);
+        this.pendingEditId = null;
+      }
     } catch (error) {
       console.error('❌ 加载系统配置失败:', error);
       wx.showToast({
@@ -188,11 +257,15 @@ Page({
         // 处理图片
         const images = data.images || [];
 
-        // 查找区域索引
-        const areaIndex = this.data.areaList.findIndex(a => a._id === data.area_id);
+        // 查找区域索引（同时支持custom_id和_id）
+        const areaIndex = this.data.areaList.findIndex(a =>
+          a.custom_id === data.area_id || a._id === data.area_id
+        );
 
-        // 查找价格单位索引
-        const priceUnitIndex = this.data.priceUnitList.findIndex(p => p._id === data.price_unit_id);
+        // 查找价格单位索引（同时支持custom_id和_id）
+        const priceUnitIndex = this.data.priceUnitList.findIndex(p =>
+          p.custom_id === data.price_unit_id || p._id === data.price_unit_id
+        );
 
         // 处理地图相关数据
         const showMapCard = !!(data.longitude && data.latitude);
@@ -462,7 +535,7 @@ Page({
 
     this.setData({
       areaIndex: index,
-      'formData.area_id': area._id,
+      'formData.area_id': area.custom_id || area._id,  // 优先使用custom_id
       'formData.area_name': area.name
     });
   },
@@ -476,7 +549,7 @@ Page({
 
     this.setData({
       priceUnitIndex: index,
-      'formData.price_unit_id': priceUnit._id,
+      'formData.price_unit_id': priceUnit.custom_id || priceUnit._id,  // 优先使用custom_id
       'formData.price_unit_name': priceUnit.name
     });
   },
@@ -569,13 +642,16 @@ Page({
 
         if (validateResult.result.success && validateResult.result.valid) {
           const matchedArea = validateResult.result.matchedArea;
-          const areaIndex = this.data.areaList.findIndex(a => a._id === matchedArea._id);
+          const areaIndex = this.data.areaList.findIndex(a =>
+            a.custom_id === matchedArea.custom_id || a.custom_id === matchedArea._id ||
+            a._id === matchedArea.custom_id || a._id === matchedArea._id
+          );
 
           this.setData({
             'formData.longitude': res.longitude,
             'formData.latitude': res.latitude,
             'formData.company_address': addressInfo.standardAddress,
-            'formData.area_id': matchedArea._id,
+            'formData.area_id': matchedArea.custom_id || matchedArea._id,  // 优先使用custom_id
             'formData.area_name': matchedArea.name,
             areaIndex: areaIndex >= 0 ? areaIndex : -1,
             showMapCard: true,
@@ -783,13 +859,16 @@ Page({
 
             if (validateResult.result.success && validateResult.result.valid) {
               const matchedArea = validateResult.result.matchedArea;
-              const areaIndex = this.data.areaList.findIndex(a => a._id === matchedArea._id);
+              const areaIndex = this.data.areaList.findIndex(a =>
+                a.custom_id === matchedArea.custom_id || a.custom_id === matchedArea._id ||
+                a._id === matchedArea.custom_id || a._id === matchedArea._id
+              );
 
               this.setData({
                 'formData.longitude': res.longitude,
                 'formData.latitude': res.latitude,
                 'formData.company_address': addressInfo.standardAddress,
-                'formData.area_id': matchedArea._id,
+                'formData.area_id': matchedArea.custom_id || matchedArea._id,  // 优先使用custom_id
                 'formData.area_name': matchedArea.name,
                 areaIndex: areaIndex >= 0 ? areaIndex : -1,
                 isInitialLocation: false,
@@ -875,7 +954,10 @@ Page({
       // 地址验证通过，自动选择匹配的区域
       const matchedArea = validateResult.result.matchedArea;
       if (matchedArea) {
-        const areaIndex = this.data.areaList.findIndex(a => a._id === matchedArea._id);
+        const areaIndex = this.data.areaList.findIndex(a =>
+          a.custom_id === matchedArea.custom_id || a.custom_id === matchedArea._id ||
+          a._id === matchedArea.custom_id || a._id === matchedArea._id
+        );
 
         // 步骤2：使用腾讯地图API将地址转换为经纬度（正向地理编码）
         wx.showLoading({ title: '解析地址中...' });
@@ -902,7 +984,7 @@ Page({
           'formData.longitude': lng,
           'formData.latitude': lat,
           'formData.company_address': addressInfo.standardAddress,
-          'formData.area_id': matchedArea._id,
+          'formData.area_id': matchedArea.custom_id || matchedArea._id,  // 优先使用custom_id
           'formData.area_name': matchedArea.name,
           areaIndex: areaIndex >= 0 ? areaIndex : -1,
           currentCity: addressInfo.city,
@@ -1262,46 +1344,54 @@ Page({
       if (result.result && result.result.success) {
         wx.hideLoading();
 
-        // 如果是编辑模式，直接返回
-        if (this.data.isEditMode) {
-          wx.showToast({
-            title: '保存成功',
-            icon: 'success',
-            duration: 2000
-          });
-          setTimeout(() => {
-            wx.navigateBack({
-              delta: 1
-            });
-          }, 2000);
-        } else {
-          // 发布模式：询问用户是否继续发布
-          wx.showModal({
-            title: '发布成功',
-            content: '信息发布成功！是否继续发布新信息？',
-            confirmText: '继续发布',
-            cancelText: '返回首页',
-            success: (res) => {
-              if (res.confirm) {
-                // 用户选择继续发布：重置表单
-                this.resetForm();
-                wx.pageScrollTo({
-                  scrollTop: 0,
-                  duration: 300
-                });
-                wx.showToast({
-                  title: '已清空表单',
-                  icon: 'success'
-                });
-              } else if (res.cancel) {
-                // 用户选择返回首页
-                wx.switchTab({
-                  url: '/pages/index/index'
-                });
-              }
+        // 编辑模式和发布模式都提供选择弹窗
+        const title = this.data.isEditMode ? '保存成功' : '发布成功';
+        const content = this.data.isEditMode
+          ? '信息修改成功！是否继续发布新信息？'
+          : '信息发布成功！是否继续发布新信息？';
+
+        wx.showModal({
+          title: title,
+          content: content,
+          confirmText: '继续发布',
+          cancelText: '返回首页',
+          success: (res) => {
+            if (res.confirm) {
+              // 用户选择继续发布：重置表单并切换为发布模式
+              this.setData({
+                isEditMode: false,
+                editId: null
+              });
+              wx.setNavigationBarTitle({
+                title: '发布信息'
+              });
+              this.resetForm();
+              wx.pageScrollTo({
+                scrollTop: 0,
+                duration: 300
+              });
+              wx.showToast({
+                title: '已清空表单',
+                icon: 'success'
+              });
+            } else if (res.cancel) {
+              // 用户选择返回首页：清空表单并重置状态
+              this.setData({
+                isEditMode: false,
+                editId: null
+              });
+              wx.setNavigationBarTitle({
+                title: '发布信息'
+              });
+              this.resetForm();
+
+              // 跳转到首页
+              wx.switchTab({
+                url: '/pages/index/index'
+              });
             }
-          });
-        }
+          }
+        });
       } else {
         wx.showToast({
           title: result.result?.message || '操作失败',
@@ -1366,17 +1456,5 @@ Page({
       scrollTop: 0,
       duration: 300
     });
-  },
-
-  /**
-   * 页面显示
-   */
-  onShow() {
-    // 同步 tabBar 选中状态
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({
-        selected: 1
-      });
-    }
   }
 });

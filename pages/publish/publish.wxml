@@ -39,13 +39,13 @@
         <view class="tag-selector">
           <view
             wx:for="{{categoryList}}"
-            wx:key="_id"
-            class="tag-item {{utils.isSelected(selectedCategories, item._id) ? 'active' : ''}}"
+            wx:key="custom_id"
+            class="tag-item {{utils.isSelected(selectedCategories, item.custom_id || item._id) ? 'active' : ''}}"
             bindtap="toggleCategory"
-            data-id="{{item._id}}"
+            data-id="{{item.custom_id || item._id}}"
           >
             <text class="tag-text">{{item.name}}</text>
-            <view wx:if="{{utils.isSelected(selectedCategories, item._id)}}" class="check-icon">✓</view>
+            <view wx:if="{{utils.isSelected(selectedCategories, item.custom_id || item._id)}}" class="check-icon">✓</view>
           </view>
         </view>
         <text class="hint">最多选择3个分类</text>
@@ -73,13 +73,13 @@
         <view class="tag-selector">
           <view
             wx:for="{{tagList}}"
-            wx:key="_id"
-            class="tag-item {{utils.isSelected(selectedTags, item._id) ? 'active' : ''}}"
+            wx:key="custom_id"
+            class="tag-item {{utils.isSelected(selectedTags, item.custom_id || item._id) ? 'active' : ''}}"
             bindtap="toggleTag"
-            data-id="{{item._id}}"
+            data-id="{{item.custom_id || item._id}}"
           >
             <text class="tag-text">{{item.name}}</text>
-            <view wx:if="{{utils.isSelected(selectedTags, item._id)}}" class="check-icon">✓</view>
+            <view wx:if="{{utils.isSelected(selectedTags, item.custom_id || item._id)}}" class="check-icon">✓</view>
           </view>
         </view>
         <text class="hint">最多选择10个标签</text>

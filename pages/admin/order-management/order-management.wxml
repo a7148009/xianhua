@@ -1,0 +1,266 @@
+<!-- pages/admin/order-management.wxml -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">{{pageTitle}}</text>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="stats-overview">
+    <view class="stats-card">
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalOrders}}</text>
+        <text class="stat-label">总订单</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.todayOrders}}</text>
+        <text class="stat-label">今日订单</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">¥{{stats.totalRevenue}}</text>
+        <text class="stat-label">总收入</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选器 -->
+  <view class="filter-section">
+    <view class="filter-tabs">
+      <view
+        class="filter-tab {{dateFilter === 'all' ? 'active' : ''}}"
+        bindtap="onDateFilterChange"
+        data-filter="all"
+      >
+        全部
+      </view>
+      <view
+        class="filter-tab {{dateFilter === 'today' ? 'active' : ''}}"
+        bindtap="onDateFilterChange"
+        data-filter="today"
+      >
+        今日
+      </view>
+      <view
+        class="filter-tab {{dateFilter === 'week' ? 'active' : ''}}"
+        bindtap="onDateFilterChange"
+        data-filter="week"
+      >
+        本周
+      </view>
+      <view
+        class="filter-tab {{dateFilter === 'month' ? 'active' : ''}}"
+        bindtap="onDateFilterChange"
+        data-filter="month"
+      >
+        本月
+      </view>
+    </view>
+
+    <!-- 搜索框 -->
+    <view class="search-box">
+      <input
+        class="search-input"
+        placeholder="搜索订单号/用户昵称/OpenID"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+      />
+      <button class="search-btn" size="mini" bindtap="onSearch">搜索</button>
+      <button wx:if="{{searchKeyword}}" class="clear-btn" size="mini" bindtap="onClearSearch">清空</button>
+    </view>
+  </view>
+
+  <!-- 订单列表 -->
+  <view class="order-list">
+    <view wx:if="{{loading && orderList.length === 0}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:elif="{{orderList.length === 0}}" class="empty-state">
+      <text>暂无订单数据</text>
+    </view>
+
+    <view wx:else>
+      <view
+        wx:for="{{orderList}}"
+        wx:key="_id"
+        class="order-card"
+        bindtap="onOrderDetail"
+        data-order="{{item}}"
+      >
+        <!-- 订单头部 -->
+        <view class="order-header">
+          <view class="order-no">
+            <text class="label">订单号：</text>
+            <text class="value">{{item.order_no}}</text>
+          </view>
+          <view class="order-status {{item.status}}">
+            {{item.status_text}}
+          </view>
+        </view>
+
+        <!-- 用户信息 -->
+        <view class="order-user">
+          <image
+            wx:if="{{item.avatar_url}}"
+            class="user-avatar"
+            src="{{item.avatar_url}}"
+            mode="aspectFill"
+          />
+          <view wx:else class="user-avatar-placeholder">👤</view>
+          <text class="user-nickname">{{item.nickname || '微信用户'}}</text>
+        </view>
+
+        <!-- 订单详情 -->
+        <view class="order-details">
+          <view class="detail-row">
+            <text class="detail-label">VIP时长：</text>
+            <text class="detail-value">{{item.vip_duration}}天</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">支付金额：</text>
+            <text class="detail-value amount">¥{{item.amount_yuan}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">支付时间：</text>
+            <text class="detail-value">{{item.pay_time_str}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">VIP到期：</text>
+            <text class="detail-value {{item.is_expired ? 'expired' : 'active'}}">
+              {{item.vip_end_date_str}}
+            </text>
+          </view>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="order-actions">
+          <button
+            class="action-btn detail-btn"
+            catchtap="onOrderDetail"
+            data-order="{{item}}"
+          >
+            查看详情
+          </button>
+          <button
+            wx:if="{{item.status === 'paid'}}"
+            class="action-btn extend-btn"
+            catchtap="onExtendVIP"
+            data-order="{{item}}"
+          >
+            延长VIP
+          </button>
+          <button
+            wx:if="{{item.status === 'paid'}}"
+            class="action-btn refund-btn"
+            catchtap="onRefund"
+            data-order="{{item}}"
+          >
+            退款
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载更多 -->
+    <view wx:if="{{loading && orderList.length > 0}}" class="loading-more">
+      <text>加载中...</text>
+    </view>
+
+    <!-- 没有更多 -->
+    <view wx:if="{{!hasMore && orderList.length > 0}}" class="no-more">
+      <text>没有更多了</text>
+    </view>
+  </view>
+
+  <!-- 延长VIP弹窗 -->
+  <view wx:if="{{showExtendModal}}" class="modal-overlay" bindtap="onCancelExtend">
+    <view class="modal" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">延长VIP</text>
+        <text class="close-btn" bindtap="onCancelExtend">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="extend-info">
+          <view class="info-row">
+            <text class="info-label">订单号：</text>
+            <text class="info-value">{{selectedOrder.order_no}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">用户：</text>
+            <text class="info-value">{{selectedOrder.nickname}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">当前到期：</text>
+            <text class="info-value">{{selectedOrder.vip_end_date_str}}</text>
+          </view>
+        </view>
+
+        <view class="extend-input">
+          <text class="input-label">延长天数：</text>
+          <input
+            class="days-input"
+            type="number"
+            placeholder="请输入天数"
+            value="{{extendDays}}"
+            bindinput="onExtendDaysInput"
+          />
+          <text class="input-unit">天</text>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel" bindtap="onCancelExtend">取消</button>
+        <button class="modal-btn confirm" bindtap="onConfirmExtend">确认延长</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退款弹窗 -->
+  <view wx:if="{{showRefundModal}}" class="modal-overlay" bindtap="onCancelRefund">
+    <view class="modal" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">退款确认</text>
+        <text class="close-btn" bindtap="onCancelRefund">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="refund-info">
+          <view class="info-row">
+            <text class="info-label">订单号：</text>
+            <text class="info-value">{{selectedOrder.order_no}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">用户：</text>
+            <text class="info-value">{{selectedOrder.nickname}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">金额：</text>
+            <text class="info-value amount">¥{{selectedOrder.amount_yuan}}</text>
+          </view>
+        </view>
+
+        <view class="refund-input">
+          <text class="input-label">退款原因：</text>
+          <textarea
+            class="reason-textarea"
+            placeholder="请输入退款原因"
+            value="{{refundReason}}"
+            bindinput="onRefundReasonInput"
+            maxlength="200"
+          />
+        </view>
+
+        <view class="refund-warning">
+          <text>⚠️ 退款后将取消用户的VIP权限，此操作不可撤销！</text>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel" bindtap="onCancelRefund">取消</button>
+        <button class="modal-btn confirm danger" bindtap="onConfirmRefund">确认退款</button>
+      </view>
+    </view>
+  </view>
+</view>

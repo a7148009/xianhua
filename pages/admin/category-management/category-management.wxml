@@ -11,7 +11,7 @@
   <view class="info-card">
     <view class="info-title">💡 分类说明</view>
     <view class="info-text">
-      这里管理的是工作信息分类，如：日结、短期工、长期工、高工资等。添加后会在首页筛选器中显示。
+      这里管理的是鲜花信息分类，如：玫瑰、百合、康乃馨、向日葵等。添加后会在首页筛选器中显示。
     </view>
     <view class="info-text vip-hint">
       🌟 点击分类名称可设置VIP分类（VIP分类在首页显示金色"高"标识）
@@ -65,7 +65,7 @@
           <text class="form-label">分类名称:</text>
           <input
             class="form-input"
-            placeholder="请输入分类名称，如：日结、短期工"
+            placeholder="请输入分类名称，如：玫瑰、百合"
             value="{{newCategoryName}}"
             bindinput="onNewCategoryInput"
             focus="{{showAddModal}}"

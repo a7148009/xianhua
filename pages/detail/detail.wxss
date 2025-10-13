@@ -5,7 +5,7 @@
 	padding-bottom: 120rpx;
 }
 
-/* 职位标题区域 */
+/* 鲜花标题区域 */
 .job-header {
 	background-color: #ffffff;
 	padding: 30rpx;
@@ -149,7 +149,7 @@
 	color: #007aff;
 }
 
-/* 职位详情 */
+/* 鲜花详情 */
 .job-detail-section {
 	background-color: #ffffff;
 	padding: 30rpx;
@@ -169,7 +169,7 @@
 .job-tags {
 	display: flex;
 	flex-wrap: wrap;
-	margin-bottom: 30rpx;
+	margin-bottom: 15rpx;
 }
 .job-tag {
 	padding: 12rpx 20rpx;
@@ -186,7 +186,7 @@
 	font-weight: 600;
 	color: #333333;
 	display: block;
-	margin-bottom: 20rpx;
+	margin-bottom: 10rpx;
 }
 .job-description {
 	margin-bottom: 20rpx;
@@ -198,7 +198,7 @@
 	font-size: 26rpx;
 	color: #666666;
 	font-weight: normal;
-	line-height: 1.2;
+	line-height: 1.4;
 	display: block;
 	word-wrap: break-word;
 	white-space: pre-wrap;

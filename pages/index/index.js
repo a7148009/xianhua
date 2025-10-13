@@ -40,6 +40,9 @@ Page({
     // 变量数据
     searchPlaceholder: '搜索鲜花、公司信息', // 搜索框提示
     workContentLabel: '鲜花信息', // 鲜花信息标签
+
+    // 管理员权限
+    isAdmin: false, // 是否是管理员
   },
 
   async onLoad() {
@@ -47,26 +50,56 @@ Page({
     const startTime = Date.now();
 
     // ========================================
-    // 步骤0: 立即同步设置页面标题（避免闪烁）
+    // 步骤0: 检查用户权限
+    // ========================================
+    this.checkUserRole();
+
+    // ========================================
+    // 步骤1: 立即同步设置页面标题（避免闪烁）
     // ========================================
     this.setPageTitleSync();
 
     // ========================================
-    // 步骤1: 加载变量配置
+    // 步骤2: 加载变量配置
     // ========================================
     this.loadVariables();
 
     // ========================================
-    // 步骤2: 立即尝试读取缓存（秒开关键）
+    // 步骤3: 立即尝试读取缓存（秒开关键）
     // ========================================
     this.loadFromCache();
 
     // ========================================
-    // 步骤3: 后台异步加载最新数据
+    // 步骤4: 后台异步加载最新数据
     // ========================================
     this.loadFreshData();
 
     console.log(`⏱️ [性能] onLoad执行完成，耗时: ${Date.now() - startTime}ms`);
+  },
+
+  /**
+   * 检查用户角色
+   */
+  checkUserRole() {
+    try {
+      const userInfo = wx.getStorageSync('userInfo');
+      if (userInfo && userInfo.role === 'admin') {
+        this.setData({
+          isAdmin: true
+        });
+        console.log('👑 [权限] 检测到管理员权限');
+      } else {
+        this.setData({
+          isAdmin: false
+        });
+        console.log('👤 [权限] 普通用户权限');
+      }
+    } catch (error) {
+      console.error('[权限] 检查用户角色失败:', error);
+      this.setData({
+        isAdmin: false
+      });
+    }
   },
 
   /**
@@ -265,7 +298,7 @@ Page({
   },
 
   /**
-   * 加载花卉/职位列表
+   * 加载鲜花列表
    */
   async loadFlowerList(refresh = false) {
     if (this.loading) return;
@@ -320,6 +353,35 @@ Page({
         sortBy: sortBy
       };
 
+      // 添加城市筛选参数（后端筛选）
+      if (this.data.cityFilterActive) {
+        params.city = this.data.currentCity || '昆明市';
+        console.log('[index] 添加城市筛选参数:', params.city);
+      }
+
+      // 添加距离筛选参数（后端筛选）
+      if (this.data.currentDistance && this.data.userLocation) {
+        params.userLatitude = this.data.userLocation.latitude;
+        params.userLongitude = this.data.userLocation.longitude;
+        params.maxDistance = parseFloat(this.data.currentDistance);
+        console.log('[index] 添加距离筛选参数:', {
+          latitude: params.userLatitude,
+          longitude: params.userLongitude,
+          maxDistance: params.maxDistance
+        });
+      }
+
+      // 附近排序需要传递用户位置（后端排序）
+      if (this.data.currentSort === 'nearby' && this.data.userLocation) {
+        params.userLatitude = this.data.userLocation.latitude;
+        params.userLongitude = this.data.userLocation.longitude;
+        params.sortBy = 'nearby'; // 告诉后端使用地理位置排序
+        console.log('[index] 附近排序，传递用户位置:', {
+          latitude: params.userLatitude,
+          longitude: params.userLongitude
+        });
+      }
+
       console.log('[index] 调用云函数 getItemList，参数:', params);
 
       const result = await cloudAPI.getItemList(params);
@@ -354,17 +416,26 @@ Page({
 
           // 注意：不再补充默认标签，直接使用数据库中的标签数据
 
-          // 处理工作内容预览：直接使用发布者输入的内容，用2个空格间隔
-          let descriptionPreview = '';
+          // 处理工作内容预览：只显示前2条，分别处理为数组（每条一行）
+          let descriptionArray = [];
           if (Array.isArray(item.description) && item.description.length > 0) {
-            // 直接使用原始内容，不添加序号，用2个空格间隔
-            descriptionPreview = item.description
-              .map(text => typeof text === 'string' ? text.trim() : text)
-              .filter(text => text) // 过滤掉空字符串
-              .join('  '); // 用2个空格连接各条目
+            // 取前2条，每条单独显示一行
+            descriptionArray = item.description
+              .slice(0, 2)  // 只取前2条
+              .map(text => {
+                // 处理每一条：去除首尾空白，去除序号（如"1、"、"2."等）
+                const cleanText = typeof text === 'string' ? text.trim() : String(text);
+                // 移除开头的序号格式：1、2、3、或 1. 2. 3. 等
+                return cleanText.replace(/^[\d]+[、.]\s*/, '');
+              })
+              .filter(text => text);  // 过滤掉空字符串
           } else if (typeof item.description === 'string') {
-            // 如果是字符串，直接使用
-            descriptionPreview = item.description.trim();
+            // 如果是字符串，直接使用（移除可能的序号）
+            const cleanText = item.description.trim();
+            const cleaned = cleanText.replace(/^[\d]+[、.]\s*/, '');
+            if (cleaned) {
+              descriptionArray = [cleaned];
+            }
           }
 
           return {
@@ -375,77 +446,19 @@ Page({
             isVIP,
             categories, // 多分类数组（用于显示）
             tags: tags,  // 标签对象数组：[{_id?, name}, ...]
-            descriptionPreview // 工作内容预览（前2条，横向显示）
+            descriptionArray // 工作内容预览数组（前2条，每条一行）
           };
         });
 
         let newList = refresh ? processedData : [...this.data.jobList, ...processedData];
 
-        // 城市筛选：如果激活了昆明筛选，只显示昆明范围内的信息
-        if (this.data.cityFilterActive) {
-          newList = newList.filter(item => {
-            // 检查公司地址是否包含"昆明"
-            const address = item.company_address || item.address || '';
-            const city = item.city || '';
-            const area = item.area || '';
-
-            // 判断是否在昆明范围内（检查地址、城市、区域字段）
-            const isInKunming =
-              address.includes('昆明') ||
-              city.includes('昆明') ||
-              area.includes('昆明') ||
-              (item.latitude >= 24.5 && item.latitude <= 26.0 &&
-               item.longitude >= 102.0 && item.longitude <= 103.5);
-
-            return isInKunming;
-          });
-          console.log(`[index] 城市筛选完成，昆明范围内有${newList.length}个职位`);
-        }
-
-        // 如果是"附近"排序或有距离筛选，需要计算距离
-        if ((this.data.currentSort === 'nearby' || this.data.currentDistance) && this.data.userLocation) {
-          const userLat = this.data.userLocation.latitude;
-          const userLon = this.data.userLocation.longitude;
-
-          // 为每个item计算距离
-          newList = newList.map(item => {
-            const distance = this.calculateDistance(
-              userLat,
-              userLon,
-              item.latitude || 25.040609,  // 默认昆明纬度
-              item.longitude || 102.712251  // 默认昆明经度
-            );
-            return {
-              ...item,
-              distance: distance,
-              distanceText: distance < 1 ? `${Math.round(distance * 1000)}m` : `${distance.toFixed(1)}km`
-            };
-          });
-
-          // 如果有距离筛选，进行过滤
-          if (this.data.currentDistance) {
-            const maxDistance = parseFloat(this.data.currentDistance);
-            newList = newList.filter(item => item.distance <= maxDistance);
-            console.log(`[index] 距离筛选完成，${maxDistance}公里内有${newList.length}个职位`);
-          }
-
-          // 如果是"附近"排序或有距离筛选，按距离排序（近到远）
-          if (this.data.currentSort === 'nearby' || this.data.currentDistance) {
-            newList.sort((a, b) => a.distance - b.distance);
-            console.log('[index] 距离排序完成，最近的3个职位:', newList.slice(0, 3).map(item => ({
-              title: item.title,
-              distance: item.distanceText
-            })));
-          }
-        }
-
-        // 计算实际显示的数量（考虑前端筛选后的结果）
-        const actualTotalCount = newList.length;
+        // 注意：城市筛选和距离筛选已经在后端完成，这里不需要再做前端筛选
+        // 后端已经返回筛选后的数据和正确的 total 值
 
         // 立即显示列表并隐藏骨架屏
         this.setData({
           jobList: newList,
-          totalCount: actualTotalCount,  // 使用前端筛选后的实际数量
+          totalCount: result.total || 0,  // 使用后端返回的 total（已考虑所有筛选条件）
           hasMore: newList.length < (result.total || 0),
           showSkeleton: false // 数据加载完成，隐藏骨架屏
         });
@@ -487,21 +500,45 @@ Page({
   },
 
   /**
-   * 类型选择（带VIP权限检查）
+   * 类型选择（带VIP权限检查 - 优化版：先更新UI，后验证权限）
    */
-  async onTypeChange(e) {
+  onTypeChange(e) {
     const typeId = e.currentTarget.dataset.id;      // 获取分类ID（升级后）
     const typeName = e.currentTarget.dataset.name;  // 获取分类名称
     const isVIP = e.currentTarget.dataset.isVip;    // 是否是VIP分类
 
     console.log('[index] 选择分类 - id:', typeId, 'name:', typeName, 'isVIP:', isVIP);
 
-    // 如果是VIP分类，需要检查用户VIP权限
-    if (isVIP) {
+    // 保存旧状态（用于可能的回滚）
+    const oldType = this.data.currentType;
+    const oldTypeName = this.data.currentTypeName;
+
+    // 💡 性能优化1：立即更新UI（提供即时视觉反馈）
+    if (typeId === this.data.currentType) {
+      // 取消选中
+      this.setData({
+        currentType: '',
+        currentTypeName: ''
+      });
+    } else {
+      this.setData({
+        currentType: typeId,       // 保存分类ID（升级后）
+        currentTypeName: typeName  // 保存分类名称（用于显示）
+      });
+    }
+
+    // 如果是VIP分类且是新选中（不是取消选中），需要检查用户VIP权限
+    if (isVIP && typeId !== oldType) {
       try {
         // 检查用户登录状态
         const userInfo = wx.getStorageSync('userInfo');
         if (!userInfo || !userInfo.openid) {
+          // 💡 性能优化2：权限不足时回滚UI状态
+          this.setData({
+            currentType: oldType,
+            currentTypeName: oldTypeName
+          });
+
           wx.showModal({
             title: '需要登录',
             content: '请先登录后再使用VIP筛选功能',
@@ -517,25 +554,48 @@ Page({
           return;
         }
 
-        // 调用云函数检查VIP状态
-        const result = await wx.cloud.callFunction({
+        // 💡 性能优化3：异步检查VIP状态（不阻塞UI）
+        wx.cloud.callFunction({
           name: 'vipManager',
           data: {
             action: 'checkVIP',
             openid: userInfo.openid
           }
+        }).then(result => {
+          if (!result.result || !result.result.success || !result.result.isVIP) {
+            // 不是VIP，回滚UI并显示弹窗
+            this.setData({
+              currentType: oldType,
+              currentTypeName: oldTypeName
+            });
+            this.showVIPPrivilegeModal();
+          } else {
+            // 是VIP，加载列表
+            console.log('[index] VIP权限验证通过，允许筛选');
+            this.loadFlowerList(true);
+          }
+        }).catch(error => {
+          console.error('[index] 检查VIP状态失败:', error);
+          // 权限检查失败，回滚UI
+          this.setData({
+            currentType: oldType,
+            currentTypeName: oldTypeName
+          });
+          wx.showToast({
+            title: '检查权限失败',
+            icon: 'none'
+          });
         });
 
-        if (!result.result || !result.result.success || !result.result.isVIP) {
-          // 不是VIP，显示VIP特权弹窗
-          this.showVIPPrivilegeModal();
-          return;
-        }
-
-        // 是VIP，继续筛选
-        console.log('[index] VIP权限验证通过，允许筛选');
+        // 注意：这里return，不再执行后面的loadFlowerList
+        return;
       } catch (error) {
         console.error('[index] 检查VIP状态失败:', error);
+        // 回滚UI
+        this.setData({
+          currentType: oldType,
+          currentTypeName: oldTypeName
+        });
         wx.showToast({
           title: '检查权限失败',
           icon: 'none'
@@ -544,20 +604,7 @@ Page({
       }
     }
 
-    // 普通分类或VIP权限验证通过，执行筛选
-    if (typeId === this.data.currentType) {
-      // 取消选中
-      this.setData({
-        currentType: '',
-        currentTypeName: ''
-      });
-    } else {
-      this.setData({
-        currentType: typeId,       // 保存分类ID（升级后）
-        currentTypeName: typeName  // 保存分类名称（用于显示）
-      });
-    }
-
+    // 普通分类或取消选中VIP分类，直接加载列表
     console.log('[index] 当前筛选 - currentType:', this.data.currentType, 'currentArea:', this.data.currentArea);
     this.loadFlowerList(true);
   },
@@ -601,6 +648,16 @@ Page({
    * 搜索确认
    */
   onSearchConfirm() {
+    this.loadFlowerList(true);
+  },
+
+  /**
+   * 清空搜索
+   */
+  onClearSearch() {
+    this.setData({
+      keyword: ''
+    });
     this.loadFlowerList(true);
   },
 
@@ -1027,5 +1084,136 @@ Page({
 
     // 刷新列表
     this.loadFlowerList(true);
+  },
+
+  /**
+   * 管理员长按卡片（显示编辑/删除菜单）
+   */
+  onItemLongPress(e) {
+    // 只有管理员才能长按操作
+    if (!this.data.isAdmin) {
+      return;
+    }
+
+    const item = e.currentTarget.dataset.item;
+    console.log('[index] 管理员长按信息:', item.hash_id);
+
+    wx.showActionSheet({
+      itemList: ['编辑信息', '删除信息'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          // 编辑
+          this.editItem(item);
+        } else if (res.tapIndex === 1) {
+          // 删除
+          this.deleteItem(item);
+        }
+      },
+      fail: (err) => {
+        console.log('[index] 用户取消操作');
+      }
+    });
+  },
+
+  /**
+   * 编辑信息（跳转到发布页并回填数据）
+   */
+  editItem(item) {
+    console.log('[index] 编辑信息:', item.hash_id);
+
+    // 因为发布页在 tabBar 中，不能使用 wx.navigateTo
+    // 需要先将数据存储到本地，然后使用 wx.switchTab 跳转
+    try {
+      // 将编辑数据存储到本地
+      wx.setStorageSync('editItemData', {
+        mode: 'edit',
+        hash_id: item.hash_id
+      });
+
+      console.log('[index] 已保存编辑数据，准备跳转到发布页');
+
+      // 使用 switchTab 跳转到 tabBar 页面
+      wx.switchTab({
+        url: '/pages/publish/publish',
+        success: () => {
+          console.log('[index] 跳转成功');
+        },
+        fail: (error) => {
+          console.error('[index] 跳转失败:', error);
+          wx.showToast({
+            title: `跳转失败: ${error.errMsg}`,
+            icon: 'none',
+            duration: 3000
+          });
+        }
+      });
+    } catch (error) {
+      console.error('[index] 保存编辑数据失败:', error);
+      wx.showToast({
+        title: '操作失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  /**
+   * 删除信息
+   */
+  deleteItem(item) {
+    console.log('[index] 删除信息:', item.hash_id);
+
+    wx.showModal({
+      title: '确认删除',
+      content: `确定要删除"${item.title}"吗？删除后无法恢复。`,
+      confirmText: '删除',
+      confirmColor: '#ff4d4f',
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            wx.showLoading({ title: '删除中...' });
+
+            // 调用云函数删除信息
+            const result = await wx.cloud.callFunction({
+              name: 'deleteFlowerInfo',
+              data: {
+                hash_id: item.hash_id
+              }
+            });
+
+            wx.hideLoading();
+
+            if (result.result && result.result.success) {
+              wx.showToast({
+                title: '删除成功',
+                icon: 'success'
+              });
+
+              // 从列表中移除该项
+              const newList = this.data.jobList.filter(job => job.hash_id !== item.hash_id);
+              this.setData({
+                jobList: newList,
+                totalCount: this.data.totalCount - 1
+              });
+
+              console.log('[index] 删除成功，已从列表移除');
+            } else {
+              wx.showModal({
+                title: '删除失败',
+                content: result.result?.message || '请稍后重试',
+                showCancel: false
+              });
+            }
+          } catch (error) {
+            console.error('[index] 删除信息失败:', error);
+            wx.hideLoading();
+            wx.showModal({
+              title: '删除失败',
+              content: error.message || '请确保已上传deleteFlowerInfo云函数',
+              showCancel: false
+            });
+          }
+        }
+      }
+    });
   }
 });

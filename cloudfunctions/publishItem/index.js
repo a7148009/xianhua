@@ -215,8 +215,16 @@ async function updateItem(event, openid) {
 
     const item = itemResult.data[0];
 
-    // 验证是否是发布者本人
-    if (item.publisher_openid !== openid) {
+    // 检查是否是管理员
+    const userResult = await db.collection('users').where({
+      openid: openid
+    }).get();
+
+    const isAdmin = userResult.data.length > 0 &&
+                    (userResult.data[0].role === 'admin' || userResult.data[0].is_admin === true);
+
+    // 验证是否是发布者本人或管理员
+    if (item.publisher_openid !== openid && !isAdmin) {
       return {
         success: false,
         message: '无权修改此信息'

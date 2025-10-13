@@ -999,6 +999,19 @@ Page({
   },
 
   /**
+   * 查看用户订单
+   */
+  onViewOrders(e) {
+    const user = e.currentTarget.dataset.user;
+    console.log('查看用户订单:', user.nickName, user.openid);
+
+    // 跳转到订单管理页面，传递用户openid作为筛选条件
+    wx.navigateTo({
+      url: `/pages/admin/order-management/order-management?openid=${user.openid}&nickName=${encodeURIComponent(user.nickName || '微信用户')}`
+    });
+  },
+
+  /**
    * TabBar 切换
    */
   switchTab(e) {

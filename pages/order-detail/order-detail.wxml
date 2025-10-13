@@ -1,0 +1,118 @@
+<view class="container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 订单详情 -->
+  <view wx:else class="detail-container">
+    <!-- 订单状态卡片 -->
+    <view class="status-card">
+      <view class="status-icon {{order.status === 'refunded' ? 'refunded' : (order.is_expired ? 'expired' : 'active')}}">
+        {{order.status === 'refunded' ? '❌' : (order.is_expired ? '⏰' : '✅')}}
+      </view>
+      <text class="status-text">{{order.status_text}}</text>
+      <text class="status-desc" wx:if="{{order.status === 'paid' && !order.is_expired}}">
+        VIP有效期至 {{order.vip_end_date_str}}
+      </text>
+      <text class="status-desc" wx:elif="{{order.is_expired}}">
+        已于 {{order.vip_end_date_str}} 过期
+      </text>
+      <text class="status-desc" wx:elif="{{order.status === 'refunded'}}">
+        已于 {{order.refund_time_str}} 退款
+      </text>
+    </view>
+
+    <!-- 订单信息 -->
+    <view class="info-section">
+      <view class="section-title">订单信息</view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="item-label">订单号</text>
+          <view class="item-value-row">
+            <text class="item-value">{{order.order_no}}</text>
+            <button class="copy-btn" bindtap="copyOrderNo">复制</button>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="item-label">支付金额</text>
+          <text class="item-value price">¥{{order.amount_yuan}}</text>
+        </view>
+        <view class="info-item">
+          <text class="item-label">VIP时长</text>
+          <text class="item-value">{{order.vip_duration}}天</text>
+        </view>
+        <view class="info-item">
+          <text class="item-label">创建时间</text>
+          <text class="item-value">{{order.create_time_str}}</text>
+        </view>
+        <view class="info-item">
+          <text class="item-label">支付时间</text>
+          <text class="item-value">{{order.pay_time_str}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- VIP有效期 -->
+    <view class="info-section">
+      <view class="section-title">VIP有效期</view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="item-label">开始时间</text>
+          <text class="item-value">{{order.vip_start_date_str}}</text>
+        </view>
+        <view class="info-item">
+          <text class="item-label">结束时间</text>
+          <text class="item-value">{{order.vip_end_date_str}}</text>
+        </view>
+        <view class="info-item">
+          <text class="item-label">当前状态</text>
+          <text class="item-value {{order.is_expired ? 'expired-text' : 'active-text'}}">
+            {{order.is_expired ? '已过期' : '使用中'}}
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 支付详情 -->
+    <view class="info-section">
+      <view class="section-title">支付详情</view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="item-label">微信支付交易号</text>
+          <view class="item-value-row">
+            <text class="item-value small">{{order.transaction_id}}</text>
+            <button class="copy-btn" bindtap="copyTransactionId">复制</button>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 退款信息（仅退款订单显示） -->
+    <view wx:if="{{order.status === 'refunded'}}" class="info-section refund-section">
+      <view class="section-title">退款信息</view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="item-label">退款时间</text>
+          <text class="item-value">{{order.refund_time_str}}</text>
+        </view>
+        <view class="info-item" wx:if="{{order.refund_reason}}">
+          <text class="item-label">退款原因</text>
+          <text class="item-value">{{order.refund_reason}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作按钮 -->
+    <view class="bottom-actions">
+      <button class="action-btn secondary" bindtap="contactService">
+        <text class="btn-icon">📞</text>
+        <text>联系客服</text>
+      </button>
+      <button class="action-btn primary" bindtap="navigateToOrders">
+        <text class="btn-icon">📋</text>
+        <text>返回订单列表</text>
+      </button>
+    </view>
+  </view>
+</view>

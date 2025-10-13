@@ -1,0 +1,93 @@
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">我的订单</text>
+  </view>
+
+  <!-- 标签筛选 -->
+  <view class="filter-tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="tab-item {{currentTab === item.key ? 'active' : ''}}"
+      bindtap="onTabChange"
+      data-key="{{item.key}}"
+    >
+      <text class="tab-text">{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- 订单列表 -->
+  <view class="order-list">
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="loading-state">
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:elif="{{orders.length === 0}}" class="empty-state">
+      <view class="empty-icon">📋</view>
+      <text class="empty-text">暂无订单</text>
+      <text class="empty-hint">去购买VIP会员享受更多服务吧</text>
+      <button class="buy-vip-btn" bindtap="navigateToBuyVIP">立即购买VIP</button>
+    </view>
+
+    <!-- 订单卡片 -->
+    <view wx:else>
+      <view
+        wx:for="{{orders}}"
+        wx:key="_id"
+        class="order-card"
+        bindtap="viewOrderDetail"
+        data-order-no="{{item.order_no}}"
+      >
+        <!-- 订单头部 -->
+        <view class="order-header">
+          <view class="order-no">
+            <text class="label">订单号：</text>
+            <text class="value">{{item.order_no}}</text>
+          </view>
+          <view class="order-status {{item.status === 'refunded' ? 'refunded' : (item.is_expired ? 'expired' : 'active')}}">
+            {{item.status_text}}
+          </view>
+        </view>
+
+        <!-- 订单内容 -->
+        <view class="order-content">
+          <view class="order-info-row">
+            <text class="info-label">支付金额</text>
+            <text class="info-value price">¥{{item.amount_yuan}}</text>
+          </view>
+          <view class="order-info-row">
+            <text class="info-label">VIP时长</text>
+            <text class="info-value">{{item.vip_duration}}天</text>
+          </view>
+          <view class="order-info-row">
+            <text class="info-label">支付时间</text>
+            <text class="info-value">{{item.pay_time_str}}</text>
+          </view>
+          <view class="order-info-row">
+            <text class="info-label">VIP有效期</text>
+            <text class="info-value">{{item.vip_start_date_str}} 至 {{item.vip_end_date_str}}</text>
+          </view>
+        </view>
+
+        <!-- 订单操作 -->
+        <view class="order-actions">
+          <button class="action-btn detail" catchtap="viewOrderDetail" data-order-no="{{item.order_no}}">
+            查看详情
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view wx:if="{{!loading && orders.length > 0 && hasMore}}" class="load-more" bindtap="loadMore">
+    <text class="load-more-text">加载更多</text>
+  </view>
+
+  <view wx:if="{{!loading && orders.length > 0 && !hasMore}}" class="no-more">
+    <text class="no-more-text">没有更多订单了</text>
+  </view>
+</view>

@@ -69,6 +69,15 @@
       </view>
       <view class="menu-arrow">></view>
     </view>
+
+    <view class="menu-item" bindtap="onMenuTap" data-action="orderManagement">
+      <view class="menu-icon">📦</view>
+      <view class="menu-content">
+        <text class="menu-title">订单管理</text>
+        <text class="menu-desc">管理VIP订单，查看订单统计</text>
+      </view>
+      <view class="menu-arrow">></view>
+    </view>
   </view>
 
   <!-- 管理员信息 -->

@@ -37,7 +37,8 @@
       "Bash(dir:*)",
       "Read(//c/Users/xyn/AppData/Roaming/**)",
       "Bash(claude --continue)",
-      "Read(//c/Users/xyn/**)"
+      "Read(//c/Users/xyn/**)",
+      "Bash(if [ -d \"cloudfunctions/vipOrderManager\" ])"
     ],
     "deny": [],
     "ask": []

@@ -16,8 +16,8 @@
   border: 2rpx dashed #ff9800;
 }
 
-/* 招聘条目 */
-.job-item {
+/* 鲜花信息条目 */
+.info-item {
   margin-bottom: 40rpx;
   padding: 30rpx;
   background: linear-gradient(135deg, #fffbf5 0%, #fff8f0 100%);
@@ -27,12 +27,12 @@
   position: relative;
 }
 
-.job-item:last-child {
+.info-item:last-child {
   margin-bottom: 0;
 }
 
-/* 招聘标题行 */
-.job-title {
+/* 鲜花信息标题行 */
+.info-title {
   display: flex;
   align-items: center;
   margin-bottom: 28rpx;
@@ -41,7 +41,7 @@
 }
 
 /* 红色序号标签 */
-.job-number {
+.info-number {
   flex-shrink: 0;
   min-width: 56rpx;
   height: 56rpx;
@@ -59,8 +59,8 @@
   border: 3rpx solid #ffffff;
 }
 
-/* 招聘职位名称 */
-.job-name {
+/* 鲜花信息标题 */
+.info-name {
   flex: 1;
   font-size: 36rpx;
   font-weight: bold;
@@ -69,8 +69,8 @@
   text-shadow: 1rpx 1rpx 2rpx rgba(0, 0, 0, 0.1);
 }
 
-/* 招聘详情文本 */
-.job-detail {
+/* 鲜花信息详情文本 */
+.info-detail {
   font-size: 30rpx;
   line-height: 2.2;
   color: #424242;
@@ -79,6 +79,50 @@
   word-break: break-all;
 }
 
-.job-detail:last-child {
+.info-detail:last-child {
   margin-bottom: 0;
+}
+
+/* 联系方式脱敏样式 */
+.sensitive-info {
+  color: #ff6b6b !important;
+  font-weight: bold;
+  position: relative;
+  padding: 8rpx 12rpx;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+  border-radius: 8rpx;
+  border: 1rpx dashed #ff6b6b;
+  cursor: pointer;
+}
+
+.sensitive-info::after {
+  content: '🔒';
+  margin-left: 8rpx;
+  font-size: 24rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.loading-text {
+  font-size: 32rpx;
+  color: #999;
+}
+
+/* 空数据提示 */
+.empty-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #999;
 }

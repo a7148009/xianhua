@@ -46,12 +46,12 @@ async function getMoreInfoList(event) {
   try {
     const { page = 1, limit = 50 } = event;
 
-    // 查询数据
+    // 查询数据 - 使用导入的字段结构：is_active, order
     const { data } = await db.collection('more_info')
       .where({
-        isVisible: true  // 只显示可见的信息
+        is_active: true  // 只显示启用的信息
       })
-      .orderBy('sortOrder', 'asc')  // 按排序值升序
+      .orderBy('order', 'asc')  // 按order字段升序
       .skip((page - 1) * limit)
       .limit(limit)
       .get();
@@ -59,7 +59,7 @@ async function getMoreInfoList(event) {
     // 获取总数
     const { total } = await db.collection('more_info')
       .where({
-        isVisible: true
+        is_active: true
       })
       .count();
 

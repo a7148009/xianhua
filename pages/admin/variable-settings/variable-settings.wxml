@@ -144,6 +144,26 @@
         />
       </view>
     </view>
+
+    <!-- TabBar导航相关变量 -->
+    <view class="variable-section">
+      <view class="section-title">底部导航栏相关</view>
+
+      <view class="variable-item">
+        <view class="variable-header">
+          <text class="variable-number">10</text>
+          <text class="variable-label">"更多"标签名称</text>
+        </view>
+        <input
+          class="variable-input"
+          value="{{variables.more_tab_name}}"
+          data-key="more_tab_name"
+          bindinput="onInputChange"
+          placeholder="请输入导航栏名称"
+        />
+        <view class="variable-tip">修改底部导航栏第4个标签的显示名称</view>
+      </view>
+    </view>
   </view>
 
   <!-- 底部操作按钮 -->

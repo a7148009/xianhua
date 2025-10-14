@@ -38,7 +38,12 @@
       "Read(//c/Users/xyn/AppData/Roaming/**)",
       "Bash(claude --continue)",
       "Read(//c/Users/xyn/**)",
-      "Bash(if [ -d \"cloudfunctions/vipOrderManager\" ])"
+      "Bash(if [ -d \"cloudfunctions/vipOrderManager\" ])",
+      "Bash(if [ -d \"cloudfunctions/moreInfoManager\" ])",
+      "Bash(if [ -f \"package.json\" ])",
+      "Bash(then cat package.json)",
+      "Bash(else echo \"No package.json in root\")",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []

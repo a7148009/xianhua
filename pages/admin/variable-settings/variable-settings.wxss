@@ -124,6 +124,14 @@
   border-color: #007aff;
 }
 
+/* 提示文字 */
+.variable-tip {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #999999;
+  line-height: 1.5;
+}
+
 /* 底部操作按钮 */
 .footer-actions {
   position: fixed;

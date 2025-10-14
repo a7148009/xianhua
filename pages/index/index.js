@@ -932,6 +932,9 @@ Page({
       this.loadSystemConfig(),
       this.loadFlowerList(true)
     ]).then(() => {
+      // 刷新 TabBar 变量
+      this.refreshTabBar();
+
       wx.stopPullDownRefresh();
       // 显示刷新成功提示
       wx.showToast({
@@ -950,6 +953,19 @@ Page({
       });
       console.error('[index] 下拉刷新失败:', error);
     });
+  },
+
+  /**
+   * 刷新 TabBar 变量
+   */
+  refreshTabBar() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      const tabBar = this.getTabBar();
+      if (tabBar.loadVariables) {
+        tabBar.loadVariables();
+        console.log('🔄 [刷新] TabBar变量已刷新');
+      }
+    }
   },
 
   /**

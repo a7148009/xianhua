@@ -1,14 +1,31 @@
 <view class="article-container">
-  <view class="article-content">
-    <!-- 招聘信息列表 -->
-    <view wx:for="{{jobList}}" wx:key="index" class="job-item">
-      <view class="job-title">
-        <text class="job-number">{{item.number}}</text>
-        <text class="job-name">{{item.title}}</text>
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 内容区域 -->
+  <view wx:else class="article-content">
+    <!-- 鲜花信息列表 -->
+    <view wx:for="{{infoList}}" wx:key="_id" class="info-item">
+      <view class="info-title">
+        <text class="info-number">{{item.number}}</text>
+        <text class="info-name">{{item.title}}</text>
       </view>
-      <view wx:for="{{item.details}}" wx:key="index" wx:for-item="detail" class="job-detail">
-        {{detail}}
+
+      <!-- 详情列表 -->
+      <view wx:for="{{item.details}}" wx:key="index" wx:for-item="detail"
+            class="info-detail {{detail.isSensitive && !detail.isVisible ? 'sensitive-info' : ''}}"
+            data-is-sensitive="{{detail.isSensitive}}"
+            data-is-visible="{{detail.isVisible}}"
+            bindtap="onSensitiveInfoTap">
+        {{detail.text}}
       </view>
+    </view>
+
+    <!-- 空数据提示 -->
+    <view wx:if="{{infoList.length === 0}}" class="empty-container">
+      <text class="empty-text">暂无鲜花信息</text>
     </view>
   </view>
 </view>

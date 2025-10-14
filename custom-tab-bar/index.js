@@ -64,11 +64,13 @@ Component({
     async loadVariables() {
       try {
         const variables = await variableManager.getAllVariables();
-        const tabName = variables.home_tab_name || '找鲜花';
+        const homeTabName = variables.home_tab_name || '找鲜花';
+        const moreTabName = variables.more_tab_name || '更多';
 
-        // 更新第一个tab的文本
+        // 更新tab的文本
         const list = this.data.list;
-        list[0].text = tabName;
+        list[0].text = homeTabName;  // 首页tab
+        list[3].text = moreTabName;  // 更多tab
 
         this.setData({ list });
 

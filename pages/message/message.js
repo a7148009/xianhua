@@ -1,308 +1,16 @@
 Page({
   data: {
-    jobList: [
-      {
-        number: '1',
-        title: '招全职导购员',
-        details: [
-          '工资待遇：保底3500加抽成另加吃住',
-          '工作地点：南屏街',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '2',
-        title: '招日结小时工',
-        details: [
-          '薪资待遇：18/时（包午餐）',
-          '工作时间：上午8:30-12:00，下午13:00-17:00 可以只做上午或下午',
-          '工作地点：昆明呈贡',
-          '工作内容：普工，纯手工活，简单，分拣鲜花',
-          '工作要求：18-60岁男女不限',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '3',
-        title: '招切花分拣师傅',
-        details: [
-          '薪资待遇：4500元（试用期3500）底薪（包吃住）',
-          '工作时间：早上6点到晚上6点（中午休息2小时，下午休息1小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：玫瑰精包分选工',
-          '工作要求：吃苦耐劳，形象良好，有耐心',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '4',
-        title: '招玫瑰初加工师傅',
-        details: [
-          '薪资待遇：按件计酬，100/扎，不限件数，多劳多得，月入5000到20000之间（包吃）',
-          '工作时间：早上6点到晚上6点（中午休息2小时，下午休息1小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：玫瑰花剪枝、打刺、分剪花头等简单体力劳动',
-          '工作要求：吃苦耐劳，形象良好，有耐心',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '5',
-        title: '招全职线上线下客服',
-        details: [
-          '薪资待遇：底薪3000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司产品销售及推广，客户维护，订单处理',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的沟通能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '6',
-        title: '招文案策划',
-        details: [
-          '薪资待遇：底薪4000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司产品文案策划、推广、客户维护',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的文案策划能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '7',
-        title: '招拍照摄影',
-        details: [
-          '薪资待遇：底薪4000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司产品拍照摄影、修图、视频剪辑',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的摄影能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '8',
-        title: '招直播',
-        details: [
-          '薪资待遇：底薪4000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司产品直播销售及推广，客户维护',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的沟通能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '9',
-        title: '招短视频运营',
-        details: [
-          '薪资待遇：底薪4000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司短视频运营、推广、客户维护',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的短视频运营能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '10',
-        title: '招美工设计',
-        details: [
-          '薪资待遇：底薪4000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司产品美工设计、推广、客户维护',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的美工设计能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '11',
-        title: '招行政助理',
-        details: [
-          '薪资待遇：底薪3000-4000（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司行政事务、人事管理、办公室日常事务处理',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的沟通能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '12',
-        title: '招财务会计',
-        details: [
-          '薪资待遇：底薪4000-5000（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司财务管理、账务处理、报表编制',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的财务能力，有相关工作经验优先，持有会计证优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '13',
-        title: '招仓库管理员',
-        details: [
-          '薪资待遇：底薪3000-4000（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责仓库管理、货物进出库、库存管理',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的仓库管理能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '14',
-        title: '招司机（C1照）',
-        details: [
-          '薪资待遇：底薪4000-5000（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司货物配送、客户拜访',
-          '工作要求：吃苦耐劳，形象良好，有耐心，持有C1驾照，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '15',
-        title: '招搬运工（装卸工）',
-        details: [
-          '薪资待遇：底薪3500-4500（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责仓库货物搬运、装卸',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '16',
-        title: '招保洁员',
-        details: [
-          '薪资待遇：底薪2500-3000（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司环境卫生清洁',
-          '工作要求：吃苦耐劳，形象良好，有耐心',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '17',
-        title: '招保安',
-        details: [
-          '薪资待遇：底薪3000-3500（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司安全保卫工作',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '18',
-        title: '招厨师',
-        details: [
-          '薪资待遇：底薪4000-5000（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司员工餐饮制作',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的厨艺，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '19',
-        title: '招采购员',
-        details: [
-          '薪资待遇：底薪3000-4000（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司物资采购、供应商管理',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的沟通能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '20',
-        title: '招销售经理',
-        details: [
-          '薪资待遇：底薪5000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司产品销售及推广，客户维护，团队管理',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的沟通能力和管理能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '21',
-        title: '招运营经理',
-        details: [
-          '薪资待遇：底薪6000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司整体运营管理、团队管理',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的沟通能力和管理能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '22',
-        title: '招项目经理',
-        details: [
-          '薪资待遇：底薪7000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司项目管理、团队管理',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的沟通能力和管理能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '23',
-        title: '招区域经理',
-        details: [
-          '薪资待遇：底薪8000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司区域管理、团队管理',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的沟通能力和管理能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '24',
-        title: '招总经理',
-        details: [
-          '薪资待遇：底薪10000提成（试用期70%，试用期1-3个月）（包午餐）',
-          '工作时间：早上8点到晚上6点（中午休息2小时）',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司整体运营管理、战略规划',
-          '工作要求：吃苦耐劳，形象良好，有耐心，有一定的沟通能力和管理能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      },
-      {
-        number: '25',
-        title: '招合伙人',
-        details: [
-          '薪资待遇：面议',
-          '工作时间：灵活',
-          '工作地点：昆明呈贡',
-          '工作内容：负责公司整体运营管理、战略规划、投资决策',
-          '工作要求：有一定的资金实力和管理能力，有相关工作经验优先',
-          '联系电话：15758527475 杨师'
-        ]
-      }
-    ]
+    infoList: [], // 从数据库加载鲜花信息列表
+    loading: true,
+    isVIP: false, // 是否是VIP用户
+    isAdmin: false // 是否是管理员
   },
 
-  onLoad() {
-    // 数据已经在data中定义好了
+  async onLoad() {
+    // 检查用户权限
+    await this.checkUserPermission();
+    // 加载鲜花信息数据
+    await this.loadMoreInfo();
   },
 
   onShow() {
@@ -312,5 +20,264 @@ Page({
         selected: 3
       });
     }
+  },
+
+  /**
+   * 检查用户权限（VIP或管理员）
+   */
+  async checkUserPermission() {
+    try {
+      const userInfo = wx.getStorageSync('userInfo');
+
+      // 检查是否是管理员
+      if (userInfo && userInfo.role === 'admin') {
+        this.setData({
+          isAdmin: true,
+          isVIP: true // 管理员默认拥有VIP权限
+        });
+        console.log('[message] 管理员权限');
+        return;
+      }
+
+      // 检查是否是VIP
+      if (userInfo && userInfo.openid) {
+        const result = await wx.cloud.callFunction({
+          name: 'vipManager',
+          data: {
+            action: 'checkVIP',
+            openid: userInfo.openid
+          }
+        });
+
+        if (result.result && result.result.success && result.result.isVIP) {
+          this.setData({ isVIP: true });
+          console.log('[message] VIP用户');
+        } else {
+          this.setData({ isVIP: false });
+          console.log('[message] 普通用户');
+        }
+      } else {
+        this.setData({ isVIP: false });
+        console.log('[message] 未登录用户');
+      }
+    } catch (error) {
+      console.error('[message] 检查权限失败:', error);
+      this.setData({ isVIP: false, isAdmin: false });
+    }
+  },
+
+  /**
+   * 从数据库加载更多鲜花信息
+   */
+  async loadMoreInfo() {
+    try {
+      wx.showLoading({ title: '加载中...' });
+
+      const result = await wx.cloud.callFunction({
+        name: 'moreInfoManager',
+        data: {
+          action: 'getList',
+          page: 1,
+          limit: 100
+        }
+      });
+
+      wx.hideLoading();
+
+      if (result.result && result.result.success) {
+        const infoList = result.result.data.map(item => {
+          // 处理每一条details，智能识别并脱敏联系方式
+          const processedDetails = this.processDetails(item.details);
+
+          return {
+            ...item,
+            details: processedDetails
+          };
+        });
+
+        this.setData({
+          infoList: infoList,
+          loading: false
+        });
+
+        console.log('[message] 加载成功，共', infoList.length, '条鲜花信息');
+      } else {
+        wx.showToast({
+          title: '加载失败',
+          icon: 'none'
+        });
+        this.setData({ loading: false });
+      }
+    } catch (error) {
+      console.error('[message] 加载鲜花信息失败:', error);
+      wx.hideLoading();
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      });
+      this.setData({ loading: false });
+    }
+  },
+
+  /**
+   * 处理详情列表，智能识别联系方式（微信号和电话号码）
+   * @param {Array} details 详情数组
+   * @returns {Array} 处理后的详情数组
+   */
+  processDetails(details) {
+    if (!Array.isArray(details)) {
+      return [];
+    }
+
+    return details.map(detail => {
+      // 检测是否包含敏感信息（电话号码或微信号）
+      const hasSensitiveInfo = this.detectSensitiveInfo(detail);
+
+      if (hasSensitiveInfo) {
+        // 如果用户有权限，显示原文
+        if (this.data.isVIP || this.data.isAdmin) {
+          return {
+            text: detail,
+            isSensitive: true,
+            isVisible: true
+          };
+        } else {
+          // 普通用户，脱敏显示
+          return {
+            text: this.maskSensitiveInfo(detail),
+            originalText: detail, // 保存原文，用于点击时提示
+            isSensitive: true,
+            isVisible: false
+          };
+        }
+      } else {
+        // 非敏感信息，所有用户都能看到
+        return {
+          text: detail,
+          isSensitive: false,
+          isVisible: true
+        };
+      }
+    });
+  },
+
+  /**
+   * 智能检测联系方式（电话号码和微信号）
+   * @param {String} text 文本内容
+   * @returns {Boolean} 是否包含联系方式
+   */
+  detectSensitiveInfo(text) {
+    if (typeof text !== 'string') {
+      return false;
+    }
+
+    // 精准检测电话号码
+    const phonePatterns = [
+      /1[3-9]\d{9}/,                    // 11位手机号
+      /0\d{2,3}[-\s]?\d{7,8}/,         // 固定电话：010-12345678 或 0871-1234567（以0开头）
+      /[48]00[-\s]?\d{3}[-\s]?\d{4}/   // 400/800电话
+    ];
+
+    // 精准检测微信号
+    const wechatPatterns = [
+      /微信[号|：|:]\s*[a-zA-Z0-9_-]{6,20}/, // "微信号：xxx"
+      /wx[：|:]\s*[a-zA-Z0-9_-]{6,20}/i,     // "wx：xxx" (不区分大小写)
+      /weixin[：|:]\s*[a-zA-Z0-9_-]{6,20}/i, // "weixin：xxx"
+      /VX[：|:]\s*[a-zA-Z0-9_-]{6,20}/i      // "VX：xxx"
+    ];
+
+    // 检测电话号码
+    const hasPhone = phonePatterns.some(pattern => pattern.test(text));
+
+    // 检测微信号
+    const hasWechat = wechatPatterns.some(pattern => pattern.test(text));
+
+    // 联系方式关键词 + 明确的联系信息格式
+    const contactKeywords = ['联系电话', '联系方式', '电话', '手机'];
+    const hasContactKeyword = contactKeywords.some(keyword => text.includes(keyword));
+
+    // 只有同时包含联系关键词和手机号才判定为敏感
+    const hasContactInfo = hasContactKeyword && hasPhone;
+
+    return hasPhone || hasWechat || hasContactInfo;
+  },
+
+  /**
+   * 脱敏处理联系方式
+   * @param {String} text 原始文本
+   * @returns {String} 脱敏后的文本
+   */
+  maskSensitiveInfo(text) {
+    if (typeof text !== 'string') {
+      return text;
+    }
+
+    let maskedText = text;
+
+    // 脱敏电话号码：保留前3位和后4位
+    maskedText = maskedText.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+    maskedText = maskedText.replace(/1[3-9]\d{9}/, (match) => {
+      return match.substr(0, 3) + '****' + match.substr(7);
+    });
+
+    // 脱敏微信号：保留前2位和后2位
+    maskedText = maskedText.replace(/([a-zA-Z][a-zA-Z0-9_-]{1})[a-zA-Z0-9_-]{2,}([a-zA-Z0-9_-]{2})/, '$1***$2');
+
+    // 如果没有匹配到具体模式，显示通用提示
+    if (maskedText === text && this.detectSensitiveInfo(text)) {
+      maskedText = text.replace(/[a-zA-Z0-9_-]{6,}/g, '***');
+    }
+
+    return maskedText + ' (VIP可见)';
+  },
+
+  /**
+   * 点击联系方式（提示开通VIP）
+   */
+  onSensitiveInfoTap(e) {
+    const { isSensitive, isVisible } = e.currentTarget.dataset;
+
+    // 如果是联系方式且不可见，提示开通VIP
+    if (isSensitive && !isVisible) {
+      this.showVIPPrivilegeModal();
+    }
+  },
+
+  /**
+   * 显示VIP特权弹窗（与首页一致）
+   */
+  showVIPPrivilegeModal() {
+    const privileges = [
+      '查看VIP专属鲜花信息',
+      '获取VIP商家联系方式',
+      '优先查看高端鲜花资源',
+      '专属客服一对一服务',
+      '每日推荐精选信息'
+    ];
+
+    wx.showModal({
+      title: '开通VIP会员',
+      content: `VIP特权：\n${privileges.map((p, i) => `${i + 1}. ${p}`).join('\n')}\n\n立即开通VIP，畅享全部特权！`,
+      confirmText: '立即开通',
+      cancelText: '暂不开通',
+      success: (res) => {
+        if (res.confirm) {
+          // 跳转到VIP购买页面
+          wx.navigateTo({
+            url: '/pages/vip/vip-purchase/vip-purchase'
+          });
+        }
+      }
+    });
+  },
+
+  /**
+   * 下拉刷新鲜花信息
+   */
+  async onPullDownRefresh() {
+    console.log('[message] 下拉刷新鲜花信息');
+    await this.checkUserPermission();
+    await this.loadMoreInfo();
+    wx.stopPullDownRefresh();
   }
 });

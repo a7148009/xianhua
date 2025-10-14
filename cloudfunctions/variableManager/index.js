@@ -20,7 +20,13 @@ const defaultVariables = {
   detail_fee_notice: '鲜花配送费用明细公示',
   detail_safety_mode: '鲜花配送费用包括哪些项目？\n配送费用是否包含包装费用？\n订单取消后退款标准是什么？\n鲜花养护服务是否收费？',
   detail_safety_title: '鲜花平台交易保障',
-  detail_warning_text: '本平台严禁商家发布虚假鲜花信息、以次充好、虚标价格等违规行为。所有鲜花信息均需真实有效，严禁欺诈消费者。平台承诺对所有交易进行监管，如发现商家违规行为将立即下架并处罚。消费者如遇到商家违规，请立即向平台举报，我们将在24小时内处理并保障您的合法权益。'
+  detail_warning_text: '本平台严禁商家发布虚假鲜花信息、以次充好、虚标价格等违规行为。所有鲜花信息均需真实有效，严禁欺诈消费者。平台承诺对所有交易进行监管，如发现商家违规行为将立即下架并处罚。消费者如遇到商家违规，请立即向平台举报，我们将在24小时内处理并保障您的合法权益。',
+
+  // 公众号相关
+  official_account_name: '昆明鲜花招聘',
+  official_account_desc: '提供昆明地区最新最全的鲜花行业招聘信息',
+  official_account_qrcode: '',
+  official_account_template_id: ''
 };
 
 // 云函数入口函数

@@ -1,3 +1,122 @@
-﻿<view class="page-subscribe">
-  <text>订阅管理 页面构建中（TODO）</text>
+<view class="subscribe-page">
+  <!-- 顶部标题区 -->
+  <view class="header-section">
+    <view class="header-title">关注公众号</view>
+    <view class="header-subtitle">获取最新信息推送</view>
+  </view>
+
+  <!-- 关注方式列表 -->
+  <view class="methods-section">
+    <view class="section-title">
+      <view class="title-line"></view>
+      <text class="title-text">关注方式</text>
+      <view class="title-line"></view>
+    </view>
+
+    <!-- 方式1：搜索关注 -->
+    <view class="method-card">
+      <view class="method-header">
+        <view class="method-icon">🔍</view>
+        <view class="method-title">方式一：搜索关注</view>
+      </view>
+      <view class="method-steps">
+        <view class="step-item">
+          <view class="step-number">1</view>
+          <view class="step-content">
+            <view class="step-text">打开微信，点击顶部搜索框</view>
+          </view>
+        </view>
+        <view class="step-item">
+          <view class="step-number">2</view>
+          <view class="step-content">
+            <view class="step-text">输入公众号名称</view>
+            <view class="copy-box" bindtap="copyAccountName">
+              <text class="copy-text">{{officialAccountName}}</text>
+              <text class="copy-btn">复制</text>
+            </view>
+          </view>
+        </view>
+        <view class="step-item">
+          <view class="step-number">3</view>
+          <view class="step-content">
+            <view class="step-text">选择"公众号"分类</view>
+          </view>
+        </view>
+        <view class="step-item">
+          <view class="step-number">4</view>
+          <view class="step-content">
+            <view class="step-text">点击关注即可</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 方式2：长按识别二维码 -->
+    <view class="method-card">
+      <view class="method-header">
+        <view class="method-icon">📷</view>
+        <view class="method-title">方式二：长按识别二维码</view>
+      </view>
+      <view class="method-steps">
+        <view class="step-item">
+          <view class="step-number">1</view>
+          <view class="step-content">
+            <view class="step-text">点击下方二维码放大</view>
+          </view>
+        </view>
+        <view class="qrcode-container">
+          <image class="qrcode-image" src="{{qrcodeUrl}}" mode="aspectFit" bindtap="previewQRCode"></image>
+          <view class="qrcode-tip">点击图片放大后，长按识别二维码</view>
+        </view>
+        <view class="step-item">
+          <view class="step-number">2</view>
+          <view class="step-content">
+            <view class="step-text">在放大界面长按识别二维码</view>
+          </view>
+        </view>
+        <view class="step-item">
+          <view class="step-number">3</view>
+          <view class="step-content">
+            <view class="step-text">点击关注公众号</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 方式3：小程序内订阅 -->
+    <view class="method-card">
+      <view class="method-header">
+        <view class="method-icon">🔔</view>
+        <view class="method-title">方式三：小程序消息订阅</view>
+      </view>
+      <view class="method-steps">
+        <view class="step-item">
+          <view class="step-number">1</view>
+          <view class="step-content">
+            <view class="step-text">点击下方按钮开启订阅</view>
+          </view>
+        </view>
+        <button class="subscribe-btn" bindtap="requestSubscribe">
+          <text class="btn-icon">🔔</text>
+          <text class="btn-text">开启消息订阅</text>
+        </button>
+        <view class="step-item">
+          <view class="step-number">2</view>
+          <view class="step-content">
+            <view class="step-text">在弹窗中勾选"总是保持以上选择"</view>
+          </view>
+        </view>
+        <view class="step-item">
+          <view class="step-number">3</view>
+          <view class="step-content">
+            <view class="step-text">点击"允许"即可接收推送</view>
+          </view>
+        </view>
+      </view>
+      <view class="method-tip">
+        <text class="tip-icon">💡</text>
+        <text class="tip-text">建议同时关注公众号和开启订阅，不错过任何新职位信息</text>
+      </view>
+    </view>
+  </view>
 </view>

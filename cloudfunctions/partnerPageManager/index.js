@@ -333,6 +333,7 @@ async function getPageStats(event) {
       .count();
 
     // 获取文章总览统计
+    const $ = db.command.aggregate;
     const articlesAgg = await db.collection('partner_articles')
       .aggregate()
       .match({
@@ -341,11 +342,11 @@ async function getPageStats(event) {
       })
       .group({
         _id: null,
-        totalViews: _.sum('$view_count'),
-        totalShares: _.sum('$share_count'),
-        totalLikes: _.sum('$like_count'),
-        totalPromotionViews: _.sum('$total_promotion_views'),
-        totalPromotionVisitors: _.sum('$total_promotion_visitors')
+        totalViews: $.sum('$view_count'),
+        totalShares: $.sum('$share_count'),
+        totalLikes: $.sum('$like_count'),
+        totalPromotionViews: $.sum('$total_promotion_views'),
+        totalPromotionVisitors: $.sum('$total_promotion_visitors')
       })
       .end();
 
@@ -363,9 +364,9 @@ async function getPageStats(event) {
       .match({ page_id: pageId })
       .group({
         _id: '$promoter_id',
-        totalEarned: _.sum('$total_earned_score'),
-        totalViews: _.sum('$total_views'),
-        totalVisitors: _.sum('$total_visitors')
+        totalEarned: $.sum('$total_earned_score'),
+        totalViews: $.sum('$total_views'),
+        totalVisitors: $.sum('$total_visitors')
       })
       .sort({ totalEarned: -1 })
       .limit(10)

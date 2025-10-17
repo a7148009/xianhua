@@ -1,0 +1,274 @@
+// pages/partner/article-list/article-list.js
+Page({
+  data: {
+    pageId: null,
+    pageInfo: {},
+    articles: [],
+    loading: false,
+    hasMore: true,
+    page: 1,
+    limit: 20,
+
+    // 排序模式：default (默认排序) / promotion (推广排序)
+    sortMode: 'default',
+    isPromoter: false // 是否当前用户是成员（可获得推广排序）
+  },
+
+  onLoad(options) {
+    console.log('📄 文章列表页加载', options);
+
+    if (options.pageId) {
+      this.setData({ pageId: options.pageId });
+      this.loadPageInfo();
+      this.checkMemberStatus();
+      this.loadArticles(true);
+    } else {
+      wx.showToast({
+        title: '页面参数错误',
+        icon: 'none'
+      });
+      setTimeout(() => {
+        wx.navigateBack();
+      }, 1500);
+    }
+  },
+
+  onPullDownRefresh() {
+    this.loadArticles(true).then(() => {
+      wx.stopPullDownRefresh();
+    });
+  },
+
+  onReachBottom() {
+    if (!this.data.loading && this.data.hasMore) {
+      this.loadArticles(false);
+    }
+  },
+
+  /**
+   * 加载页面信息
+   */
+  async loadPageInfo() {
+    try {
+      const result = await wx.cloud.callFunction({
+        name: 'partnerPageManager',
+        data: {
+          action: 'getPageDetail',
+          pageId: this.data.pageId
+        }
+      });
+
+      if (result.result && result.result.success) {
+        this.setData({
+          pageInfo: result.result.data
+        });
+        wx.setNavigationBarTitle({
+          title: result.result.data.page_name
+        });
+      }
+    } catch (error) {
+      console.error('❌ 加载页面信息失败:', error);
+    }
+  },
+
+  /**
+   * 检查成员身份（是否可以使用推广排序）
+   */
+  async checkMemberStatus() {
+    try {
+      console.log('🔍 ========== 开始检查成员身份 ==========');
+      console.log('🔍 pageId:', this.data.pageId);
+
+      // 不传递 userId，让云函数自动使用调用者的 openid
+      const result = await wx.cloud.callFunction({
+        name: 'partnerMemberManager',
+        data: {
+          action: 'getMemberInfo',
+          pageId: this.data.pageId
+          // 不传递 userId，云函数会自动使用 wxContext.OPENID
+        }
+      });
+
+      console.log('🔍 云函数返回完整结果:', JSON.stringify(result));
+      console.log('🔍 result.result:', result.result);
+      console.log('🔍 result.result.success:', result.result?.success);
+      console.log('🔍 result.result.is_member:', result.result?.is_member);
+      console.log('🔍 result.result.message:', result.result?.message);
+      console.log('🔍 result.result.data:', result.result?.data);
+
+      if (result.result?.data) {
+        console.log('🔍 成员数据详情:');
+        console.log('   join_status:', result.result.data.join_status);
+        console.log('   member_role:', result.result.data.member_role);
+        console.log('   page_id:', result.result.data.page_id);
+        console.log('   user_id:', result.result.data.user_id);
+      }
+
+      if (result.result && result.result.success && result.result.is_member) {
+        console.log('✅ 是成员，设置 isPromoter = true');
+        this.setData({
+          isPromoter: true
+        });
+      } else {
+        console.log('❌ 不是成员或检查失败');
+        console.log('   success:', result.result?.success);
+        console.log('   is_member:', result.result?.is_member);
+        console.log('   message:', result.result?.message);
+      }
+      console.log('🔍 ========== 成员身份检查完成 ==========');
+    } catch (error) {
+      console.error('❌ 检查成员身份失败:', error);
+      console.error('❌ 错误详情:', JSON.stringify(error));
+    }
+  },
+
+  /**
+   * 切换排序模式
+   */
+  switchSortMode() {
+    if (!this.data.isPromoter) {
+      wx.showToast({
+        title: '仅成员可切换推广排序',
+        icon: 'none'
+      });
+      return;
+    }
+
+    const newMode = this.data.sortMode === 'default' ? 'promotion' : 'default';
+    this.setData({
+      sortMode: newMode
+    });
+    this.loadArticles(true);
+  },
+
+  /**
+   * 加载文章列表
+   */
+  async loadArticles(refresh = false) {
+    if (refresh) {
+      this.setData({
+        page: 1,
+        articles: [],
+        hasMore: true
+      });
+    }
+
+    if (this.data.loading) return;
+
+    this.setData({ loading: true });
+
+    try {
+      // 🔍 调试信息
+      console.log('🔍 ========== 开始加载文章 ==========');
+      console.log('🔍 页面 pageId:', this.data.pageId);
+      console.log('🔍 排序模式:', this.data.sortMode);
+      console.log('🔍 是否是成员:', this.data.isPromoter);
+
+      const action = this.data.sortMode === 'promotion'
+        ? 'getListWithPromotionSort'
+        : 'getListWithDefaultSort';
+
+      const requestData = {
+        action,
+        pageId: this.data.pageId,
+        page: this.data.page,
+        limit: this.data.limit
+        // 不传递 promoterId，云函数会自动使用调用者的 OPENID
+      };
+
+      console.log('🔍 调用云函数 action:', action);
+
+      const result = await wx.cloud.callFunction({
+        name: 'partnerArticleManager',
+        data: requestData
+      });
+
+      if (result.result && result.result.success) {
+        const articles = result.result.data || [];
+
+        // 🔍 调试：输出返回的文章数据
+        console.log('📋 云函数返回成功');
+        console.log('📋 文章数量:', articles.length);
+        console.log('📋 文章列表:', articles);
+        articles.forEach((item, index) => {
+          console.log(`  [${index + 1}] ${item.title}`);
+          console.log(`      status: ${item.status}, review: ${item.review_status || '无'}`);
+        });
+
+        this.setData({
+          articles: refresh ? articles : [...this.data.articles, ...articles],
+          page: this.data.page + 1,
+          hasMore: articles.length >= this.data.limit,
+          loading: false
+        });
+      } else {
+        console.error('❌ 云函数调用失败:', result.result?.message);
+        throw new Error(result.result?.message || '加载失败');
+      }
+    } catch (error) {
+      console.error('❌ 加载文章列表失败:', error);
+      this.setData({ loading: false });
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  /**
+   * 查看文章详情
+   */
+  viewArticle(e) {
+    const { hashId } = e.currentTarget.dataset;
+    wx.navigateTo({
+      url: `/pages/partner/article-detail/article-detail?hashId=${hashId}`
+    });
+  },
+
+  /**
+   * 发布新文章
+   */
+  publishArticle() {
+    // 检查是否是成员
+    if (!this.data.isPromoter) {
+      wx.showModal({
+        title: '提示',
+        content: '您还不是该页面的成员，是否申请加入？',
+        confirmText: '去申请',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateBack();
+          }
+        }
+      });
+      return;
+    }
+
+    wx.navigateTo({
+      url: `/pages/partner/publish/publish?pageId=${this.data.pageId}`
+    });
+  },
+
+  /**
+   * 格式化日期
+   */
+  formatDate(date) {
+    if (!date) return '';
+    const d = new Date(date);
+    const now = new Date();
+    const diff = now - d;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 1) return '刚刚';
+    if (minutes < 60) return `${minutes}分钟前`;
+    if (hours < 24) return `${hours}小时前`;
+    if (days < 7) return `${days}天前`;
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+});

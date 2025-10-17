@@ -1,0 +1,116 @@
+<view class="container">
+  <!-- 顶部统计卡片 -->
+  <view class="stats-card">
+    <view class="stat-item">
+      <text class="stat-value">{{totalPages}}</text>
+      <text class="stat-label">合作页面总数</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{activePages}}</text>
+      <text class="stat-label">活跃页面</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{totalMembers}}</text>
+      <text class="stat-label">总成员数</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-bar">
+    <button class="create-btn" bindtap="navigateToCreate">
+      <text class="btn-icon">➕</text>
+      <text>创建合作页面</text>
+    </button>
+  </view>
+
+  <!-- 页面列表 -->
+  <view class="page-list">
+    <view
+      wx:for="{{pages}}"
+      wx:key="_id"
+      class="page-item"
+      bindtap="viewPageDetail"
+      data-page="{{item}}"
+    >
+      <!-- 页面封面 -->
+      <view class="page-cover">
+        <image
+          wx:if="{{item.cover_image}}"
+          class="cover-image"
+          src="{{item.cover_image}}"
+          mode="aspectFill"
+        />
+        <view wx:else class="cover-placeholder">
+          <text class="placeholder-icon">🤝</text>
+        </view>
+      </view>
+
+      <!-- 页面信息 -->
+      <view class="page-info">
+        <view class="page-header">
+          <text class="page-name">{{item.page_name}}</text>
+          <view class="status-badge status-{{item.status}}">
+            {{item.status === 'active' ? '活跃' : item.status === 'disabled' ? '已禁用' : '已删除'}}
+          </view>
+        </view>
+
+        <text class="page-desc">{{item.page_desc || '暂无描述'}}</text>
+
+        <view class="page-stats">
+          <text class="stat-text">👥 成员: {{item.member_count}}/{{item.max_members}}</text>
+          <text class="stat-text">📝 文章: {{item.article_count}}</text>
+          <text class="stat-text">👁 浏览: {{item.total_views || 0}}</text>
+        </view>
+
+        <view class="page-meta">
+          <text class="meta-text">创建时间: {{formatDate(item.create_time)}}</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="page-actions">
+        <button
+          class="action-btn edit-btn"
+          catchtap="editPage"
+          data-page="{{item}}"
+        >
+          编辑
+        </button>
+        <button
+          class="action-btn price-btn"
+          catchtap="managePrices"
+          data-page="{{item}}"
+        >
+          价格管理
+        </button>
+        <button
+          class="action-btn stats-btn"
+          catchtap="viewStats"
+          data-page="{{item}}"
+        >
+          统计
+        </button>
+        <button
+          wx:if="{{item.status !== 'deleted'}}"
+          class="action-btn delete-btn"
+          catchtap="deletePage"
+          data-page="{{item}}"
+        >
+          删除
+        </button>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{pages.length === 0 && !loading}}" class="empty-state">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">还没有创建任何合作页面</text>
+      <button class="empty-btn" bindtap="navigateToCreate">创建第一个页面</button>
+    </view>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading-state">
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

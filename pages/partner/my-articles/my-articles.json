@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的文章",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "backgroundColor": "#f5f5f5"
+}

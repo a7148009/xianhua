@@ -1,0 +1,75 @@
+<!-- pages/partner/article-detail/article-detail.wxml -->
+<view class="container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 文章内容 - 完全照搬更多页面样式 -->
+  <view wx:if="{{!loading && article}}" class="article-container">
+    <!-- 文章卡片 -->
+    <view class="info-item">
+      <!-- 标题行 -->
+      <view class="info-title">
+        <text class="info-number">{{article.default_sort}}</text>
+        <text class="info-name">{{article.title}}</text>
+      </view>
+
+      <!-- 文章内容 -->
+      <view class="info-detail">{{article.content}}</view>
+
+      <!-- 底部信息 -->
+      <view class="info-detail" style="margin-top: 20rpx; color: #999;">
+        {{formatDate(article.publish_time)}} · 👁 {{article.view_count}} · ❤️ {{article.like_count}}
+      </view>
+    </view>
+
+    <!-- 统计信息 -->
+    <view class="stats-card">
+      <view class="stats-title">数据统计</view>
+      <view class="stats-grid">
+        <view class="stat-item">
+          <text class="stat-value">{{article.view_count || 0}}</text>
+          <text class="stat-label">浏览</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{article.like_count || 0}}</text>
+          <text class="stat-label">点赞</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{article.share_count || 0}}</text>
+          <text class="stat-label">分享</text>
+        </view>
+        <view wx:if="{{article.publish_type === 'partner'}}" class="stat-item">
+          <text class="stat-value {{article.is_score_sufficient ? 'sufficient' : 'insufficient'}}">
+            {{article.promotion_score || 0}}
+          </text>
+          <text class="stat-label">积分</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 所有者操作按钮 -->
+    <view wx:if="{{isOwner}}" class="owner-actions">
+      <button class="action-btn stats-btn" bindtap="viewStats">
+        📊 查看详细统计
+      </button>
+      <button class="action-btn edit-btn" bindtap="editArticle">
+        ✏️ 编辑文章
+      </button>
+      <button class="action-btn delete-btn" bindtap="deleteArticle">
+        🗑️ 删除文章
+      </button>
+    </view>
+
+    <!-- 访客操作按钮 -->
+    <view wx:if="{{!isOwner}}" class="visitor-actions">
+      <button class="action-btn like-btn" bindtap="handleLike">
+        ❤️ 点赞 {{article.like_count > 0 ? article.like_count : ''}}
+      </button>
+      <button class="action-btn share-btn" open-type="share">
+        🔗 分享
+      </button>
+    </view>
+  </view>
+</view>

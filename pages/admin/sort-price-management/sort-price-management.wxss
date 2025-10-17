@@ -1,0 +1,283 @@
+/* pages/admin/sort-price-management/sort-price-management.wxss */
+page {
+  background-color: #f5f5f5;
+}
+
+.container {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+/* 页面标题 */
+.page-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40rpx 32rpx;
+  color: #ffffff;
+}
+
+.page-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.page-subtitle {
+  display: block;
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+/* 操作栏 */
+.action-bar {
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx;
+  background-color: #ffffff;
+  margin-bottom: 20rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 72rpx;
+  line-height: 72rpx;
+  padding: 0;
+  font-size: 28rpx;
+  font-weight: 600;
+  border-radius: 12rpx;
+  border: none;
+  text-align: center;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.batch-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+}
+
+.init-btn {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+  color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(82, 196, 26, 0.3);
+}
+
+/* 价格列表 */
+.price-list {
+  padding: 20rpx;
+}
+
+.loading {
+  text-align: center;
+  padding: 80rpx 20rpx;
+  font-size: 28rpx;
+  color: #999999;
+}
+
+.price-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16rpx;
+}
+
+.price-item {
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.3s;
+  position: relative;
+}
+
+.price-item:active {
+  transform: scale(0.95);
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.2);
+}
+
+.sort-badge {
+  width: 48rpx;
+  height: 48rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.price-value {
+  font-size: 24rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 40rpx;
+  background-color: #ffffff;
+  border-radius: 20rpx;
+}
+
+.empty-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.3;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999999;
+  margin-bottom: 32rpx;
+}
+
+.empty-btn {
+  padding: 16rpx 48rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+  border: none;
+}
+
+.empty-btn::after {
+  border: none;
+}
+
+/* 弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  width: 600rpx;
+  background-color: #ffffff;
+  border-radius: 20rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border-radius: 20rpx 20rpx 0 0;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.modal-close {
+  font-size: 48rpx;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 32rpx;
+  background-color: #ffffff;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.form-label {
+  width: 180rpx;
+  font-size: 28rpx;
+  color: #666666;
+  flex-shrink: 0;
+}
+
+.form-value {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+.form-input {
+  flex: 1;
+  height: 72rpx;
+  padding: 0 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.batch-example {
+  margin-top: 16rpx;
+  padding: 16rpx;
+  background-color: #f0f5ff;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #667eea;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 20rpx;
+  padding: 0 32rpx 32rpx;
+  background-color: #ffffff;
+  border-radius: 0 0 20rpx 20rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0;
+  font-size: 28rpx;
+  font-weight: 600;
+  border-radius: 16rpx;
+  border: none;
+  text-align: center;
+}
+
+.modal-btn::after {
+  border: none;
+}
+
+.cancel-btn {
+  background-color: #f5f5f5;
+  color: #666666;
+}
+
+.confirm-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+}

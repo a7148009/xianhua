@@ -1,0 +1,145 @@
+<!-- pages/admin/sort-price-management/sort-price-management.wxml -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">{{pageName}}</text>
+    <text class="page-subtitle">付费发布价格管理</text>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-bar">
+    <button class="action-btn batch-btn" bindtap="showBatchSetting">
+      批量设置
+    </button>
+    <button class="action-btn init-btn" bindtap="initDefaultPrices">
+      初始化默认价格
+    </button>
+  </view>
+
+  <!-- 价格列表 -->
+  <view class="price-list">
+    <view wx:if="{{loading}}" class="loading">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:if="{{!loading && prices.length > 0}}" class="price-grid">
+      <view
+        wx:for="{{prices}}"
+        wx:key="sort_position"
+        class="price-item"
+        bindtap="editPrice"
+        data-item="{{item}}"
+      >
+        <view class="sort-badge">{{item.sort_position}}</view>
+        <view class="price-value">¥{{item.price}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{!loading && prices.length === 0}}" class="empty-state">
+      <text class="empty-icon">💰</text>
+      <text class="empty-text">暂无价格设置</text>
+      <button class="empty-btn" bindtap="initDefaultPrices">
+        初始化默认价格
+      </button>
+    </view>
+  </view>
+
+  <!-- 单个编辑弹窗 -->
+  <view wx:if="{{showEditModal}}" class="modal-overlay" catchtap="closeEditModal">
+    <view class="modal-container" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">编辑排序位价格</text>
+        <text class="modal-close" catchtap="closeEditModal">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">排序位:</text>
+          <text class="form-value">{{editForm.sortPosition}}</text>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">价格(元):</text>
+          <input
+            class="form-input"
+            type="digit"
+            placeholder="请输入价格"
+            value="{{editForm.price}}"
+            bindinput="onEditPriceInput"
+            adjust-position="{{false}}"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel-btn" catchtap="closeEditModal">
+          取消
+        </button>
+        <button class="modal-btn confirm-btn" catchtap="savePrice">
+          保存
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 批量设置弹窗 -->
+  <view wx:if="{{showBatchModal}}" class="modal-overlay" catchtap="closeBatchModal">
+    <view class="modal-container" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">批量设置价格</text>
+        <text class="modal-close" catchtap="closeBatchModal">×</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">起始排序位:</text>
+          <input
+            class="form-input"
+            type="number"
+            placeholder="1-60"
+            value="{{batchForm.startSort}}"
+            bindinput="onBatchStartInput"
+            adjust-position="{{false}}"
+          />
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">结束排序位:</text>
+          <input
+            class="form-input"
+            type="number"
+            placeholder="1-60"
+            value="{{batchForm.endSort}}"
+            bindinput="onBatchEndInput"
+            adjust-position="{{false}}"
+          />
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">价格(元):</text>
+          <input
+            class="form-input"
+            type="digit"
+            placeholder="请输入价格"
+            value="{{batchForm.price}}"
+            bindinput="onBatchPriceInput"
+            adjust-position="{{false}}"
+          />
+        </view>
+
+        <view class="batch-example">
+          <text>示例: 排序1-10，价格150元</text>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn cancel-btn" catchtap="closeBatchModal">
+          取消
+        </button>
+        <button class="modal-btn confirm-btn" catchtap="batchSetPrice">
+          确定
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

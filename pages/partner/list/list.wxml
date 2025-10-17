@@ -1,0 +1,93 @@
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索合作页面"
+      value="{{searchKeyword}}"
+      bindinput="onSearchInput"
+    />
+  </view>
+
+  <!-- 页面列表 -->
+  <view class="page-list">
+    <view
+      wx:for="{{pages}}"
+      wx:key="_id"
+      class="page-card"
+      bindtap="viewPageDetail"
+      data-page="{{item}}"
+    >
+      <!-- 封面 -->
+      <view class="page-cover">
+        <image
+          wx:if="{{item.cover_image}}"
+          class="cover-image"
+          src="{{item.cover_image}}"
+          mode="aspectFill"
+        />
+        <view wx:else class="cover-placeholder">
+          <text class="placeholder-icon">🤝</text>
+        </view>
+
+        <!-- 状态标签 -->
+        <view wx:if="{{item.is_joined}}" class="status-tag joined">
+          已加入
+        </view>
+        <view wx:elif="{{item.is_pending}}" class="status-tag pending">
+          待审核
+        </view>
+      </view>
+
+      <!-- 页面信息 -->
+      <view class="page-info">
+        <text class="page-name">{{item.page_name}}</text>
+        <text class="page-desc">{{item.page_desc || '暂无描述'}}</text>
+
+        <view class="page-meta">
+          <text class="meta-item">👥 {{item.member_count}}/{{item.max_members}}</text>
+          <text class="meta-item">📝 {{item.article_count}}篇</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="page-actions">
+        <button
+          wx:if="{{!item.is_joined && !item.is_pending}}"
+          class="action-btn join-btn"
+          catchtap="applyToJoin"
+          data-page="{{item}}"
+        >
+          申请加入
+        </button>
+        <button
+          wx:elif="{{item.is_pending}}"
+          class="action-btn pending-btn"
+          catchtap="cancelApplication"
+          data-page="{{item}}"
+        >
+          取消申请
+        </button>
+        <button
+          wx:else
+          class="action-btn joined-btn"
+          catchtap="viewMyPage"
+          data-page="{{item}}"
+        >
+          查看详情
+        </button>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{pages.length === 0 && !loading}}" class="empty-state">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无合作页面</text>
+    </view>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading-state">
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

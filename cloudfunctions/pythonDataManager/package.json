@@ -1,0 +1,9 @@
+{
+  "name": "pythonDataManager",
+  "version": "1.0.0",
+  "description": "废弃的云函数 - 临时占位",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

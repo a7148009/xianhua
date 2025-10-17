@@ -1,0 +1,114 @@
+<!-- pages/partner/article-list/article-list.wxml -->
+<wxs module="utils">
+  var formatDate = function(date) {
+    if (!date) return '';
+    var d = getDate(date);
+    var now = getDate();
+    var diff = now.getTime() - d.getTime();
+    var minutes = Math.floor(diff / 60000);
+    var hours = Math.floor(diff / 3600000);
+    var days = Math.floor(diff / 86400000);
+
+    if (minutes < 1) return '刚刚';
+    if (minutes < 60) return minutes + '分钟前';
+    if (hours < 24) return hours + '小时前';
+    if (days < 7) return days + '天前';
+
+    var year = d.getFullYear();
+    var month = '' + (d.getMonth() + 1);
+    var day = '' + d.getDate();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    return year + '-' + month + '-' + day;
+  };
+
+  module.exports = {
+    formatDate: formatDate
+  };
+</wxs>
+
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="page-header">
+    <view class="page-name">{{pageInfo.page_name}}</view>
+    <view class="page-meta">
+      <text>📝 {{pageInfo.article_count}} 篇文章</text>
+      <text>👥 {{pageInfo.member_count}} 位成员</text>
+    </view>
+  </view>
+
+  <!-- 排序切换 -->
+  <view wx:if="{{isPromoter}}" class="sort-switch-bar">
+    <view class="sort-label">排序方式：</view>
+    <view class="sort-tabs">
+      <view
+        class="sort-tab {{sortMode === 'default' ? 'active' : ''}}"
+        bindtap="switchSortMode"
+      >
+        默认排序
+      </view>
+      <view
+        class="sort-tab {{sortMode === 'promotion' ? 'active' : ''}}"
+        bindtap="switchSortMode"
+      >
+        推广排序
+      </view>
+    </view>
+  </view>
+
+  <!-- 文章列表 -->
+  <view class="article-list">
+    <view
+      wx:for="{{articles}}"
+      wx:key="hash_id"
+      class="info-item"
+      bindtap="viewArticle"
+      data-hash-id="{{item.hash_id}}"
+    >
+      <!-- 标题行 -->
+      <view class="info-title">
+        <text class="info-number">{{item.display_sort}}</text>
+        <text class="info-name">{{item.title}}</text>
+      </view>
+
+      <!-- 文章内容 -->
+      <view class="info-detail">{{item.content}}</view>
+
+      <!-- 底部信息 -->
+      <view class="info-detail" style="margin-top: 20rpx; color: #999;">
+        {{utils.formatDate(item.publish_time)}} · 👁 {{item.view_count}} · ❤️ {{item.like_count}}
+      </view>
+
+      <!-- 审核状态 -->
+      <view wx:if="{{item.review_status}}" class="review-status-tag {{item.review_status}}">
+        <text wx:if="{{item.review_status === 'pending'}}">⏳ 审核中</text>
+        <text wx:if="{{item.review_status === 'approved'}}">✓ 已通过</text>
+        <text wx:if="{{item.review_status === 'rejected'}}">✗ 已拒绝</text>
+      </view>
+    </view>
+
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="loading-more">
+      <text>加载中...</text>
+    </view>
+
+    <!-- 没有更多 -->
+    <view wx:if="{{!loading && !hasMore && articles.length > 0}}" class="no-more">
+      <text>没有更多了</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{!loading && articles.length === 0}}" class="empty-state">
+      <text class="empty-icon">📄</text>
+      <text class="empty-text">还没有文章</text>
+      <view wx:if="{{isPromoter}}" class="empty-action" bindtap="publishArticle">
+        立即发布
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 浮动发布按钮 -->
+<view wx:if="{{isPromoter}}" class="publish-fab" bindtap="publishArticle">
+  <text class="fab-icon">+</text>
+</view>

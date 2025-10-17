@@ -1,0 +1,203 @@
+/* pages/partner/article-detail/article-detail.wxss */
+page {
+  background-color: #f5f5f5;
+}
+
+.container {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999999;
+}
+
+/* 文章容器 */
+.article-container {
+  padding: 20rpx;
+}
+
+/* 鲜花信息条目 - 完全照搬更多页面样式 */
+.info-item {
+  margin-bottom: 40rpx;
+  padding: 30rpx;
+  background: linear-gradient(135deg, #fffbf5 0%, #fff8f0 100%);
+  border-radius: 16rpx;
+  border: 2rpx dashed #ff9800;
+  box-shadow: 0 4rpx 12rpx rgba(255, 152, 0, 0.1);
+  position: relative;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+/* 鲜花信息标题行 */
+.info-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 28rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid #ffcc80;
+}
+
+/* 红色序号标签 */
+.info-number {
+  flex-shrink: 0;
+  min-width: 56rpx;
+  height: 56rpx;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  border-radius: 12rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #ffffff;
+  margin-right: 24rpx;
+  padding: 0 12rpx;
+  box-shadow: 0 6rpx 16rpx rgba(238, 90, 82, 0.4);
+  border: 3rpx solid #ffffff;
+}
+
+/* 鲜花信息标题 */
+.info-name {
+  flex: 1;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #d84315;
+  line-height: 1.5;
+  text-shadow: 1rpx 1rpx 2rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 鲜花信息详情文本 */
+.info-detail {
+  font-size: 30rpx;
+  line-height: 2.2;
+  color: #424242;
+  margin-bottom: 12rpx;
+  padding: 0;
+  word-break: break-all;
+}
+
+.info-detail:last-child {
+  margin-bottom: 0;
+}
+
+/* 统计信息 */
+.stats-card {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.stats-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 24rpx;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx;
+  background-color: #f8f8f8;
+  border-radius: 12rpx;
+}
+
+.stat-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 8rpx;
+}
+
+.stat-value.sufficient {
+  color: #52c41a;
+}
+
+.stat-value.insufficient {
+  color: #f74734;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+/* 操作按钮 */
+.owner-actions,
+.visitor-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.action-btn {
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0;
+  font-size: 28rpx;
+  font-weight: 600;
+  border-radius: 16rpx;
+  border: none;
+  text-align: center;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.stats-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+  color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(82, 196, 26, 0.3);
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+  color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(255, 77, 79, 0.3);
+}
+
+.like-btn {
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+  color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(255, 77, 79, 0.3);
+}
+
+.share-btn {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+  color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(82, 196, 26, 0.3);
+}
+
+.action-btn:active {
+  opacity: 0.85;
+  transform: scale(0.98);
+}

@@ -1,0 +1,151 @@
+<!-- pages/partner/my-articles/my-articles.wxml -->
+<view class="container">
+  <!-- Tab栏 -->
+  <view class="tab-bar">
+    <view
+      class="tab-item {{currentTab === 'all' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="all"
+    >
+      全部
+    </view>
+    <view
+      class="tab-item {{currentTab === 'pending' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="pending"
+    >
+      待审核
+    </view>
+    <view
+      class="tab-item {{currentTab === 'approved' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="approved"
+    >
+      已通过
+    </view>
+    <view
+      class="tab-item {{currentTab === 'rejected' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="rejected"
+    >
+      已拒绝
+    </view>
+  </view>
+
+  <!-- 文章列表 -->
+  <view class="article-list">
+    <view
+      wx:for="{{articles}}"
+      wx:key="hash_id"
+      class="article-card"
+    >
+      <!-- 文章信息 -->
+      <view class="article-main" bindtap="viewArticle" data-hash-id="{{item.hash_id}}">
+        <view class="article-header">
+          <text class="article-title">{{item.title}}</text>
+          <view class="status-badges">
+            <view class="publish-type {{item.publish_type}}">
+              {{item.publish_type === 'partner' ? '合作' : '付费'}}
+            </view>
+            <view class="review-status {{item.review_status || 'pending'}}">
+              <text wx:if="{{(item.review_status || 'pending') === 'pending'}}">审核中</text>
+              <text wx:if="{{(item.review_status || 'pending') === 'approved'}}">已通过</text>
+              <text wx:if="{{(item.review_status || 'pending') === 'rejected'}}">已拒绝</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="article-content">{{item.content}}</view>
+
+        <!-- 图片预览（最多3张） -->
+        <view wx:if="{{item.images && item.images.length > 0}}" class="article-images">
+          <image
+            wx:for="{{item.images}}"
+            wx:for-item="img"
+            wx:key="index"
+            wx:if="{{index < 3}}"
+            class="article-img"
+            src="{{img}}"
+            mode="aspectFill"
+          />
+        </view>
+
+        <view class="article-meta">
+          <text class="meta-item">排序: {{item.default_sort}}</text>
+          <text class="meta-item">👁 {{item.view_count}}</text>
+          <text class="meta-item">❤️ {{item.like_count}}</text>
+          <text class="meta-item">🔗 {{item.share_count}}</text>
+        </view>
+
+        <!-- 推广积分 -->
+        <view wx:if="{{item.publish_type === 'partner'}}" class="score-info">
+          <text class="score-label">推广积分:</text>
+          <text class="score-value {{item.is_score_sufficient ? 'sufficient' : 'insufficient'}}">
+            {{item.promotion_score}}
+          </text>
+          <text wx:if="{{!item.is_score_sufficient}}" class="score-warning">⚠️ 积分不足</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="article-actions">
+        <button
+          wx:if="{{item.status === 'active'}}"
+          class="action-btn stats-btn"
+          catchtap="viewStats"
+          data-hash-id="{{item.hash_id}}"
+        >
+          📊 统计
+        </button>
+        <button
+          wx:if="{{item.status === 'active'}}"
+          class="action-btn edit-btn"
+          catchtap="editArticle"
+          data-article="{{item}}"
+        >
+          ✏️ 编辑
+        </button>
+        <button
+          wx:if="{{item.status === 'active'}}"
+          class="action-btn delete-btn"
+          catchtap="deleteArticle"
+          data-article="{{item}}"
+        >
+          🗑️ 删除
+        </button>
+        <button
+          wx:if="{{item.status === 'pending'}}"
+          class="action-btn pay-btn"
+          catchtap="viewArticle"
+          data-hash-id="{{item.hash_id}}"
+        >
+          💳 去支付
+        </button>
+      </view>
+    </view>
+
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="loading-more">
+      <text>加载中...</text>
+    </view>
+
+    <!-- 没有更多 -->
+    <view wx:if="{{!loading && !hasMore && articles.length > 0}}" class="no-more">
+      <text>没有更多了</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{!loading && articles.length === 0}}" class="empty-state">
+      <text class="empty-icon">📄</text>
+      <text class="empty-text">
+        <block wx:if="{{currentTab === 'all'}}">还没有发布任何文章</block>
+        <block wx:elif="{{currentTab === 'pending'}}">没有待审核的文章</block>
+        <block wx:elif="{{currentTab === 'approved'}}">没有已通过的文章</block>
+        <block wx:elif="{{currentTab === 'rejected'}}">没有被拒绝的文章</block>
+      </text>
+      <view wx:if="{{currentTab === 'all'}}" class="empty-action" bindtap="publishNew">
+        去发布
+      </view>
+    </view>
+  </view>
+</view>

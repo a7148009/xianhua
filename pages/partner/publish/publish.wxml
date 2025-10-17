@@ -1,0 +1,172 @@
+<!-- pages/partner/publish/publish.wxml -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">{{pageInfo.page_name || '发布文章'}}</text>
+    <text class="page-subtitle">选择发布方式</text>
+  </view>
+
+  <!-- 发布模式选择 -->
+  <view class="mode-selector">
+    <view
+      class="mode-item {{publishMode === 'partner' ? 'active' : ''}}"
+      bindtap="switchMode"
+      data-mode="partner"
+    >
+      <text class="mode-icon">🤝</text>
+      <text class="mode-name">合作发布</text>
+      <text class="mode-desc">提交审核，免费发布</text>
+    </view>
+    <view
+      class="mode-item {{publishMode === 'paid' ? 'active' : ''}}"
+      bindtap="switchMode"
+      data-mode="paid"
+    >
+      <text class="mode-icon">💰</text>
+      <text class="mode-name">付费发布</text>
+      <text class="mode-desc">选择排序位，立即发布</text>
+    </view>
+  </view>
+
+  <!-- 表单区域 -->
+  <view class="form-section">
+    <!-- 文章标题 -->
+    <view class="form-item">
+      <text class="form-label">文章标题</text>
+      <input
+        class="form-input"
+        type="text"
+        placeholder="请输入文章标题（必填）"
+        value="{{formData.title}}"
+        bindinput="onInputChange"
+        data-field="title"
+        maxlength="100"
+      />
+    </view>
+
+    <!-- 文章内容 -->
+    <view class="form-item">
+      <text class="form-label">文章内容（可包含联系方式）</text>
+      <textarea
+        class="form-textarea"
+        placeholder="请输入文章内容，可在内容中直接填写联系方式（必填）"
+        value="{{formData.content}}"
+        bindinput="onInputChange"
+        data-field="content"
+        maxlength="5000"
+        auto-height
+        show-confirm-bar="{{false}}"
+      />
+    </view>
+  </view>
+
+  <!-- 排序位选择（合作发布和付费发布都显示） -->
+  <view class="sort-section">
+    <view class="section-title">
+      <text class="title-text">选择排序位置</text>
+      <text class="title-tip" wx:if="{{publishMode === 'paid'}}">点击选择发布位置，不同位置价格不同</text>
+      <text class="title-tip" wx:if="{{publishMode === 'partner'}}">点击选择发布位置（免费）</text>
+    </view>
+
+    <view class="sort-grid">
+      <view
+        wx:for="{{sortPrices}}"
+        wx:key="sort_position"
+        class="sort-item {{selectedSort === item.sort_position ? 'selected' : ''}} {{!item.is_available ? 'disabled' : ''}}"
+        bindtap="selectSort"
+        data-item="{{item}}"
+      >
+        <view class="sort-badge">{{item.sort_position}}</view>
+        <view class="sort-price" wx:if="{{publishMode === 'paid'}}">¥{{item.price}}</view>
+        <view class="sort-price" wx:if="{{publishMode === 'partner'}}">免费</view>
+        <view wx:if="{{!item.is_available}}" class="sort-occupied">已占用</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已选信息 -->
+  <view wx:if="{{selectedSort}}" class="selected-info">
+    <view class="info-row">
+      <text class="info-label">已选排序位:</text>
+      <text class="info-value">第{{selectedSort}}位</text>
+    </view>
+    <view class="info-row" wx:if="{{publishMode === 'paid'}}">
+      <text class="info-label">需支付金额:</text>
+      <text class="info-value price">¥{{selectedPrice}}</text>
+    </view>
+    <view class="info-row" wx:if="{{publishMode === 'partner'}}">
+      <text class="info-label">发布费用:</text>
+      <text class="info-value free">免费</text>
+    </view>
+    <view wx:if="{{isPaid}}" class="paid-badge">
+      <text>✓ 已支付</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-bar">
+    <!-- 付费发布模式 -->
+    <block wx:if="{{publishMode === 'paid'}}">
+      <button
+        wx:if="{{!isPaid}}"
+        class="action-btn pay-btn"
+        bindtap="handlePay"
+      >
+        去付费 ¥{{selectedPrice || 0}}
+      </button>
+      <button
+        class="action-btn publish-btn {{canPublish ? '' : 'disabled'}}"
+        bindtap="handleSubmit"
+        disabled="{{!canPublish}}"
+      >
+        {{canPublish ? '立即发布' : '请先完成付费'}}
+      </button>
+    </block>
+
+    <!-- 合作发布模式 -->
+    <block wx:if="{{publishMode === 'partner'}}">
+      <button
+        class="action-btn publish-btn full-width"
+        bindtap="handleSubmit"
+      >
+        提交审核
+      </button>
+    </block>
+  </view>
+
+  <!-- 提示信息 -->
+  <view class="tips-section">
+    <block wx:if="{{publishMode === 'paid'}}">
+      <view class="tip-item">
+        <text class="tip-icon">💡</text>
+        <text class="tip-text">排序位越靠前，文章曝光率越高</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-icon">📌</text>
+        <text class="tip-text">付费成功后才能发布文章</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-icon">⏰</text>
+        <text class="tip-text">文章发布后将立即展示</text>
+      </view>
+    </block>
+    <block wx:if="{{publishMode === 'partner'}}">
+      <view class="tip-item">
+        <text class="tip-icon">🤝</text>
+        <text class="tip-text">合作发布免费，需管理员审核</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-icon">📍</text>
+        <text class="tip-text">请选择排序位置，位置越靠前曝光率越高</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-icon">⏰</text>
+        <text class="tip-text">审核通过后文章将自动展示</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-icon">📝</text>
+        <text class="tip-text">请确保内容真实有效</text>
+      </view>
+    </block>
+  </view>
+</view>

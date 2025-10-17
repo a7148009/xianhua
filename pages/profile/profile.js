@@ -154,6 +154,12 @@ Page({
       console.log('👑 检测到管理员角色，添加管理功能菜单');
       menuItems = [
         {
+          icon: '🤝',
+          title: '合作页面管理',
+          desc: '管理、创建、删除合作页面',
+          url: '/pages/admin/partner-management/partner-management'
+        },
+        {
           icon: '👥',
           title: '用户管理',
           desc: '管理所有用户和角色权限',
@@ -186,6 +192,21 @@ Page({
       ];
     } else {
       console.log('👤 非管理员用户，角色:', role);
+      // 普通用户的合作页面功能
+      menuItems = [
+        {
+          icon: '🏠',
+          title: '浏览合作页面',
+          desc: '查看所有合作页面并申请加入',
+          url: '/pages/partner/list/list'
+        },
+        {
+          icon: '📋',
+          title: '我的合作页面',
+          desc: '管理我加入的合作页面',
+          url: '/pages/partner/my-pages/my-pages'
+        }
+      ];
     }
 
     console.log('📝 设置菜单项:', menuItems);

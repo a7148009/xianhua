@@ -1,0 +1,71 @@
+<view class="container">
+  <view class="form-section">
+    <view class="form-item">
+      <view class="form-label">页面名称 <text class="required">*</text></view>
+      <input
+        class="form-input"
+        placeholder="请输入页面名称（最多50字）"
+        value="{{formData.pageName}}"
+        bindinput="onInputChange"
+        data-field="pageName"
+        maxlength="50"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">页面描述</view>
+      <textarea
+        class="form-textarea"
+        placeholder="请输入页面描述"
+        value="{{formData.pageDesc}}"
+        bindinput="onInputChange"
+        data-field="pageDesc"
+        maxlength="200"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">最大成员数</view>
+      <input
+        class="form-input"
+        type="number"
+        placeholder="默认60"
+        value="{{formData.maxMembers}}"
+        bindinput="onInputChange"
+        data-field="maxMembers"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">自动审核</view>
+      <switch
+        checked="{{formData.enableAutoApprove}}"
+        bindchange="onSwitchChange"
+        data-field="enableAutoApprove"
+      />
+      <text class="form-hint">开启后用户申请将自动通过</text>
+    </view>
+
+    <view class="form-item" wx:if="{{isEdit}}">
+      <view class="form-label">页面状态</view>
+      <picker
+        mode="selector"
+        range="{{statusOptions}}"
+        range-key="label"
+        value="{{statusIndex}}"
+        bindchange="onStatusChange"
+      >
+        <view class="picker-display">
+          {{statusOptions[statusIndex].label}}
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="btn-group">
+    <button class="save-btn" bindtap="handleSave">
+      {{isEdit ? '保存修改' : '创建页面'}}
+    </button>
+    <button class="cancel-btn" bindtap="handleCancel">取消</button>
+  </view>
+</view>

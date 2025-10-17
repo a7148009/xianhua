@@ -1,0 +1,83 @@
+<view class="container">
+  <!-- 页面信息 -->
+  <view class="page-header">
+    <text class="page-name">{{pageInfo.page_name}}</text>
+    <text class="page-desc">{{pageInfo.page_desc}}</text>
+  </view>
+
+  <!-- 成员统计 -->
+  <view class="stats-section">
+    <view class="section-title">成员统计</view>
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-value">{{memberStats.total_members}}</text>
+        <text class="stat-label">活跃成员</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{memberStats.pending_members}}</text>
+        <text class="stat-label">待审核</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{memberStats.available_slots}}</text>
+        <text class="stat-label">剩余名额</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 文章统计 -->
+  <view class="stats-section">
+    <view class="section-title">文章统计</view>
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-value">{{articleStats.total_articles}}</text>
+        <text class="stat-label">总文章数</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{articleStats.partner_articles}}</text>
+        <text class="stat-label">Partner</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{articleStats.paid_articles}}</text>
+        <text class="stat-label">付费</text>
+      </view>
+    </view>
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-value">{{articleStats.total_views}}</text>
+        <text class="stat-label">总浏览</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{articleStats.total_shares}}</text>
+        <text class="stat-label">总分享</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{articleStats.total_likes}}</text>
+        <text class="stat-label">总点赞</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- TOP推广者 -->
+  <view class="stats-section">
+    <view class="section-title">TOP推广者</view>
+    <view class="promoter-list">
+      <view
+        wx:for="{{topPromoters}}"
+        wx:key="user_id"
+        class="promoter-item"
+      >
+        <view class="promoter-rank">{{index + 1}}</view>
+        <view class="promoter-info">
+          <text class="promoter-name">{{item.nickname}}</text>
+          <text class="promoter-stats">
+            获得积分: {{item.total_earned}} | 浏览: {{item.total_views}} | 访客: {{item.total_visitors}}
+          </text>
+        </view>
+      </view>
+
+      <view wx:if="{{topPromoters.length === 0}}" class="empty-promoters">
+        暂无推广数据
+      </view>
+    </view>
+  </view>
+</view>

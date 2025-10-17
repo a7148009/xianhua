@@ -1,0 +1,154 @@
+<wxs module="utils">
+  var formatDate = function(date) {
+    if (!date) return '';
+    var d = getDate(date);
+    var year = d.getFullYear();
+    var month = d.getMonth() + 1;
+    var day = d.getDate();
+
+    month = month < 10 ? '0' + month : month;
+    day = day < 10 ? '0' + day : day;
+
+    return year + '-' + month + '-' + day;
+  }
+
+  module.exports = {
+    formatDate: formatDate
+  };
+</wxs>
+
+<view class="container">
+  <!-- 页面信息 -->
+  <view class="page-info-card">
+    <view class="page-name">{{pageInfo.page_name}}</view>
+    <view class="page-desc">{{pageInfo.page_desc}}</view>
+    <view class="page-meta">
+      <text>最大成员: {{pageInfo.max_members}}</text>
+      <text>当前成员: {{pageInfo.member_count}}</text>
+      <text>文章数: {{pageInfo.article_count}}</text>
+    </view>
+  </view>
+
+  <!-- Tab切换 -->
+  <view class="tab-bar">
+    <view
+      class="tab-item {{currentTab === 'active' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="active"
+    >
+      活跃成员
+    </view>
+    <view
+      class="tab-item {{currentTab === 'pending' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="pending"
+    >
+      待审核 {{pendingCount > 0 ? '(' + pendingCount + ')' : ''}}
+    </view>
+    <view
+      class="tab-item {{currentTab === 'articles' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="articles"
+    >
+      合作信息 {{articlePendingCount > 0 ? '(' + articlePendingCount + ')' : ''}}
+    </view>
+  </view>
+
+  <!-- 成员列表 -->
+  <view wx:if="{{currentTab !== 'articles'}}" class="member-list">
+    <view
+      wx:for="{{members}}"
+      wx:key="_id"
+      class="member-item"
+    >
+      <image
+        class="member-avatar"
+        src="{{item.user_info.avatarUrl || '/images/default-avatar.png'}}"
+        mode="aspectFill"
+      />
+      <view class="member-info">
+        <text class="member-name">{{item.user_info.nickName || '未知用户'}}</text>
+        <view class="member-meta">
+          <text class="meta-item">📝 发布 {{item.published_count}} 篇</text>
+          <text class="meta-item">🕐 {{currentTab === 'active' ? '加入' : '申请'}}: {{utils.formatDate(currentTab === 'active' ? item.approve_time : item.apply_time)}}</text>
+        </view>
+      </view>
+
+      <!-- 待审核成员的操作按钮 -->
+      <view wx:if="{{currentTab === 'pending'}}" class="member-actions">
+        <button
+          class="action-btn approve-btn"
+          catchtap="approveMember"
+          data-member="{{item}}"
+        >
+          通过
+        </button>
+        <button
+          class="action-btn reject-btn"
+          catchtap="rejectMember"
+          data-member="{{item}}"
+        >
+          拒绝
+        </button>
+      </view>
+
+      <!-- 活跃成员的操作按钮 -->
+      <view wx:if="{{currentTab === 'active'}}" class="member-actions">
+        <button
+          class="action-btn remove-btn"
+          catchtap="removeMember"
+          data-member="{{item}}"
+        >
+          移除
+        </button>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{members.length === 0 && !loading}}" class="empty-state">
+      <text class="empty-icon">👥</text>
+      <text class="empty-text">
+        {{currentTab === 'active' ? '还没有活跃成员' : '暂无待审核申请'}}
+      </text>
+    </view>
+  </view>
+
+  <!-- 合作信息列表 -->
+  <view wx:if="{{currentTab === 'articles'}}" class="article-list">
+    <view
+      wx:for="{{pendingArticles}}"
+      wx:key="_id"
+      class="article-review-item"
+      bindtap="viewArticleDetail"
+      data-article="{{item}}"
+    >
+      <!-- 左侧头像 -->
+      <image
+        class="author-avatar"
+        src="{{item.author_info.avatarUrl}}"
+        mode="aspectFill"
+      />
+
+      <!-- 右侧文章信息 -->
+      <view class="article-info">
+        <view class="article-title">{{item.title}}</view>
+        <view class="article-preview">{{item.content}}</view>
+        <view class="article-meta">
+          <text class="meta-author">{{item.author_info.nickName}}</text>
+          <text class="meta-time">{{utils.formatDate(item.create_time)}}</text>
+          <view class="review-status {{item.review_status}}">
+            <text wx:if="{{item.review_status === 'pending'}}">审核中</text>
+            <text wx:if="{{item.review_status === 'approved'}}">已通过</text>
+            <text wx:if="{{item.review_status === 'rejected'}}">已拒绝</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{pendingArticles.length === 0 && !loading}}" class="empty-state">
+      <text class="empty-icon">📄</text>
+      <text class="empty-text">暂无待审核文章</text>
+    </view>
+  </view>
+</view>

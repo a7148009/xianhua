@@ -43,7 +43,18 @@
       "Bash(if [ -f \"package.json\" ])",
       "Bash(then cat package.json)",
       "Bash(else echo \"No package.json in root\")",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "WebFetch(domain:docs.cloudbase.net)",
+      "WebSearch",
+      "Bash(if [ -d \"pages/admin/partner-management\" ])",
+      "Bash(if [ -f \"D:\\鲜花发布系统鲜花小程序原生版重构项目\\images\\default-avatar.png\" ])",
+      "Bash(then echo \"默认头像存在\")",
+      "Bash(else echo \"默认头像不存在\")",
+      "Bash(if [ -d \"pages/partner/publish\" ])",
+      "Bash(if [ -d \"cloudfunctions/partnerArticleManager\" ])",
+      "Bash(if [ -f \"cloudfunctions/partnerArticleManager/package.json\" ])",
+      "Bash(if [ -f \"images/default-avatar.png\" ])",
+      "Bash(npm run deploy:partnerArticleManager:flower-release:*)"
     ],
     "deny": [],
     "ask": []

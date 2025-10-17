@@ -1,0 +1,12 @@
+{
+  "name": "generateMiniCode",
+  "version": "1.0.0",
+  "description": "生成小程序码/二维码/URL Link",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "wxcloud functions:deploy generateMiniCode flower-release"
+  },
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

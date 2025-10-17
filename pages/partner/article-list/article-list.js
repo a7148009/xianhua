@@ -263,8 +263,8 @@ Page({
     try {
       wx.showLoading({ title: '生成中...' });
 
-      // 调用云函数生成Token
-      const result = await wx.cloud.callFunction({
+      // 1. 生成Token
+      const tokenResult = await wx.cloud.callFunction({
         name: 'partnerMemberManager',
         data: {
           action: 'generatePromotionToken',
@@ -272,43 +272,126 @@ Page({
         }
       });
 
+      if (!tokenResult.result || !tokenResult.result.success) {
+        throw new Error(tokenResult.result?.message || 'Token生成失败');
+      }
+
+      const token = tokenResult.result.data.token;
+      const isReused = tokenResult.result.data.is_reused;
+
+      // 2. 生成URL Link（可选，用于微信外分享）
+      const linkResult = await wx.cloud.callFunction({
+        name: 'generateMiniCode',
+        data: {
+          action: 'getUrlLink',
+          path: 'pages/partner/article-list/article-list',
+          query: `pageId=${this.data.pageId}&t=${token}`,
+          expireInterval: 30  // 30天有效期
+        }
+      });
+
       wx.hideLoading();
 
-      if (result.result && result.result.success) {
-        const token = result.result.data.token;
-        const isReused = result.result.data.is_reused;
+      const urlLink = linkResult.result?.url_link || '';
+      const miniPath = `pages/partner/article-list/article-list?pageId=${this.data.pageId}&t=${token}`;
 
-        // 小程序路径（新版Token方式）
-        const path = `/pages/partner/article-list/article-list?pageId=${this.data.pageId}&t=${token}`;
-
-        wx.showModal({
-          title: '推广链接',
-          content: `${isReused ? '（已有链接）' : '（新生成）'}\n\n推广码：${token}\n页面路径：${path}\n\n点击"复制路径"按钮复制链接，或点击右上角"..."按钮进行分享`,
-          confirmText: '复制路径',
-          cancelText: '知道了',
-          success: (res) => {
-            if (res.confirm) {
-              // 复制路径到剪贴板
+      // 显示多种分享方式
+      wx.showActionSheet({
+        itemList: ['复制小程序路径', '复制URL链接（微信外可用）', '生成小程序码'],
+        success: (res) => {
+          if (res.tapIndex === 0) {
+            // 复制小程序路径
+            wx.setClipboardData({
+              data: miniPath,
+              success: () => {
+                wx.showToast({ title: '路径已复制', icon: 'success' });
+              }
+            });
+          } else if (res.tapIndex === 1) {
+            // 复制URL Link
+            if (urlLink) {
               wx.setClipboardData({
-                data: path,
+                data: urlLink,
                 success: () => {
-                  wx.showToast({
-                    title: '路径已复制',
-                    icon: 'success'
-                  });
+                  wx.showToast({ title: 'URL链接已复制', icon: 'success' });
                 }
               });
+            } else {
+              wx.showToast({ title: 'URL链接生成失败', icon: 'none' });
             }
+          } else if (res.tapIndex === 2) {
+            // 生成小程序码
+            this.generateMiniCode(token);
           }
-        });
-      } else {
-        throw new Error(result.result?.message || '生成失败');
-      }
+        }
+      });
     } catch (error) {
       wx.hideLoading();
       console.error('❌ 显示推广链接失败:', error);
       wx.showToast({
         title: error.message || '获取失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  /**
+   * 生成小程序码
+   */
+  async generateMiniCode(token) {
+    try {
+      wx.showLoading({ title: '生成小程序码...' });
+
+      // scene参数：最多32个字符
+      const scene = `t=${token}&p=${this.data.pageId.substring(0, 20)}`;
+
+      const result = await wx.cloud.callFunction({
+        name: 'generateMiniCode',
+        data: {
+          action: 'getUnlimited',
+          scene: scene,
+          page: 'pages/partner/article-list/article-list',
+          width: 280
+        }
+      });
+
+      wx.hideLoading();
+
+      if (result.result && result.result.success) {
+        // 将Buffer保存到临时文件
+        const fs = wx.getFileSystemManager();
+        const filePath = `${wx.env.USER_DATA_PATH}/minicode_${Date.now()}.jpg`;
+
+        fs.writeFile({
+          filePath: filePath,
+          data: result.result.buffer,
+          encoding: 'binary',
+          success: () => {
+            // 预览小程序码
+            wx.previewImage({
+              urls: [filePath],
+              success: () => {
+                wx.showToast({
+                  title: '长按保存小程序码',
+                  icon: 'none',
+                  duration: 2000
+                });
+              }
+            });
+          },
+          fail: (err) => {
+            console.error('保存小程序码失败:', err);
+            wx.showToast({ title: '保存失败', icon: 'none' });
+          }
+        });
+      } else {
+        throw new Error('生成小程序码失败');
+      }
+    } catch (error) {
+      wx.hideLoading();
+      console.error('❌ 生成小程序码失败:', error);
+      wx.showToast({
+        title: '生成失败',
         icon: 'none'
       });
     }

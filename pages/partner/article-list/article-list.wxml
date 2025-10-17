@@ -35,6 +35,11 @@
       <text>📝 {{pageInfo.article_count}} 篇文章</text>
       <text>👥 {{pageInfo.member_count}} 位成员</text>
     </view>
+    <!-- 推广链接按钮（仅成员可见） -->
+    <view wx:if="{{isPromoter}}" class="promotion-link-btn" bindtap="showPromotionLink">
+      <text class="btn-icon">🔗</text>
+      <text class="btn-text">获取推广链接</text>
+    </view>
   </view>
 
   <!-- 排序切换 -->

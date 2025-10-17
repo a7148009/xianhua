@@ -54,7 +54,8 @@
       "Bash(if [ -d \"cloudfunctions/partnerArticleManager\" ])",
       "Bash(if [ -f \"cloudfunctions/partnerArticleManager/package.json\" ])",
       "Bash(if [ -f \"images/default-avatar.png\" ])",
-      "Bash(npm run deploy:partnerArticleManager:flower-release:*)"
+      "Bash(npm run deploy:partnerArticleManager:flower-release:*)",
+      "Bash(npm run deploy:*)"
     ],
     "deny": [],
     "ask": []

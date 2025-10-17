@@ -19,6 +19,13 @@ Page({
 
     if (options.pageId) {
       this.setData({ pageId: options.pageId });
+
+      // 检查是否通过推广链接访问（新版Token方式）
+      if (options.t) {
+        console.log('🔗 通过推广链接访问，Token:', options.t);
+        this.validateAndRecordPromotionVisit(options.t);
+      }
+
       this.loadPageInfo();
       this.checkMemberStatus();
       this.loadArticles(true);
@@ -250,6 +257,102 @@ Page({
   },
 
   /**
+   * 显示推广链接（新版Token方式）
+   */
+  async showPromotionLink() {
+    try {
+      wx.showLoading({ title: '生成中...' });
+
+      // 调用云函数生成Token
+      const result = await wx.cloud.callFunction({
+        name: 'partnerMemberManager',
+        data: {
+          action: 'generatePromotionToken',
+          pageId: this.data.pageId
+        }
+      });
+
+      wx.hideLoading();
+
+      if (result.result && result.result.success) {
+        const token = result.result.data.token;
+        const isReused = result.result.data.is_reused;
+
+        // 小程序路径（新版Token方式）
+        const path = `/pages/partner/article-list/article-list?pageId=${this.data.pageId}&t=${token}`;
+
+        wx.showModal({
+          title: '推广链接',
+          content: `${isReused ? '（已有链接）' : '（新生成）'}\n\n推广码：${token}\n页面路径：${path}\n\n点击"复制路径"按钮复制链接，或点击右上角"..."按钮进行分享`,
+          confirmText: '复制路径',
+          cancelText: '知道了',
+          success: (res) => {
+            if (res.confirm) {
+              // 复制路径到剪贴板
+              wx.setClipboardData({
+                data: path,
+                success: () => {
+                  wx.showToast({
+                    title: '路径已复制',
+                    icon: 'success'
+                  });
+                }
+              });
+            }
+          }
+        });
+      } else {
+        throw new Error(result.result?.message || '生成失败');
+      }
+    } catch (error) {
+      wx.hideLoading();
+      console.error('❌ 显示推广链接失败:', error);
+      wx.showToast({
+        title: error.message || '获取失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  /**
+   * 验证Token并记录推广访问（新版）
+   */
+  async validateAndRecordPromotionVisit(token) {
+    try {
+      // 1. 验证Token
+      const validateResult = await wx.cloud.callFunction({
+        name: 'partnerMemberManager',
+        data: {
+          action: 'validatePromotionToken',
+          token: token,
+          pageId: this.data.pageId
+        }
+      });
+
+      if (validateResult.result && validateResult.result.success) {
+        const promoterId = validateResult.result.data.promoter_id;
+        console.log('✅ Token验证成功，推广者:', promoterId);
+
+        // 2. 记录推广访问
+        await wx.cloud.callFunction({
+          name: 'partnerMemberManager',
+          data: {
+            action: 'recordPromotionVisit',
+            pageId: this.data.pageId,
+            promoterId: promoterId
+          }
+        });
+
+        console.log('✅ 推广访问记录成功');
+      } else {
+        console.log('⚠️ Token无效或已过期:', validateResult.result?.message);
+      }
+    } catch (error) {
+      console.error('❌ 验证Token或记录访问失败:', error);
+    }
+  },
+
+  /**
    * 格式化日期
    */
   formatDate(date) {
@@ -270,5 +373,57 @@ Page({
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  },
+
+  /**
+   * 分享功能（新版Token方式）
+   */
+  onShareAppMessage() {
+    // 如果是成员，需要生成Token后分享
+    if (this.data.isPromoter) {
+      // 先返回一个Promise，异步获取Token
+      return new Promise(async (resolve) => {
+        try {
+          const result = await wx.cloud.callFunction({
+            name: 'partnerMemberManager',
+            data: {
+              action: 'generatePromotionToken',
+              pageId: this.data.pageId
+            }
+          });
+
+          if (result.result && result.result.success) {
+            const token = result.result.data.token;
+            resolve({
+              title: `${this.data.pageInfo.page_name || '合作页面'} - 精选文章推荐`,
+              path: `/pages/partner/article-list/article-list?pageId=${this.data.pageId}&t=${token}`,
+              imageUrl: this.data.pageInfo.cover_image || ''
+            });
+          } else {
+            // 生成Token失败，分享普通链接
+            resolve({
+              title: `${this.data.pageInfo.page_name || '合作页面'} - 精选文章`,
+              path: `/pages/partner/article-list/article-list?pageId=${this.data.pageId}`,
+              imageUrl: this.data.pageInfo.cover_image || ''
+            });
+          }
+        } catch (error) {
+          console.error('❌ 分享时生成Token失败:', error);
+          // 失败时分享普通链接
+          resolve({
+            title: `${this.data.pageInfo.page_name || '合作页面'} - 精选文章`,
+            path: `/pages/partner/article-list/article-list?pageId=${this.data.pageId}`,
+            imageUrl: this.data.pageInfo.cover_image || ''
+          });
+        }
+      });
+    }
+
+    // 非成员分享普通链接
+    return {
+      title: `${this.data.pageInfo.page_name || '合作页面'} - 精选文章`,
+      path: `/pages/partner/article-list/article-list?pageId=${this.data.pageId}`,
+      imageUrl: this.data.pageInfo.cover_image || ''
+    };
   }
 });

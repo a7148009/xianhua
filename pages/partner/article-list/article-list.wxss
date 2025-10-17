@@ -28,6 +28,34 @@ page {
   opacity: 0.9;
 }
 
+/* 推广链接按钮 */
+.promotion-link-btn {
+  margin-top: 20rpx;
+  padding: 16rpx 24rpx;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  transition: all 0.3s;
+}
+
+.promotion-link-btn:active {
+  transform: scale(0.95);
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.promotion-link-btn .btn-icon {
+  font-size: 32rpx;
+}
+
+.promotion-link-btn .btn-text {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
 /* 排序切换栏 */
 .sort-switch-bar {
   background-color: #ffffff;

@@ -267,33 +267,71 @@ page {
 }
 
 .sort-item.disabled {
-  opacity: 0.4;
+  background-color: #e8e8e8;
+  border-color: #d0d0d0;
+  opacity: 0.6;
   cursor: not-allowed;
+  position: relative;
+}
+
+.sort-item.disabled::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10rpx,
+    rgba(0, 0, 0, 0.05) 10rpx,
+    rgba(0, 0, 0, 0.05) 20rpx
+  );
+  border-radius: 12rpx;
 }
 
 .sort-badge {
   font-size: 24rpx;
   font-weight: 700;
   color: #333333;
+  position: relative;
+  z-index: 1;
 }
 
 .sort-item.selected .sort-badge {
   color: #ffffff;
 }
 
+.sort-item.disabled .sort-badge {
+  color: #999999;
+}
+
 .sort-price {
   font-size: 20rpx;
   color: #f74734;
   font-weight: 600;
+  position: relative;
+  z-index: 1;
 }
 
 .sort-item.selected .sort-price {
   color: #ffffff;
 }
 
+.sort-item.disabled .sort-price {
+  color: #999999;
+}
+
 .sort-occupied {
   font-size: 18rpx;
-  color: #999999;
+  color: #f74734;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+  background-color: rgba(247, 71, 52, 0.1);
+  padding: 2rpx 8rpx;
+  border-radius: 8rpx;
 }
 
 /* 已选信息 */

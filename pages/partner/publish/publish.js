@@ -145,6 +145,9 @@ Page({
       canPublish: false,
       orderId: null
     });
+
+    // 重新加载排序位数据（刷新占用状态）
+    this.loadSortPrices();
   },
 
   /**
@@ -184,11 +187,14 @@ Page({
   },
 
   /**
-   * 加载排序位价格
+   * 加载排序位价格和占用状态
    */
   async loadSortPrices() {
     try {
-      const result = await wx.cloud.callFunction({
+      wx.showLoading({ title: '加载排序位...' });
+
+      // 1. 获取价格数据
+      const priceResult = await wx.cloud.callFunction({
         name: 'sortPriceManager',
         data: {
           action: 'getPrices',
@@ -196,19 +202,50 @@ Page({
         }
       });
 
-      if (result.result && result.result.success) {
-        // 只显示1-60的排序位
-        const prices = result.result.data.filter(item =>
-          item.sort_position >= 1 && item.sort_position <= 60
+      // 2. 获取占用状态
+      const availableResult = await wx.cloud.callFunction({
+        name: 'partnerArticleManager',
+        data: {
+          action: 'getAvailableSortPositions',
+          pageId: this.data.pageId,
+          range: '1-60'
+        }
+      });
+
+      wx.hideLoading();
+
+      if (priceResult.result && priceResult.result.success &&
+          availableResult.result && availableResult.result.success) {
+
+        // 获取可用排序位集合
+        const availablePositions = new Set(
+          availableResult.result.data.available_positions || []
         );
+
+        console.log('🔍 可用排序位:', Array.from(availablePositions));
+        console.log('🔍 已占用数量:', availableResult.result.data.occupied_count);
+
+        // 合并价格和占用状态
+        const prices = priceResult.result.data
+          .filter(item => item.sort_position >= 1 && item.sort_position <= 60)
+          .map(item => ({
+            ...item,
+            is_available: availablePositions.has(item.sort_position)
+          }));
+
+        console.log('📊 排序位数据:', prices);
+
         this.setData({
           sortPrices: prices
         });
+      } else {
+        throw new Error('加载排序位数据失败');
       }
     } catch (error) {
-      console.error('❌ 加载排序价格失败:', error);
+      wx.hideLoading();
+      console.error('❌ 加载排序位失败:', error);
       wx.showToast({
-        title: '加载价格失败',
+        title: '加载排序位失败',
         icon: 'none'
       });
     }
@@ -220,10 +257,13 @@ Page({
   selectSort(e) {
     const { item } = e.currentTarget.dataset;
 
+    // 检查是否已被占用
     if (!item.is_available) {
-      wx.showToast({
-        title: '该排序位已被占用',
-        icon: 'none'
+      wx.showModal({
+        title: '排序位已被占用',
+        content: `排序位 ${item.sort_position} 已被其他文章占用，请选择其他排序位`,
+        showCancel: false,
+        confirmText: '知道了'
       });
       return;
     }

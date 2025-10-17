@@ -43,6 +43,16 @@ exports.main = async (event, context) => {
       case 'getMemberInfo':
         return await getMemberInfo(event);
 
+      // 推广链接操作（新版Token方式）
+      case 'generatePromotionToken':
+        return await generatePromotionToken(event);
+      case 'validatePromotionToken':
+        return await validatePromotionToken(event);
+      case 'recordPromotionVisit':
+        return await recordPromotionVisit(event);
+      case 'getPromotionStats':
+        return await getPromotionStats(event);
+
       default:
         return { success: false, message: '未知操作' };
     }
@@ -868,4 +878,313 @@ async function verifyAdminPermission(userId) {
   }
 
   return true;
+}
+
+/**
+ * 生成推广Token（新版安全方式）
+ */
+async function generatePromotionToken(event) {
+  const wxContext = cloud.getWXContext();
+  const userId = wxContext.OPENID;
+  const { pageId } = event;
+
+  try {
+    console.log(`[generatePromotionToken] 用户 ${userId} 为页面 ${pageId} 生成推广Token`);
+
+    // 1. 验证用户是否是页面成员
+    const { data: members } = await db.collection('page_members')
+      .where({
+        page_id: pageId,
+        user_id: userId,
+        join_status: 'active'
+      })
+      .get();
+
+    if (members.length === 0) {
+      throw new Error('您不是该页面的成员，无法生成推广链接');
+    }
+
+    // 2. 检查是否已有有效的token（24小时内生成的）
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const { data: existingTokens } = await db.collection('promotion_tokens')
+      .where({
+        page_id: pageId,
+        promoter_id: userId,
+        is_active: true,
+        create_time: _.gte(oneDayAgo)
+      })
+      .orderBy('create_time', 'desc')
+      .limit(1)
+      .get();
+
+    // 如果有24小时内的token，直接返回
+    if (existingTokens.length > 0) {
+      console.log(`[generatePromotionToken] 复用已有Token: ${existingTokens[0].token}`);
+      return {
+        success: true,
+        message: '获取推广Token成功',
+        data: {
+          token: existingTokens[0].token,
+          create_time: existingTokens[0].create_time,
+          is_reused: true
+        }
+      };
+    }
+
+    // 3. 生成新的6位随机Token
+    const token = generateRandomToken(6);
+    const now = new Date();
+    const expireTime = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30天过期
+
+    // 4. 存入数据库
+    await db.collection('promotion_tokens').add({
+      data: {
+        token: token,
+        page_id: pageId,
+        promoter_id: userId,
+        create_time: now,
+        expire_time: expireTime,
+        use_count: 0,
+        last_use_time: null,
+        is_active: true
+      }
+    });
+
+    // 5. 更新成员的推广链接生成次数
+    await db.collection('page_members')
+      .where({
+        page_id: pageId,
+        user_id: userId
+      })
+      .update({
+        data: {
+          promotion_link_generation_count: _.inc(1),
+          last_promotion_link_generation_time: now,
+          update_time: now
+        }
+      });
+
+    console.log(`[generatePromotionToken] ✅ 生成新Token成功: ${token}`);
+
+    return {
+      success: true,
+      message: '生成推广Token成功',
+      data: {
+        token: token,
+        create_time: now,
+        expire_time: expireTime,
+        is_reused: false
+      }
+    };
+  } catch (error) {
+    console.error('[generatePromotionToken] 错误:', error);
+    throw new Error(`生成推广Token失败: ${error.message}`);
+  }
+}
+
+/**
+ * 验证推广Token并返回推广者ID
+ */
+async function validatePromotionToken(event) {
+  const { token, pageId } = event;
+
+  try {
+    console.log(`[validatePromotionToken] 验证Token: ${token}, 页面: ${pageId}`);
+
+    if (!token || !pageId) {
+      throw new Error('参数缺失');
+    }
+
+    // 查询Token记录
+    const { data: tokens } = await db.collection('promotion_tokens')
+      .where({
+        token: token,
+        page_id: pageId,
+        is_active: true
+      })
+      .get();
+
+    if (tokens.length === 0) {
+      console.log(`[validatePromotionToken] ❌ Token不存在或已失效`);
+      return {
+        success: false,
+        message: 'Token无效',
+        data: null
+      };
+    }
+
+    const tokenData = tokens[0];
+
+    // 检查是否过期
+    if (new Date() > new Date(tokenData.expire_time)) {
+      console.log(`[validatePromotionToken] ❌ Token已过期`);
+
+      // 将token设置为失效
+      await db.collection('promotion_tokens')
+        .where({ _id: tokenData._id })
+        .update({
+          data: {
+            is_active: false,
+            update_time: new Date()
+          }
+        });
+
+      return {
+        success: false,
+        message: 'Token已过期',
+        data: null
+      };
+    }
+
+    // 更新使用次数和最后使用时间
+    const now = new Date();
+    await db.collection('promotion_tokens')
+      .where({ _id: tokenData._id })
+      .update({
+        data: {
+          use_count: _.inc(1),
+          last_use_time: now,
+          update_time: now
+        }
+      });
+
+    console.log(`[validatePromotionToken] ✅ Token验证成功，推广者: ${tokenData.promoter_id}`);
+
+    return {
+      success: true,
+      message: 'Token有效',
+      data: {
+        promoter_id: tokenData.promoter_id,
+        page_id: tokenData.page_id
+      }
+    };
+  } catch (error) {
+    console.error('[validatePromotionToken] 错误:', error);
+    throw new Error(`验证Token失败: ${error.message}`);
+  }
+}
+
+/**
+ * 辅助函数：生成随机Token
+ */
+function generateRandomToken(length = 6) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 去掉易混淆的字符 I,O,0,1
+  let token = '';
+  for (let i = 0; i < length; i++) {
+    token += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return token;
+}
+
+/**
+ * 记录推广访问
+ */
+async function recordPromotionVisit(event) {
+  const wxContext = cloud.getWXContext();
+  const visitorId = wxContext.OPENID;
+  const { pageId, promoterId } = event;
+
+  try {
+    console.log(`[recordPromotionVisit] 访问记录 - 页面: ${pageId}, 推广者: ${promoterId}, 访客: ${visitorId}`);
+
+    // 检查是否是推广者自己访问（不记录）
+    if (visitorId === promoterId) {
+      console.log('[recordPromotionVisit] 推广者自己访问，不记录');
+      return {
+        success: true,
+        message: '推广者自己访问，不记录'
+      };
+    }
+
+    const now = new Date();
+
+    // 记录到推广访问记录表
+    await db.collection('promotion_visits').add({
+      data: {
+        page_id: pageId,
+        promoter_id: promoterId,
+        visitor_id: visitorId,
+        visit_time: now,
+        create_time: now
+      }
+    });
+
+    // 更新成员的推广访问统计
+    await db.collection('page_members')
+      .where({
+        page_id: pageId,
+        user_id: promoterId,
+        join_status: 'active'
+      })
+      .update({
+        data: {
+          promotion_visit_count: _.inc(1),
+          last_promotion_visit_time: now,
+          update_time: now
+        }
+      });
+
+    console.log('[recordPromotionVisit] ✅ 推广访问记录成功');
+
+    return {
+      success: true,
+      message: '推广访问记录成功'
+    };
+  } catch (error) {
+    console.error('[recordPromotionVisit] 错误:', error);
+    throw new Error(`记录推广访问失败: ${error.message}`);
+  }
+}
+
+/**
+ * 获取推广统计数据
+ */
+async function getPromotionStats(event) {
+  const wxContext = cloud.getWXContext();
+  const userId = wxContext.OPENID;
+  const { pageId } = event;
+
+  try {
+    // 获取成员信息
+    const { data: members } = await db.collection('page_members')
+      .where({
+        page_id: pageId,
+        user_id: userId,
+        join_status: 'active'
+      })
+      .get();
+
+    if (members.length === 0) {
+      throw new Error('您不是该页面的成员');
+    }
+
+    const member = members[0];
+
+    // 获取推广访问记录
+    const { data: visits } = await db.collection('promotion_visits')
+      .where({
+        page_id: pageId,
+        promoter_id: userId
+      })
+      .orderBy('visit_time', 'desc')
+      .limit(100)
+      .get();
+
+    // 统计数据
+    const stats = {
+      link_generation_count: member.promotion_link_generation_count || 0,
+      visit_count: member.promotion_visit_count || 0,
+      last_generation_time: member.last_promotion_link_generation_time || null,
+      last_visit_time: member.last_promotion_visit_time || null,
+      recent_visits: visits
+    };
+
+    return {
+      success: true,
+      data: stats
+    };
+  } catch (error) {
+    console.error('[getPromotionStats] 错误:', error);
+    throw new Error(`获取推广统计失败: ${error.message}`);
+  }
 }

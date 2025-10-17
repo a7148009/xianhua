@@ -345,19 +345,33 @@ Page({
       // scene参数：最多32个字符
       const scene = `t=${token}&p=${this.data.pageId.substring(0, 20)}`;
 
+      console.log('🔍 [generateMiniCode] 开始生成小程序码');
+      console.log('🔍 scene参数:', scene);
+      console.log('🔍 scene长度:', scene.length);
+
       const result = await wx.cloud.callFunction({
         name: 'generateMiniCode',
         data: {
           action: 'getUnlimited',
           scene: scene,
-          page: 'pages/partner/article-list/article-list',
+          page: 'pages/index/index',  // 使用首页作为落地页（开发环境兼容）
           width: 280
         }
       });
 
+      console.log('🔍 [generateMiniCode] 云函数返回完整结果:', JSON.stringify(result));
+      console.log('🔍 result.result:', result.result);
+      console.log('🔍 result.result.success:', result.result?.success);
+      console.log('🔍 result.result.message:', result.result?.message);
+      console.log('🔍 result.result.error:', result.result?.error);
+
       wx.hideLoading();
 
       if (result.result && result.result.success) {
+        console.log('✅ [generateMiniCode] 小程序码生成成功');
+        console.log('🔍 buffer类型:', typeof result.result.buffer);
+        console.log('🔍 buffer存在:', !!result.result.buffer);
+
         // 将Buffer保存到临时文件
         const fs = wx.getFileSystemManager();
         const filePath = `${wx.env.USER_DATA_PATH}/minicode_${Date.now()}.jpg`;
@@ -367,6 +381,7 @@ Page({
           data: result.result.buffer,
           encoding: 'binary',
           success: () => {
+            console.log('✅ 小程序码已保存到:', filePath);
             // 预览小程序码
             wx.previewImage({
               urls: [filePath],
@@ -380,18 +395,21 @@ Page({
             });
           },
           fail: (err) => {
-            console.error('保存小程序码失败:', err);
+            console.error('❌ 保存小程序码失败:', err);
             wx.showToast({ title: '保存失败', icon: 'none' });
           }
         });
       } else {
-        throw new Error('生成小程序码失败');
+        const errorMsg = result.result?.message || result.result?.error || '生成小程序码失败';
+        console.error('❌ [generateMiniCode] 云函数返回失败:', errorMsg);
+        throw new Error(errorMsg);
       }
     } catch (error) {
       wx.hideLoading();
       console.error('❌ 生成小程序码失败:', error);
+      console.error('❌ 错误详情:', JSON.stringify(error));
       wx.showToast({
-        title: '生成失败',
+        title: error.message || '生成失败',
         icon: 'none'
       });
     }

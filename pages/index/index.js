@@ -45,36 +45,87 @@ Page({
     isAdmin: false, // 是否是管理员
   },
 
-  async onLoad() {
-    console.log('🚀 [性能] 首页onLoad开始');
+  async onLoad(options) {
+    console.log('🚀 [性能] 首页onLoad开始', options);
     const startTime = Date.now();
 
     // ========================================
-    // 步骤0: 检查用户权限
+    // 步骤0: 处理小程序码扫描参数（scene）
+    // ========================================
+    if (options.scene) {
+      console.log('📱 [小程序码] 检测到scene参数:', options.scene);
+      this.handleSceneParam(decodeURIComponent(options.scene));
+      return; // 跳转后不继续执行首页加载逻辑
+    }
+
+    // ========================================
+    // 步骤1: 检查用户权限
     // ========================================
     this.checkUserRole();
 
     // ========================================
-    // 步骤1: 立即同步设置页面标题（避免闪烁）
+    // 步骤2: 立即同步设置页面标题（避免闪烁）
     // ========================================
     this.setPageTitleSync();
 
     // ========================================
-    // 步骤2: 加载变量配置
+    // 步骤3: 加载变量配置
     // ========================================
     this.loadVariables();
 
     // ========================================
-    // 步骤3: 立即尝试读取缓存（秒开关键）
+    // 步骤4: 立即尝试读取缓存（秒开关键）
     // ========================================
     this.loadFromCache();
 
     // ========================================
-    // 步骤4: 后台异步加载最新数据
+    // 步骤5: 后台异步加载最新数据
     // ========================================
     this.loadFreshData();
 
     console.log(`⏱️ [性能] onLoad执行完成，耗时: ${Date.now() - startTime}ms`);
+  },
+
+  /**
+   * 处理小程序码scene参数
+   * scene格式: t=TOKEN&p=pageId
+   */
+  handleSceneParam(scene) {
+    console.log('📱 [小程序码] 解析scene参数:', scene);
+
+    try {
+      // 解析scene参数：t=TOKEN&p=pageId
+      const params = {};
+      scene.split('&').forEach(item => {
+        const [key, value] = item.split('=');
+        if (key && value) {
+          params[key] = value;
+        }
+      });
+
+      console.log('📱 [小程序码] 解析后的参数:', params);
+
+      if (params.t && params.p) {
+        // 跳转到文章列表页，带上Token和pageId
+        console.log('📱 [小程序码] 跳转到文章列表页');
+        wx.redirectTo({
+          url: `/pages/partner/article-list/article-list?pageId=${params.p}&t=${params.t}`,
+          fail: (error) => {
+            console.error('❌ [小程序码] 跳转失败:', error);
+            wx.showToast({
+              title: '页面跳转失败',
+              icon: 'none'
+            });
+          }
+        });
+      } else {
+        console.warn('⚠️ [小程序码] scene参数不完整:', params);
+        // 参数不完整，继续正常加载首页
+      }
+    } catch (error) {
+      console.error('❌ [小程序码] 解析scene参数失败:', error);
+      // 解析失败，继续正常加载首页
+    }
   },
 
   /**
